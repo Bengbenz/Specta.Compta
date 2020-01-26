@@ -1,6 +1,7 @@
 # Specta.Compta
-Saas de Gestion de la comptabilité des projets de production audio-visuelle
-Hebergé dans le cloud Azure de Microsoft.
+Saas de Gestion de la comptabilité des projets de production audio-visuelle.
+
+Solution Hebergée dans le cloud Azure de Microsoft.
 
 Fonctionnalités :
 
