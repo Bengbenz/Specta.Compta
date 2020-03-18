@@ -1,0 +1,120 @@
+@inject ILogger<AppSidebar> Logger
+
+<aside class="@ComputedClass" style="@ComputedStyle">
+  <ul class="app-sidebar__menu">
+    @foreach(var item in _menuItems){
+      @if(item.Children.Any())
+      {
+        <AppSidebarGroupLink @key="item"
+          Icon="@item.Meta.IconClass"
+          Title="@item.DisplayName">
+          @foreach(var subMenuItem in item.Children)
+          {
+            <AppSidebarLink @key="subMenuItem"
+              Title="@subMenuItem.DisplayName" />
+          }
+        </AppSidebarGroupLink>
+      }
+      else
+      {
+        <AppSidebarLink Icon="@item.Meta.IconClass"
+                        Title="@item.DisplayName"
+                        Url="@item.Meta.Url" />
+      }
+    }
+  </ul>
+</aside>
+
+@code{
+
+  [CascadingParameter]
+  public LayoutInfoVm LayoutInfo { get; set; }
+
+  [CascadingParameter]
+  public ThemeStore ContextTheme { get; set; }
+
+  [Parameter]
+  public string Color { get; set; } = ThemeStore.SecondaryKey;
+
+  private string ComputedClass => ComputeClass();
+  private string ComputedStyle => ComputeColorStyle(); // "background-color: rgb(0, 44, 133);";
+
+  private string ComputeColorStyle()
+  {
+    var style = new StyleType { BackgroundColor = "white" };
+    if(ContextTheme == null)
+    {
+      return style.ToString();
+    }
+
+    style.BackgroundColor = !ContextTheme.IsInverted ? ContextTheme.ComputeColor(Color) : "white";
+    return style.ToString();
+  }
+
+  private string ComputeClass()
+  {
+    var style = "app-sidebar app-layout__sidebar";
+    if(LayoutInfo == null)
+    {
+      return style;
+    }
+
+    return LayoutInfo.IsMinimized ? $"{style} app-sidebar--minimized" : style;
+  }
+
+  private IList<ModuleInfo> _menuItems => new List<ModuleInfo>
+  {
+    new ModuleInfo("1", "Dashboard", new MetaInfo("/", "vuestic-iconset vuestic-iconset-dashboard")),
+    new ModuleInfo("2", "Statistics", new MetaInfo("/stats", "vuestic-iconset vuestic-iconset-statistics"))
+    {
+      Children = new List<ModuleInfo>
+      {
+        new ModuleInfo("3", "Charts", new MetaInfo("/charts", "vuestic-iconset vuestic-iconset-dashboard")),
+        new ModuleInfo("4", "Progress Bar", new MetaInfo("/progressbar", "vuestic-iconset vuestic-iconset-dashboard")),
+      }
+    },
+    new ModuleInfo("4", "Forms", new MetaInfo("/stats", "vuestic-iconset vuestic-iconset-forms")),
+    new ModuleInfo("5", "Tables", new MetaInfo("/stats", "vuestic-iconset vuestic-iconset-tables")),
+    new ModuleInfo("6", "UI Elements", new MetaInfo("/stats", "vuestic-iconset vuestic-iconset-ui-elements")),
+    new ModuleInfo("7", "Maps", new MetaInfo("/stats", "vuestic-iconset vuestic-iconset-maps")),
+    new ModuleInfo("8", "Pages", new MetaInfo("/stats", "vuestic-iconset vuestic-iconset-files")),
+  };
+
+  protected override async Task OnParametersSetAsync()
+  {
+    await base.OnParametersSetAsync();
+  }
+
+  protected override async Task OnInitializedAsync()
+  {
+      await base.OnInitializedAsync();
+      Logger.LogDebug($"{GetType().Name} initialized");
+  }
+
+  private class ModuleInfo 
+  { 
+    public ModuleInfo(string id, string displayName, MetaInfo meta)
+    {
+      Id = id;
+      DisplayName = displayName;
+      Meta = meta;
+    }
+
+    public string Id { get; set; }
+    public string DisplayName { get; set; }
+    public MetaInfo Meta { get; set; }
+    public ICollection<ModuleInfo> Children { get; set; } = new List<ModuleInfo>();
+  }
+
+  private class MetaInfo 
+  { 
+    public MetaInfo(string url, string iconClass)
+    {
+      Url = url;
+      IconClass = iconClass;
+    }
+
+    public string Url { get; set; }
+    public string IconClass { get; set; }
+  }
+}

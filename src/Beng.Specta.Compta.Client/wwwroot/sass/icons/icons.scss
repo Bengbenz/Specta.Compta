@@ -1,0 +1,11 @@
+@import "vuestic-icons";
+@import "fonts";
+
+// NOTE ionicons past 3.0 don't provide outline icons. Consider that on upgrade.
+$ionicons-font-path: "../lib/ionicons/dist/fonts";
+
+@import "../../lib/ionicons/dist/scss/ionicons";
+
+$fa-font-path: "../lib/font-awesome/fonts";
+
+@import "../../lib/font-awesome/scss/font-awesome";

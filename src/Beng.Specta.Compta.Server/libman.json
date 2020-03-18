@@ -1,0 +1,15 @@
+{
+	"version": "1.0",
+	"defaultProvider": "cdnjs",
+	/**"libraries": [
+		{   "provider": "unpkg",
+			"library": "bootstrap@4.4.1",
+			"destination": "../Beng.Specta.Compta.Client/wwwroot/lib/bootstrap/"
+		},
+		{
+            "provider": "unpkg",
+			"library": "bootstrap.sass@4.4.1",
+			"destination": "../Beng.Specta.Compta.Client/wwwroot/lib/bootstrap.sass/"
+		}
+	]*/
+}

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Beng.Specta.Compta.Core.Entities;
-using Beng.Specta.Compta.Web;
+using Beng.Specta.Compta.Server;
 using Newtonsoft.Json;
 using Xunit;
 

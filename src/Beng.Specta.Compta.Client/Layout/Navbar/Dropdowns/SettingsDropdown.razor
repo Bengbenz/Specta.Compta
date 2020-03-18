@@ -1,0 +1,75 @@
+<VaDropdown ExtraClass="@ComputedClass" offset="0, 16px">
+  <Anchor>
+    <VaIcon Name="vuestic-iconset vuestic-iconset-settings"
+            ExtraClass="settings-dropdown__icon"
+            Size="1.4rem;"
+            ExtraStyle="display: flex;"
+            Color="@IconColor" />
+  </Anchor>
+  <Content>
+    <div class="settings-dropdown__content pl-4 pr-4 pt-2 pb-2">
+      <div class="settings-dropdown__content-label mt-2 mb-3"
+           style="@ContentStyle">
+      Settings
+      </div>
+      <VaButtonToggle IsOutline="true" IsSmall="true"
+                      bind-Value="ContextTheme."
+                      Options="@ModelOptions"
+                      ExtraClass="settings-dropdown__control mb-2" /> <!-- v-model="selectedTheme"-->
+      </div>
+  </Content>
+</VaDropdown>
+
+@code{
+
+  [Parameter(CaptureUnmatchedValues = true)]
+  public IDictionary<string, object> AdditionalAttributes { get; set; }
+
+  [Parameter]
+  public string ExtraClass { get; set; }
+
+  [CascadingParameter]
+  public ThemeStore ContextTheme { get; set; }
+
+  private IList<OptionType> ModelOptions => new List<OptionType>
+  {
+    new OptionType { Label = "Original", Value = "false" },
+    new OptionType { Label = "Corporate", Value = "true" },
+  };
+
+  private string ComputedClass => $"settings-dropdown {ExtraClass ?? string.Empty}";
+
+  private string IconColor => ComputeIconColor();
+  private string ContentStyle => ComputeContentStyle();
+
+  private string ComputeIconColor()
+  {
+    var iconColor = "white";
+    if(ContextTheme == null)
+    {
+      return iconColor;
+    }
+
+    if(ContextTheme.IsInverted)
+    {
+      iconColor = $"{ContextTheme[ThemeStore.GrayKey]}";
+    }
+    return iconColor;
+  }
+
+  private string ComputeContentStyle()
+  {
+    var style = new StyleType();
+    if(ContextTheme == null)
+    {
+      return style.ToString();
+    }
+    style.Color = ContextTheme[ThemeStore.PrimaryKey];
+    return style.ToString();
+  }
+
+  protected override async Task OnParametersSetAsync()
+  {
+    await base.OnParametersSetAsync();
+  }
+}

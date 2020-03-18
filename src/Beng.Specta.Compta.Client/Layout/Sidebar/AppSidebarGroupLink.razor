@@ -1,0 +1,77 @@
+<li class="@ComputedClass" >
+  @if(!LayoutInfo.IsMinimized)
+  {
+    <div>
+      <div @onclick="ToggleMenuItem">
+        <AppSidebarLink Icon="@Icon"
+                        IconRight="fa fa-angle-down" 
+                        Title="@Title" />
+      </div>
+
+      <transition-expand>
+        <ul class="app-sidebar-link-group__submenu"> <!-- v-show="expanded" @ref="linkGroupWrapper" -->
+          @ChildContent
+        </ul>
+      </transition-expand>
+    </div>
+  }
+  else
+  {
+    <VaDropdown position="right" fixed :preventOverflow="false" ref="dropdown">
+      <Anchor>
+        <AppSidebarLink Icon="@Icon"
+          IconRight="material-icons"
+          IconRightContent="more_horiz"/>
+      </Anchor>
+      <Content>
+        <ul class="app-sidebar-link-group__submenu" style="ComputedSubmenuColor" >
+          @ChildContent
+        </ul>
+      </Content>
+    </VaDropdown>
+  }
+  </li>
+
+  @code{
+
+    private bool _isActive = true;
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string Icon { get; set; }
+
+    [Parameter]
+    public string IconRight { get; set; }
+
+    [CascadingParameter]
+    public LayoutInfoVm LayoutInfo { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    protected void ToggleMenuItem () {
+        //this.expanded = !this.expanded
+    }
+
+    private string ComputedClass
+    { 
+      get
+      {
+        string result = "app-sidebar-link-group";
+        if(LayoutInfo.IsMinimized)
+        {
+          return result + "app-sidebar-link-group--minimized";
+        }
+
+        if(_isActive)
+        {
+          return result + "app-sidebar-link-group--isActive";
+        }
+        return null;
+      }
+    }
+
+    private string ComputedSubmenuColor => "color: white;";
+  }

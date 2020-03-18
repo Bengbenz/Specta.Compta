@@ -2,13 +2,13 @@
   <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.46" />
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <TestProjectMode>true</TestProjectMode>
   </PropertyGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Beng.Specta.Compta.Web\Beng.Specta.Compta.Web.csproj" />
+    <ProjectReference Include="..\..\src\Beng.Specta.Compta.Server\Beng.Specta.Compta.Server.csproj" />
   </ItemGroup>
 
 </Project>

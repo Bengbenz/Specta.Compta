@@ -1,0 +1,152 @@
+<li class="@ComputedLinkClass">
+    <NavLink class="app-sidebar-link__item" style="@ComputedLinkStyles" href="@Url"
+             @onmouseover="EnableHoverState" @onmouseout="DisableHoverState"> 
+      <!-- :to="to"
+      :target="target"-->
+      @if(!string.IsNullOrWhiteSpace(Icon))
+      {
+        <VaIcon ExtraClass="app-sidebar-link__item-icon" Name="@Icon" style="@ComputedIconStyles" />
+      }
+
+      @if(!string.IsNullOrWhiteSpace(Title))
+      {
+        <div class="app-sidebar-link__item-title">
+          @Title
+        </div>
+      }
+
+      @if(!string.IsNullOrWhiteSpace(IconRight))
+      {
+        <VaIcon ExtraClass="app-sidebar-link__item-icon-right" Name="@IconRight" style="@ComputedIconStyles" >
+              @IconRightContent
+        </VaIcon>
+      }
+    </NavLink>
+</li>
+
+@code{
+
+  [Parameter]
+  public string Title { get; set; }
+
+  [Parameter]
+  public string Url { get; set; }
+
+  [Parameter]
+  public string Icon { get; set; }
+
+  [Parameter]
+  public string IconRight { get; set; }
+
+  [Parameter]
+  public string IconRightContent { get; set; }
+
+  [Parameter]
+  public bool IsActiveByDefault { get; set; }
+
+  [CascadingParameter]
+  public LayoutInfoVm LayoutInfo { get; set; }
+
+  [CascadingParameter]
+  public ThemeStore ContextTheme { get; set; }
+
+  private bool IsHovered { get; set; }
+  private bool IsActive { get; set; }
+  private string ComputedLinkClass => ComputeLinkClass();
+  private string ComputedLinkStyles => ComputeLinkStyles(); // "color: rgb(64, 229, 131);";
+  private string ComputedIconStyles => ComputeIconStyles();
+
+  private string ComputeLinkClass()
+  {
+    var linkClass = "app-sidebar-link";
+    if (LayoutInfo == null)
+    {
+      return linkClass;
+    }
+
+    return LayoutInfo.IsMinimized ? $"{linkClass} app-sidebar-link--minimized" : linkClass;
+  }
+
+  private string ComputeIconStyles()
+  {
+    var colorStyle = new StyleType { Color = "white" };
+    if (ContextTheme != null)
+    {
+      return colorStyle.ToString();
+    }
+
+    if (ContextTheme.IsInverted)
+    {
+      if (!IsHovered && !IsActive)
+      {
+        colorStyle.Color = ContextTheme[ThemeStore.GrayKey];
+      }
+    }
+    else
+    {
+      if (IsHovered || IsActive)
+      {
+        colorStyle.Color = ContextTheme[ThemeStore.PrimaryKey];
+      }
+    }
+    return colorStyle.ToString();
+  }
+
+  private void UpdateHoverState(bool isHovered) => IsHovered = isHovered;
+
+  private void EnableHoverState() => UpdateHoverState(true);
+
+  private void DisableHoverState() => UpdateHoverState(false);
+
+  private void UpdateActiveState()
+  {
+    IsActive = IsActiveByDefault; //(this.$route.name === this.to.name) || IsActiveByDefault;
+  }
+
+  private string ComputeLinkStyles()
+  {
+    var style = new StyleType();
+    var primaryColor = ContextTheme[ThemeStore.PrimaryKey];
+    if (ContextTheme.IsInverted)
+    {
+      if (IsHovered || IsActive)
+      {
+        style.Color = "white";
+      }
+      else
+      {
+        style.Color = ContextTheme[ThemeStore.GrayKey];
+      }
+    }
+    else
+    {
+      style.Color = primaryColor;
+    }
+
+    if (IsHovered || IsActive)
+    {
+      style.BackgroundColor = ContextTheme.IsGradient ? 
+      ContextTheme[ThemeStore.SecondaryKey].ColorShiftHsl(new HslType(h: 0, s: -13, l: 15)).ToString() :
+      primaryColor;
+
+      if (ContextTheme.IsGradient)
+      {
+        style.BorderColor = IsActive ? primaryColor : "transparent";
+      }
+      else
+      {
+        style.BorderColor = primaryColor.ColorShiftHsl(new HslType(h: 0, s: 13, l: -15)).ToString();
+      }
+    }
+
+    return style.ToString();
+  }
+
+  protected override async Task OnInitializedAsync()
+  {
+      UpdateActiveState();
+      // Logger.LogDebug($"{GetType().Name} initialized");
+      await base.OnInitializedAsync();
+
+  }
+}

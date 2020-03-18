@@ -2,7 +2,7 @@
 using Beng.Specta.Compta.Infrastructure.Data;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
 using Beng.Specta.Compta.UnitTests;
-using Beng.Specta.Compta.Web;
+using Beng.Specta.Compta.Server;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
