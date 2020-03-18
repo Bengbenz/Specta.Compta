@@ -1,0 +1,31 @@
+@inherits LayoutComponentBase
+@inject LayoutInfoVm LayoutInfo;
+@inject AppSettings ContextConfig;
+
+<CascadingValue Value="LayoutInfo">
+    <CascadingValue Value="ContextConfig.ThemeStore">
+    <div class="app-page-layout app-layout">
+        <AppNavbar OnMinimized="@ToggleMinimized"/>
+        <div class="app-layout__container">
+            <AppSidebar />
+            <div class="app-layout__main">
+                <main class="app-layout__main-layout layout fluid gutter--xl" role="main" >
+                @Body
+                </main>
+            </div>
+        </div>
+    </div>
+    </CascadingValue>
+</CascadingValue>
+
+ @code{
+    public void ToggleMinimized()
+    {
+        LayoutInfo.ToggleMinimized();
+    }
+
+    public void ToggleInverted()
+    {
+        ContextConfig.ToggleInverted();
+    }
+}

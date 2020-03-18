@@ -1,0 +1,812 @@
+@import "./vuestic-ui/styles";
+@import "../lib/flag-icon-css/css/flag-icon.css";
+
+// custom
+body {
+    height: 100%;
+  
+    #app {
+        height: 100%;
+    }
+}
+
+// -- App Layout 
+.app-layout {
+    display: flex;
+    flex-direction: column;
+  
+    &__container {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: stretch;
+      // TODO Probably there is a better way to achieve this.
+      height: calc(100% - 65px);
+  
+      @include media-breakpoint-down(sm) {
+        height: calc(100% - 110px);
+      }
+    }
+  
+    &__main {
+      box-sizing: border-box;
+      width: 100%;
+      position: relative;
+      max-height: 100%;
+      min-height: 100%;
+  
+      &--top {
+      }
+  
+      &-layout {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        overflow: auto;
+        box-sizing: border-box;
+        min-height: 100%;
+        margin: 0;
+      }
+    }
+  }
+
+  // App-page-layout
+  .app-page-layout {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    height: 100vh;
+  
+    .content-wrap {
+      transition: margin-left 0.3s ease;
+      padding: 0;
+      margin-left: 0 !important;
+    }
+  }
+
+  // App-nav-bar
+  $nav-border-side-width: 3.1875rem;
+  .app-navbar {
+    transition: background-color 0.3s ease; /* sidebar's bg color transitions as well -> consistency */
+    display: flex;
+    padding: 1rem 1rem;
+    z-index: 1;
+  
+    &__content {
+      z-index: 1;
+      align-items: center;
+      justify-content: space-between;
+      flex-direction: row;
+      flex-wrap: wrap;
+      height: 100%;
+      flex: 1 1 auto;
+    }
+  
+    &__center {
+      display: flex;
+      margin-left: 3rem;
+      justify-content: space-between;
+      align-items: center;
+    }
+  
+    &__text {
+      color: $lighter-gray;
+    }
+  
+    &__button {
+      width: 10rem;
+      margin: 0 0 0 1rem !important;
+      font-weight: bold;
+  
+      .va-button__content__icon-left.fa-github {
+        font-size: 1.5rem;
+      }
+    }
+  
+    &__menu {
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1rem;
+      margin-right: 1.5rem;
+    }
+  
+    &__menu-container {
+      display: flex;
+      flex-wrap: nowrap;
+      height: 1.5rem;
+    }
+  
+    &__logo {
+      width: 9.5rem;
+      height: auto;
+      align-items: center;
+  
+      & * {
+        max-height: 100%;
+        max-width: 100%;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+    }
+  
+    &__actions {
+      justify-content: flex-end;
+    }
+  
+    &__mailto-link:hover {
+      filter: brightness(85%);
+    }
+  
+    &__shape {
+      transition: border-top-color 0.3s ease; /* sidebar's bg color transitions as well -> consistency */
+      width: 33%;
+      max-width: 467px;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      margin: auto;
+      border-top: 4.215rem solid transparent; // hardcoded size
+      border-left: $nav-border-side-width solid transparent;
+      border-right: $nav-border-side-width solid transparent;
+      height: 0;
+    }
+  
+    @include media-breakpoint-down(lg) {
+      &__button {
+        display: none !important;
+      }
+    }
+  
+    @include media-breakpoint-down(md) {
+      &__center {
+        display: none !important;
+      }
+    }
+  
+    @include media-breakpoint-down(sm) {
+      &__content {
+        align-items: flex-end;
+      }
+  
+      &__actions {
+        margin-top: 1.25rem;
+        justify-content: space-between;
+        width: 100%;
+      }
+  
+      &__shape {
+        display: none;
+      }
+    }
+  }
+
+  // App-side-bar
+  .app-sidebar {
+    overflow: auto;
+    display: flex;
+    max-height: 100%;
+    flex: 0 0 16rem;
+  
+    @include media-breakpoint-down(sm) {
+      flex: 0 0 100%;
+    }
+  
+    &--minimized {
+      flex: 0 0 3.25rem;
+    }
+  
+    &__menu {
+      margin-bottom: 0;
+      padding-top: 2.5625rem;
+      padding-bottom: 2.5rem;
+      list-style: none;
+      padding-left: 0;
+      width: 100%;
+    }
+  }
+
+  // Va-icon-menu
+  .va-icon-menu {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+  }
+  // va-icon-menu-collapsed
+  .va-icon-menu-collapsed {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+  }
+
+  // app-navbar-actions
+  .app-navbar-actions {
+    display: flex;
+  
+    &__item {
+      margin-top: 0.3rem;
+      padding: 0;
+      margin-left: 1.25rem;
+      margin-right: 1.25rem;
+  
+      &:last-of-type {
+        margin-right: 0;
+      }
+  
+      &--profile {
+        display: flex;
+        justify-content: center;
+        margin: auto 0 auto 1.25rem;
+      }
+  
+      @include media-breakpoint-down(lg) {
+        margin-right: 0.25rem;
+      }
+  
+      @include media-breakpoint-down(sm) {
+        margin-right: 0;
+  
+        &:first-of-type {
+          margin-left: 0;
+        }
+  
+        &--profile {
+          position: absolute;
+          right: 0.75rem;
+          top: 1.25rem;
+          height: fit-content;
+          margin: auto;
+        }
+      }
+    }
+  }
+
+  // profile-dropdown 
+  .profile-dropdown {
+    cursor: pointer;
+  
+    &__anchor {
+      color: $vue-green;
+    }
+  
+    .va-dropdown-popper__anchor {
+      display: flex;
+      justify-content: flex-end;
+    }
+  
+    &__content {
+      background-color: $dropdown-background;
+      box-shadow: $gray-box-shadow;
+      border-radius: 0.5rem;
+      width: 8rem;
+    }
+  
+    &__item {
+      display: block;
+      color: $vue-darkest-blue;
+  
+      &:hover,
+      &:active {
+        color: $vue-green;
+      }
+    }
+  
+    .va-dropdown__anchor {
+      display: inline-block;
+    }
+  }
+
+  // Language dropdown
+.language-dropdown {
+  cursor: pointer;
+
+  &__content {
+    background-color: $dropdown-background;
+    box-shadow: $gray-box-shadow;
+    border-radius: 0.5rem;
+    width: 12rem;
+
+    .flag-icon-small {
+      min-width: 1.5rem;
+      min-height: 1.5rem;
+      margin-right: 0.5rem;
+    }
+  }
+
+  &__item {
+    padding-bottom: 0.625rem;
+    cursor: pointer;
+    flex-wrap: nowrap;
+
+    &:last-of-type {
+      padding-bottom: 0 !important;
+    }
+
+    &:hover,
+    &.active {
+      color: $vue-green;
+    }
+  }
+
+  .flag-icon::before {
+    content: "";
+  }
+
+  .flag-icon-large {
+    display: block;
+    width: 31px;
+    height: 23px;
+  }
+
+  .va-dropdown__anchor {
+    display: inline-block;
+  }
+}
+
+// notification-dropdown
+.notification-dropdown {
+    cursor: pointer;
+  
+    .notification-dropdown__icon {
+      position: relative;
+      display: flex;
+      align-items: center;
+  
+      &--unread::before {
+        content: '';
+        position: absolute;
+        right: 0;
+        left: 0;
+        top: -0.5rem;
+        background-color: $brand-danger;
+        height: 0.375rem;
+        width: 0.375rem;
+        margin: 0 auto;
+        border-radius: 0.187rem;
+      }
+    }
+  
+    &__content {
+      background-color: $dropdown-background;
+      box-shadow: $gray-box-shadow;
+      border-radius: 0.5rem;
+      max-width: 19rem;
+    }
+  
+    &__item {
+      cursor: pointer;
+      margin-bottom: 0.75rem;
+      color: $brand-secondary;
+      flex-wrap: nowrap;
+      position: relative;
+  
+      &--unread {
+        color: $vue-darkest-blue;
+  
+        &::after {
+          content: '';
+          position: absolute;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          height: 0.375rem;
+          width: 0.375rem;
+          background-color: $brand-danger;
+          margin: auto;
+          border-radius: 0.187rem;
+        }
+      }
+  
+      &:hover {
+        color: $vue-green;
+      }
+  
+      &__avatar {
+        border-radius: 50%;
+        width: 1.5rem;
+        height: 1.5rem;
+        min-width: 1.5rem;
+      }
+    }
+  
+    .va-dropdown__anchor {
+      display: inline-block;
+    }
+  }
+
+  //settings-dropdown
+  .settings-dropdown {
+    cursor: pointer;
+  
+    &__icon {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+  
+    &__content {
+      background-color: $dropdown-background;
+      box-shadow: $gray-box-shadow;
+      border-radius: 0.5rem;
+  
+      &-label {
+        margin-bottom: 0.5rem;
+      }
+    }
+  
+    &__control {
+      .va-button-group {
+        margin: 0;
+      }
+    }
+  
+    .va-dropdown__anchor {
+      display: inline-block;
+    }
+  }
+
+  // app-sidebar-link-group
+  .app-sidebar-link-group {
+    flex-direction: column;
+    position: relative;
+    display: flex;
+  
+    &__submenu {
+      list-style: none;
+      padding-left: 0;
+      width: 100%;
+      overflow: hidden;
+  
+      a {
+        display: block;
+        padding-left: 2.5rem;
+      }
+  
+      .app-sidebar-link-group--minimized & {
+        width: 10rem;
+        border-radius: 0.375rem;
+        margin-left: 2px;
+        max-height: 80vh;
+        padding: 0.375rem 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+  
+        a {
+          padding: 0.75rem 1rem;
+          border: 0;
+        }
+      }
+    }
+  
+    &--minimized {
+      .va-dropdown {
+        &__anchor {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  // app-sidebar-link
+  .app-sidebar-link {
+    display: flex;
+  
+    &__item {
+      position: relative;
+      display: flex;
+      min-height: 3rem;
+      cursor: pointer;
+      padding: 0.75rem 0.75rem 0.75rem 0.75rem; // 0.75 - border size as 0.25
+      align-items: center;
+      text-decoration: none;
+      border-left: 0.25rem solid transparent;
+      color: rgba(255, 255, 255, 0.65);
+      box-sizing: border-box;
+      width: 20rem;
+  
+      @include media-breakpoint-down(sm) {
+        flex: 0 0 100%;
+      }
+  
+      .app-sidebar-link--minimized & {
+        justify-content: center;
+        padding-left: 0.5rem;
+        width: 3.5rem;
+      }
+  
+      &-icon {
+        width: 1.5rem;
+        text-align: center;
+        font-size: $sidebar-menu-item-icon-size;
+      }
+  
+      &-icon-right {
+        display: block;
+        font-weight: bold;
+        position: absolute;
+        right: 0.75rem;
+        bottom: auto;
+  
+        .app-sidebar-link--minimized & {
+          bottom: 1.25rem;
+          right: auto;
+          height: 0;
+          display: block;
+          text-align: center;
+          font-weight: normal;
+        }
+      }
+  
+      &-title {
+        line-height: 1.5em;
+  
+        .app-sidebar-link__item-icon + & {
+          margin-left: 0.5rem;
+        }
+  
+        .app-sidebar-link--minimized & {
+          display: none;
+        }
+      }
+    }
+  }
+
+  // .va-dropdown
+.va-dropdown {
+  &__content {
+    /*overflow: hidden;*/
+    z-index: 100;
+  }
+}
+
+// .va-icon
+.va-icon {
+    display: inline-block;
+    letter-spacing: normal;
+  
+    &--large {
+      font-size: $icon-lg-size;
+    }
+  
+    &--small {
+      font-size: $icon-sm-size;
+    }
+  
+    &--fixed {
+      width: $icon-fixed-width;
+      text-align: center;
+    }
+  }
+
+// va-icon-vuestic
+.va-icon-vuestic {
+  .st0 {
+    fill: #4ae387;
+  }
+}
+
+// va-avatar
+.va-avatar {
+  display: flex;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+
+  img {
+    display: block;
+    width: 100%;
+  }
+}
+
+// va-button 
+.va-button {
+  display: inline-block;
+  margin: $btn-margin;
+  background-image: none;
+  box-shadow: none;
+  outline: none !important;
+  border: $btn-border;
+  font-family: $font-family-sans-serif;
+  text-decoration: none !important;
+  text-transform: initial;
+  font-weight: $font-weight-bold;
+  cursor: pointer;
+  transition: $btn-transition;
+  background-color: $white;
+
+  &__content {
+    display: flex;
+
+    &__title, &__icon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: auto;
+    }
+  }
+
+  &--default {
+    color: $white;
+
+    &:hover {
+      filter: brightness(115%);
+    }
+
+    &:focus, &:active {
+      filter: brightness(85%);
+    }
+
+    i {
+      color: $white;
+    }
+  }
+
+  &--outline {
+    background-color: transparent;
+    border: solid $btn-border-outline;
+    text-decoration: none;
+
+    &.va-button--disabled {
+      background: transparent;
+      @include va-disabled;
+
+      &.va-button--active {
+
+        .va-button__content, i {
+          color: $white !important;
+        }
+      }
+    }
+  }
+
+  &--flat {
+    background: transparent;
+    border: $btn-border solid transparent;
+    text-decoration: none;
+  }
+
+  &.va-button--disabled {
+    @include va-disabled;
+  }
+
+  &--large {
+    @include va-button($btn-padding-y-lg, $btn-padding-x-lg, $btn-font-size-lg, $btn-line-height-lg, $btn-border-radius-lg);
+    letter-spacing: $btn-letter-spacing-lg;
+
+    .va-button__content__icon {
+      width: $btn-icon-width-lg;
+    }
+
+    &.va-button--with-left-icon {
+      padding-left: $btn-with-icon-wrapper-padding-lg;
+
+      &.va-button--without-title {
+        padding-right: $btn-with-icon-wrapper-padding-lg;
+      }
+
+      .va-button__content__title {
+        padding-left: $btn-with-icon-content-padding-lg;
+      }
+    }
+
+    &.va-button--with-right-icon {
+      padding-right: $btn-with-icon-wrapper-padding-lg;
+
+      .va-button__content__title {
+        padding-right: $btn-with-icon-content-padding-lg;
+      }
+    }
+
+    &.va-button--outline {
+      line-height: $btn-line-height-lg - 2 * $btn-border-outline;
+    }
+  }
+
+  &--small {
+    @include va-button($btn-padding-y-sm, $btn-padding-x-sm, $btn-font-size-sm, $btn-line-height-sm, $btn-border-radius-sm);
+    letter-spacing: $btn-letter-spacing-sm;
+
+    .va-button__content__icon {
+      width: $btn-icon-width-sm;
+    }
+
+    &.va-button--with-left-icon {
+      padding-left: $btn-with-icon-wrapper-padding-sm;
+
+      &.va-button--without-title {
+        padding-right: $btn-with-icon-wrapper-padding-sm;
+      }
+
+      .va-button__content__title {
+        padding-left: $btn-with-icon-content-padding-sm;
+      }
+    }
+
+    &.va-button--with-right-icon {
+      padding-right: $btn-with-icon-wrapper-padding-sm;
+
+      .va-button__content__title {
+        padding-right: $btn-with-icon-content-padding-sm;
+      }
+    }
+
+    &.va-button--outline {
+      line-height: $btn-line-height-sm - 2 * $btn-border-outline;
+    }
+  }
+
+  &--normal {
+    @include va-button($btn-padding-y-nrm, $btn-padding-x-nrm, $btn-font-size-nrm, $btn-line-height-nrm, $btn-border-radius-nrm);
+    letter-spacing: $btn-letter-spacing-nrm;
+
+    .va-button__content__icon {
+      width: $btn-icon-width-nrm;
+    }
+
+    &.va-button--with-left-icon {
+      padding-left: $btn-with-icon-wrapper-padding-nrm;
+
+      &.va-button--without-title {
+        padding-right: $btn-with-icon-wrapper-padding-nrm;
+      }
+
+      .va-button__content__title {
+        padding-left: $btn-with-icon-content-padding-nrm;
+      }
+    }
+
+    &.va-button--with-right-icon {
+      padding-right: $btn-with-icon-wrapper-padding-nrm;
+
+      .va-button__content__title {
+        padding-right: $btn-with-icon-content-padding-nrm;
+      }
+    }
+
+    &.va-button--outline {
+      line-height: $btn-line-height-nrm - 2 * $btn-border-outline;
+    }
+  }
+}
+
+// Va-Button-Group
+.va-button-group {
+  display: flex;
+  justify-content: stretch;
+  margin: 0.375rem 0.5rem;
+
+  &--small {
+    border-radius: $btn-border-radius-sm;
+  }
+
+  &--large {
+    border-radius: $btn-border-radius-lg;
+  }
+
+  &--normal {
+    border-radius: $btn-border-radius-nrm;
+  }
+
+  .va-button {
+    margin: 0;
+  }
+
+  & > .va-button:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    border-right: 0;
+  }
+
+  & > .va-button + .va-button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-left: 0;
+  }
+}

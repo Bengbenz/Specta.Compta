@@ -1,0 +1,80 @@
+@inject ILogger<AppNavbarActions> Logger
+
+Langue
+<!--
+<VaDropdown ExtraClass="@ComputedClass" offset="0, 16px" fixed >
+  <Anchor>
+    <VaIcon Name="@AnchorIconClass"/> 
+    Langue
+  </Anchor>
+  <Content>
+    <div class="language-dropdown__content pl-4 pr-4 pt-2 pb-2">
+    @foreach(var option in Options){
+      <div @key="option.Code" class="@OptionClass(option.Code)"
+            @onclick="@(() => SetLanguage(option.Code))">
+        <VaIcon Name="@ContentIconClass(option.Code)"/>
+        <span class="dropdown-item__text">
+            @option.Name
+        </span>
+      </div>
+    }
+    </div>
+  </Content> 
+</VaDropdown>-->
+
+@code{
+
+    [Parameter]
+    public string ExtraClass { get; set; }
+    
+    private string ComputedClass => $"language-dropdown {ExtraClass ?? string.Empty}";
+
+    private string AnchorIconClass => $"flag-icon flag-icon-large {FlagIconClass(CurrentLanguage)}";
+
+    private string CurrentLanguage { get; set; } = "fr";
+
+    private string FlagIconClass(string code) => $"flag-icon-{code}";
+
+    private string ContentIconClass(string code) => $"flag-icon flag-icon-small {FlagIconClass(code)}";
+
+    private string OptionClass(string code)
+    {
+      var optionClass = "language-dropdown__item row align--center pt-1 pb-1 mt-2 mb-2";
+      if(code == CurrentLanguage)
+      {
+        optionClass += " active";
+      }
+      return optionClass;
+    }
+
+    private void SetLanguage (string locale) {
+      // Vue.i18n.set(locale)
+      CurrentLanguage = locale;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+      await OnParametersSetAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        Logger.LogDebug($"{GetType().Name} initialized");
+    }
+
+    private IReadOnlyCollection<Option> Options => new List<Option>
+    {
+      new Option { Name = "English", Code = "gb"},
+      new Option { Name = "Spanish", Code = "es"},
+      new Option { Name = "Brazilian", Code = "br"},
+      new Option { Name = "Chinese", Code = "cn"},
+      new Option { Name = "French", Code = "fr"},
+    };
+
+    private class Option
+    {
+      public string Name { get; set; }
+      public string Code { get; set; }
+    }
+}

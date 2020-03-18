@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <Sdk Name="Microsoft.Build.CentralPackageVersions" Version="2.0.46" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <RazorLangVersion>3.0</RazorLangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazor.Extensions.Logging" />
+    <PackageReference Include="Microsoft.AspNetCore.Blazor" />
+    <PackageReference Include="Microsoft.AspNetCore.Blazor.Build" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Blazor.HttpClient" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Beng.Specta.Compta.Core\Beng.Specta.Compta.Core.csproj" />
+    <ProjectReference Include="..\Beng.Specta.Compta.ComponentLibrary\Beng.Specta.Compta.ComponentLibrary.csproj" />
+  </ItemGroup>
+
+</Project>

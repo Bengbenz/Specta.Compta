@@ -1,0 +1,95 @@
+<div class="va-button-toggle @ExtraClass" @attributes="AdditionalAttributes">
+    <VaButtonGroup>
+    @foreach(var option in Options)
+    {
+        <VaButton key="@option.Label"
+                Style="@ButtonStyle(option.Value)"
+                Color="@ButtonColor(option.Value)"
+                ExtraClass="@ButtonClass(option.Value)"
+                IsOutline="@IsOutline"
+                IsFlat="@IsFlat"
+                IsDisabled="@IsDisabled"
+                IsSmall="@IsSmall"
+                IsLarge="@IsLarge"> <!-- @onclick="@ToggleValue(option.value)" -->
+            @option.Label
+        </VaButton>
+    }
+    </VaButtonGroup>
+</div>
+
+@code
+{
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object> AdditionalAttributes { get; set; }
+
+    [CascadingParameter]
+    public ThemeStore ContextTheme { get; set; }
+
+    [Parameter]
+    public string ExtraClass { get; set; }
+
+    [Parameter]
+    public string Value { get; set; }
+
+    [Parameter]
+    public string Color { get; set; } = ThemeStore.PrimaryKey;
+
+    [Parameter]
+    public string ToggleColor { get; set; }
+
+    [Parameter]
+    public bool IsDisabled { get; set; }
+
+    [Parameter]
+    public bool IsFlat { get; set; }
+
+    [Parameter]
+    public bool IsOutline { get; set; }
+
+    [Parameter]
+    public bool IsSmall { get; set; }
+
+    [Parameter]
+    public bool IsLarge { get; set; }
+
+    [Parameter]
+    public IList<OptionType> Options { get; set; }
+
+    private string ButtonColor(string buttonValue)
+    {
+      return buttonValue == Value && !string.IsNullOrWhiteSpace(ToggleColor) ? ToggleColor : Color;
+    }
+
+    private string ButtonStyle(string buttonValue)
+    {
+        var buttonStyle = new StyleType();
+        if (buttonValue != Value)
+        {
+            return buttonStyle.ToString();
+        }
+
+        string backgroundKey = Color;
+        if (IsOutline || IsFlat)
+        {
+            backgroundKey = (!string.IsNullOrWhiteSpace(ToggleColor)) ? ToggleColor : backgroundKey;
+            buttonStyle.Color = "#ffffff";
+        }
+        else
+        {
+            buttonStyle.Filter = "brightness(85%)";
+        }
+
+        if(ContextTheme.TryGetValue(backgroundKey, out var backgroundColor))
+        {
+            buttonStyle.BackgroundColor = backgroundColor.GetGradientBackground();
+        }
+        return buttonStyle.ToString();
+    }
+
+    private string ButtonClass(string buttonValue) => (buttonValue == Value) ? "va-button--active" : string.Empty;
+
+    private void ToggleValue(string value)
+    {
+      // this.$emit('input', value)
+    }
+}

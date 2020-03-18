@@ -1,0 +1,38 @@
+<div class="@ComputedClass" >
+    @ChildContent
+</div>
+
+@code{
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string Color { get; set; } = ThemeStore.PrimaryKey; // GetParentColor
+
+    [Parameter]
+    public bool IsSmall { get; set; }
+
+    [Parameter]
+    public bool IsLarge { get; set; }
+
+    private string ComputedClass => ComputeClass();
+
+    private string ComputeClass()
+    {
+        var groupButtonClass = "va-button-group";
+        if(IsLarge)
+        {
+            groupButtonClass += " va-button-group--large";
+        }
+        if(IsSmall)
+        {
+            groupButtonClass += " va-button-group--small";
+        }
+        if(!IsLarge && !IsSmall)
+        {
+            groupButtonClass += " va-button-group--normal";
+        }
+        return groupButtonClass;
+    }
+}

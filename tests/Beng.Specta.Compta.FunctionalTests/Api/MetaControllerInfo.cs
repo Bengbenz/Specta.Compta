@@ -1,6 +1,6 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
-using Beng.Specta.Compta.Web;
+using Beng.Specta.Compta.Server;
 using Xunit;
 
 namespace Beng.Specta.Compta.FunctionalTests.Api

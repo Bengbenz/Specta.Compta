@@ -1,0 +1,106 @@
+@inject ILogger<AppNavbar> Logger
+
+<nav class="app-navbar app-layout__navbar" style="@NavbarStyle">
+    <div class="app-navbar__content row">
+      <div class="app-navbar__menu-container">
+        <VaIconMenu ExtraClass="app-navbar__menu" IsShown="!LayoutInfo.IsMinimized"
+          OnClick="@OnMinimized"
+          Color="@ComputedColor" />
+
+        <VaIconMenuCollapsed ExtraClass="app-navbar__menu" IsShown="LayoutInfo.IsMinimized"
+          OnClick="@OnMinimized"
+          Color="@ComputedColor"/>
+
+        <a class="app-navbar__logo mr-3" href="/">
+          <VaIconApp /> <!-- Specta.Compta -->
+        </a>
+      </div>
+      <div class="app-navbar__center lg5 md4">
+        <VaButton  ExtraClass="app-navbar__button"
+                   Icon="fa fa-github"
+                   Color="#000000"
+                   Target="https://github.com/Bengbenz/Specta.Compta">
+            <text>Bengbenz</text>
+        </VaButton>
+      </div>
+      <AppNavbarActions ExtraClass="app-navbar__actions md5 lg4" UserName="@UserName" />
+    </div>
+    <div class="app-navbar__shape" style="@ShapeStyle" ></div>
+</nav>
+
+@code{
+
+  [Parameter]
+  public string UserName { get; set; } = "LebCa";
+
+  [CascadingParameter]
+  public LayoutInfoVm LayoutInfo { get; set; }
+
+  [CascadingParameter]
+  public ThemeStore ContextTheme { get; set; }
+
+  [Parameter]
+  public EventCallback OnMinimized { get; set; }
+
+  private string NavbarStyle => ComputeNavbarStyle();
+  private string ShapeStyle => ComputeShapeStyle();
+  private string ComputedColor => ComputeColor();
+
+  private string ComputeColor()
+  {
+    var color = "white";
+    if(ContextTheme == null)
+    {
+      return color;
+    }
+
+    if(ContextTheme.IsInverted)
+    {
+      color = ContextTheme[ThemeStore.GrayKey];
+    }
+    return color;
+  }
+  private string ComputeNavbarStyle()
+  {
+    var style = new StyleType { BackgroundColor =  "white" };
+    if(ContextTheme == null)
+    {
+      return style.ToString();
+    }
+
+    if (ContextTheme.IsGradient)
+    {
+      style.BackgroundColor = ContextTheme[ThemeStore.SecondaryKey]
+                                .ColorShiftHsl(new HslType(h: 0, s: -13, l: 15))
+                                .ToString();
+    }
+    if (ContextTheme.Shadow == ShadowType.Small)
+    {
+      style.BoxShadow = "0 2px 3px 0 rgba(52, 56, 85, 0.25)";
+    }
+    return style.ToString();
+  }
+
+  private string ComputeShapeStyle()
+  {
+    var style = new StyleType { BorderTopColor = "transparent" };
+    if(ContextTheme == null)
+    {
+      return style.ToString();
+    }
+
+    if(ContextTheme.IsGradient)
+    {
+      style.BorderTopColor = ContextTheme[ThemeStore.SecondaryKey]
+                              .ColorShiftHsl(new HslType(h: -1, s: -11, l: 10))
+                              .ToString();
+    }
+    return style.ToString();
+  }
+
+  protected override async Task OnInitializedAsync()
+  {
+      await base.OnInitializedAsync();
+      Logger.LogDebug($"{GetType().Name} initialized");
+  }
+}
