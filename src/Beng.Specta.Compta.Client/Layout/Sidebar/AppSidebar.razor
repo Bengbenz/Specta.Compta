@@ -7,17 +7,20 @@
       {
         <AppSidebarGroupLink @key="item"
           Icon="@item.Meta.IconClass"
-          Title="@item.DisplayName">
+          Title="@item.DisplayName"
+          Children="@item.Children">
           @foreach(var subMenuItem in item.Children)
           {
             <AppSidebarLink @key="subMenuItem"
-              Title="@subMenuItem.DisplayName" />
+              Title="@subMenuItem.DisplayName"
+              Url="@subMenuItem.Meta.Url" />
           }
         </AppSidebarGroupLink>
       }
       else
       {
-        <AppSidebarLink Icon="@item.Meta.IconClass"
+        <AppSidebarLink @key="item"
+                        Icon="@item.Meta.IconClass"
                         Title="@item.DisplayName"
                         Url="@item.Meta.Url" />
       }
@@ -37,7 +40,7 @@
   public string Color { get; set; } = ThemeStore.SecondaryKey;
 
   private string ComputedClass => ComputeClass();
-  private string ComputedStyle => ComputeColorStyle(); // "background-color: rgb(0, 44, 133);";
+  private string ComputedStyle => ComputeColorStyle();
 
   private string ComputeColorStyle()
   {
@@ -62,22 +65,29 @@
     return LayoutInfo.IsMinimized ? $"{style} app-sidebar--minimized" : style;
   }
 
-  private IList<ModuleInfo> _menuItems => new List<ModuleInfo>
+  private IList<ModuleInfoVm> _menuItems => new List<ModuleInfoVm>
   {
-    new ModuleInfo("1", "Dashboard", new MetaInfo("/", "vuestic-iconset vuestic-iconset-dashboard")),
-    new ModuleInfo("2", "Statistics", new MetaInfo("/stats", "vuestic-iconset vuestic-iconset-statistics"))
+    new ModuleInfoVm("1", "Dashboard", new MetaInfoVm("/", "vuestic-iconset vuestic-iconset-dashboard")),
+    new ModuleInfoVm("2", "Exercices comptables", new MetaInfoVm("/stats", "vuestic-iconset vuestic-iconset-statistics"))
     {
-      Children = new List<ModuleInfo>
+      Children = new List<ModuleInfoVm>
       {
-        new ModuleInfo("3", "Charts", new MetaInfo("/charts", "vuestic-iconset vuestic-iconset-dashboard")),
-        new ModuleInfo("4", "Progress Bar", new MetaInfo("/progressbar", "vuestic-iconset vuestic-iconset-dashboard")),
+        new ModuleInfoVm("3", "Projets", new MetaInfoVm("/charts")),
+        new ModuleInfoVm("4", "Statistics", new MetaInfoVm("/progressbar")),
       }
     },
-    new ModuleInfo("4", "Forms", new MetaInfo("/stats", "vuestic-iconset vuestic-iconset-forms")),
-    new ModuleInfo("5", "Tables", new MetaInfo("/stats", "vuestic-iconset vuestic-iconset-tables")),
-    new ModuleInfo("6", "UI Elements", new MetaInfo("/stats", "vuestic-iconset vuestic-iconset-ui-elements")),
-    new ModuleInfo("7", "Maps", new MetaInfo("/stats", "vuestic-iconset vuestic-iconset-maps")),
-    new ModuleInfo("8", "Pages", new MetaInfo("/stats", "vuestic-iconset vuestic-iconset-files")),
+    new ModuleInfoVm("4", "Budget", new MetaInfoVm("/forms", "vuestic-iconset vuestic-iconset-forms")),
+    new ModuleInfoVm("5", "Financement", new MetaInfoVm("/tables", "vuestic-iconset vuestic-iconset-tables"))
+    {
+      Children = new List<ModuleInfoVm>
+      {
+        new ModuleInfoVm("6", "Projets", new MetaInfoVm("/markuptable")),
+        new ModuleInfoVm("7", "Facturation", new MetaInfoVm("/datatable")),
+      }
+    },
+    new ModuleInfoVm("8", "Trésorerie", new MetaInfoVm("/uielements", "vuestic-iconset vuestic-iconset-ui-elements")),
+    new ModuleInfoVm("9", "Bilan", new MetaInfoVm("/maps", "vuestic-iconset vuestic-iconset-maps")),
+    new ModuleInfoVm("10", "Utilisateurs", new MetaInfoVm("/pages", "vuestic-iconset vuestic-iconset-files")),
   };
 
   protected override async Task OnParametersSetAsync()
@@ -89,32 +99,5 @@
   {
       await base.OnInitializedAsync();
       Logger.LogDebug($"{GetType().Name} initialized");
-  }
-
-  private class ModuleInfo 
-  { 
-    public ModuleInfo(string id, string displayName, MetaInfo meta)
-    {
-      Id = id;
-      DisplayName = displayName;
-      Meta = meta;
-    }
-
-    public string Id { get; set; }
-    public string DisplayName { get; set; }
-    public MetaInfo Meta { get; set; }
-    public ICollection<ModuleInfo> Children { get; set; } = new List<ModuleInfo>();
-  }
-
-  private class MetaInfo 
-  { 
-    public MetaInfo(string url, string iconClass)
-    {
-      Url = url;
-      IconClass = iconClass;
-    }
-
-    public string Url { get; set; }
-    public string IconClass { get; set; }
   }
 }

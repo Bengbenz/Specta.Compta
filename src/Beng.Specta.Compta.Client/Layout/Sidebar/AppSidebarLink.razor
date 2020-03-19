@@ -1,8 +1,9 @@
+@inject ILogger<AppSidebarLink> Logger
+@inject NavigationManager NavigationManager
+
 <li class="@ComputedLinkClass">
-    <NavLink class="app-sidebar-link__item" style="@ComputedLinkStyles" href="@Url"
-             @onmouseover="EnableHoverState" @onmouseout="DisableHoverState"> 
-      <!-- :to="to"
-      :target="target"-->
+    <NavLink class="app-sidebar-link__item" style="@ComputedLinkStyles" href="@Url" target="@Target"
+             @onmouseover="EnableHoverState" @onmouseout="DisableHoverState" @onclick="UpdateActiveState">
       @if(!string.IsNullOrWhiteSpace(Icon))
       {
         <VaIcon ExtraClass="app-sidebar-link__item-icon" Name="@Icon" style="@ComputedIconStyles" />
@@ -33,6 +34,9 @@
   public string Url { get; set; }
 
   [Parameter]
+  public string Target { get; set; } = "_self";
+
+  [Parameter]
   public string Icon { get; set; }
 
   [Parameter]
@@ -53,7 +57,7 @@
   private bool IsHovered { get; set; }
   private bool IsActive { get; set; }
   private string ComputedLinkClass => ComputeLinkClass();
-  private string ComputedLinkStyles => ComputeLinkStyles(); // "color: rgb(64, 229, 131);";
+  private string ComputedLinkStyles => ComputeLinkStyles();
   private string ComputedIconStyles => ComputeIconStyles();
 
   private string ComputeLinkClass()
@@ -70,7 +74,7 @@
   private string ComputeIconStyles()
   {
     var colorStyle = new StyleType { Color = "white" };
-    if (ContextTheme != null)
+    if (ContextTheme == null)
     {
       return colorStyle.ToString();
     }
@@ -100,12 +104,19 @@
 
   private void UpdateActiveState()
   {
-    IsActive = IsActiveByDefault; //(this.$route.name === this.to.name) || IsActiveByDefault;
+    string currentUrlWithoutBase = NavigationManager.Uri.Substring(NavigationManager.BaseUri.Length - 1);
+    IsActive = currentUrlWithoutBase == Url || IsActiveByDefault;
+    Logger.LogDebug($"{GetType().Name}: Current uri={currentUrlWithoutBase}, Link url={Url}, IsActive={IsActive}");
   }
 
   private string ComputeLinkStyles()
   {
     var style = new StyleType();
+    if (ContextTheme == null)
+    {
+      return style.ToString();
+    }
+
     var primaryColor = ContextTheme[ThemeStore.PrimaryKey];
     if (ContextTheme.IsInverted)
     {
@@ -145,7 +156,7 @@
   protected override async Task OnInitializedAsync()
   {
       UpdateActiveState();
-      // Logger.LogDebug($"{GetType().Name} initialized");
+      Logger.LogDebug($"{GetType().Name} initialized");
       await base.OnInitializedAsync();
 
   }

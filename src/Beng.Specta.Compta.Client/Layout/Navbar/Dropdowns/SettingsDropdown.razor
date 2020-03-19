@@ -10,12 +10,12 @@
     <div class="settings-dropdown__content pl-4 pr-4 pt-2 pb-2">
       <div class="settings-dropdown__content-label mt-2 mb-3"
            style="@ContentStyle">
-      Settings
+        Settings
       </div>
       <VaButtonToggle IsOutline="true" IsSmall="true"
-                      bind-Value="ContextTheme."
                       Options="@ModelOptions"
-                      ExtraClass="settings-dropdown__control mb-2" /> <!-- v-model="selectedTheme"-->
+                      ExtraClass="settings-dropdown__control mb-2"
+                      @bind-Value="@SelectedTheme" /> <!-- //@bind-Value="@ContextTheme.IsInverted.ToString()" v-model="selectedTheme"-->
       </div>
   </Content>
 </VaDropdown>
@@ -31,14 +31,34 @@
   [CascadingParameter]
   public ThemeStore ContextTheme { get; set; }
 
+  [CascadingParameter]
+  public LayoutInfoVm LayoutInfo { get; set; }
+
+
   private IList<OptionType> ModelOptions => new List<OptionType>
   {
-    new OptionType { Label = "Original", Value = "false" },
-    new OptionType { Label = "Corporate", Value = "true" },
+    new OptionType { Label = "Original", Value = "original" },
+    new OptionType { Label = "Corporate", Value = "corporate" },
   };
 
-  private string ComputedClass => $"settings-dropdown {ExtraClass ?? string.Empty}";
+  private string SelectedTheme
+  {
+      get => ContextTheme.IsInverted ? "corporate" : "original";
+      set
+      {
+        if (value == "original")
+        {
+          ContextTheme = ThemeStore.DEFAULT;
+        }
+        else
+        {
+          ContextTheme = ThemeStore.CORPORATE;
+        }
+        // this.$root.$emit('change-theme', value)
+      }
+  }
 
+  private string ComputedClass => $"settings-dropdown {ExtraClass ?? string.Empty}";
   private string IconColor => ComputeIconColor();
   private string ContentStyle => ComputeContentStyle();
 
@@ -52,7 +72,7 @@
 
     if(ContextTheme.IsInverted)
     {
-      iconColor = $"{ContextTheme[ThemeStore.GrayKey]}";
+      iconColor = ContextTheme[ThemeStore.GrayKey];
     }
     return iconColor;
   }
