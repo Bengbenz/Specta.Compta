@@ -1354,7 +1354,13 @@ ol.va-ordered, .content ol {
     text-decoration: none; }
 
 body {
-  height: 100%; }
+  height: 100%;
+  font-family: Source Sans Pro,sans-serif;
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.5;
+  color: #34495e;
+  text-align: left; }
   body #app {
     height: 100%; }
 

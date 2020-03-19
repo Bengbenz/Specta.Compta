@@ -1,5 +1,5 @@
 <i class="@IconClass" style="@IconStyle" @attributes="AdditionalAttributes">
-     @Children
+     @ChildContent
 </i>
 
 @code{
@@ -38,7 +38,7 @@
   public string ExtraStyle { get; set; }
 
   [Parameter]
-  public RenderFragment Children { get; set; }
+  public RenderFragment ChildContent { get; set; }
 
   private string IconStyle => ComputeIconStyle();
 
