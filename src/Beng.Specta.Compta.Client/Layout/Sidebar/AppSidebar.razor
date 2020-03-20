@@ -68,11 +68,11 @@
   private IList<ModuleInfoVm> _menuItems => new List<ModuleInfoVm>
   {
     new ModuleInfoVm("1", "Dashboard", new MetaInfoVm("/", "vuestic-iconset vuestic-iconset-dashboard")),
-    new ModuleInfoVm("2", "Exercices comptables", new MetaInfoVm("/stats", "vuestic-iconset vuestic-iconset-statistics"))
+    new ModuleInfoVm("2", "Projets", new MetaInfoVm("/stats", "vuestic-iconset vuestic-iconset-statistics"))
     {
       Children = new List<ModuleInfoVm>
       {
-        new ModuleInfoVm("3", "Projets", new MetaInfoVm("/charts")),
+        new ModuleInfoVm("3", "Exercices comptables", new MetaInfoVm("/charts")),
         new ModuleInfoVm("4", "Statistics", new MetaInfoVm("/progressbar")),
       }
     },
@@ -81,8 +81,9 @@
     {
       Children = new List<ModuleInfoVm>
       {
-        new ModuleInfoVm("6", "Projets", new MetaInfoVm("/markuptable")),
-        new ModuleInfoVm("7", "Facturation", new MetaInfoVm("/datatable")),
+        new ModuleInfoVm("6", "Echéanciers", new MetaInfoVm("/markuptable")),
+        new ModuleInfoVm("7", "Tranches", new MetaInfoVm("/datatable")),
+        new ModuleInfoVm("11", "Encaissés", new MetaInfoVm("/datatable")),
       }
     },
     new ModuleInfoVm("8", "Trésorerie", new MetaInfoVm("/uielements", "vuestic-iconset vuestic-iconset-ui-elements")),

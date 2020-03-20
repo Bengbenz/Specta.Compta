@@ -15,7 +15,7 @@
       <VaButtonToggle IsOutline="true" IsSmall="true"
                       Options="@ModelOptions"
                       ExtraClass="settings-dropdown__control mb-2"
-                      @bind-Value="@SelectedTheme" /> <!-- //@bind-Value="@ContextTheme.IsInverted.ToString()" v-model="selectedTheme"-->
+                      Value="@ContextTheme.Name" />
       </div>
   </Content>
 </VaDropdown>
@@ -35,28 +35,11 @@
   public LayoutInfoVm LayoutInfo { get; set; }
 
 
-  private IList<OptionType> ModelOptions => new List<OptionType>
+  private IReadOnlyList<OptionType> ModelOptions => new List<OptionType>
   {
-    new OptionType { Label = "Original", Value = "original" },
-    new OptionType { Label = "Corporate", Value = "corporate" },
+    new OptionType { Label = ThemeStore.DEFAULT.Name, Value = ThemeStore.DEFAULT.Name, OnSelectedItemHandler = ContextTheme.OnToggle  },
+    new OptionType { Label = ThemeStore.CORPORATE.Name, Value = ThemeStore.CORPORATE.Name, OnSelectedItemHandler = ContextTheme.OnToggle },
   };
-
-  private string SelectedTheme
-  {
-      get => ContextTheme.IsInverted ? "corporate" : "original";
-      set
-      {
-        if (value == "original")
-        {
-          ContextTheme = ThemeStore.DEFAULT;
-        }
-        else
-        {
-          ContextTheme = ThemeStore.CORPORATE;
-        }
-        // this.$root.$emit('change-theme', value)
-      }
-  }
 
   private string ComputedClass => $"settings-dropdown {ExtraClass ?? string.Empty}";
   private string IconColor => ComputeIconColor();

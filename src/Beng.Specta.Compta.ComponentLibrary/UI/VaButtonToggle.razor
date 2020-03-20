@@ -5,13 +5,13 @@
         <VaButton
                 Color="@ButtonColor(option.Value)"
                 ExtraStyle="@ButtonStyle(option.Value)"
-                ExtraClass="@ButtonClass(option.Value)"
+                ActiveClass="@ButtonClass(option.Value)"
                 IsOutline="@IsOutline"
                 IsFlat="@IsFlat"
                 IsDisabled="@IsDisabled"
                 IsSmall="@IsSmall"
                 IsLarge="@IsLarge"
-                @onclick="@(() => OnToggleValue(option.Value))"> <!-- @onclick="@ToggleValue(option.value)" -->
+                @onclick="@(() => ToggleValue(option))">
             @option.Label
         </VaButton>
     }
@@ -54,10 +54,10 @@
     public bool IsLarge { get; set; }
 
     [Parameter]
-    public IList<OptionType> Options { get; set; }
+    public IReadOnlyList<OptionType> Options { get; set; }
 
-    // [Parameter]
-    // public EventCallback OnToggleValue { get; set; }
+    [Parameter]
+    public EventCallback OnToggleValue { get; set; }
 
     private string ButtonColor(string buttonValue)
     {
@@ -87,14 +87,14 @@
 
     private string ButtonClass(string buttonValue) => (buttonValue == Value) ? "va-button--active" : string.Empty;
 
-    private void OnToggleValue(string value)
+    private void ToggleValue(OptionType option)
     {
-        Value = value;
+        Value = option.Value;
+        option.OnSelectedItemHandler.Invoke();
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        Value = Options.First().Value;
-        await base.OnInitializedAsync();
+        await base.OnParametersSetAsync();
     }
 }

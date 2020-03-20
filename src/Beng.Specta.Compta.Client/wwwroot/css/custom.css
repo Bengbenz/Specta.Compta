@@ -1420,7 +1420,6 @@ body {
     flex: 1 1 auto; }
   .app-navbar__center {
     display: flex;
-    margin-left: 3rem;
     justify-content: space-between;
     align-items: center; }
   .app-navbar__text {

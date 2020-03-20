@@ -27,5 +27,13 @@
     public void ToggleInverted()
     {
         ContextConfig.ToggleInverted();
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ThemeStore.DEFAULT.OnToggle += ToggleInverted;
+        ThemeStore.CORPORATE.OnToggle += ToggleInverted;
+        await base.OnInitializedAsync();
     }
 }

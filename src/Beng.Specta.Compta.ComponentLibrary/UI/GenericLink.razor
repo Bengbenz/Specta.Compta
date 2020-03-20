@@ -1,12 +1,12 @@
-<!--if (Link == LinkType.A)
+@if (Link == LinkType.A)
 {
-    <a @attributes="AdditionalAttributes">
+    <a href="@To" target="@Target" @attributes="AdditionalAttributes">
         @ChildContent
     </a>
 }
 else if (Link == LinkType.NavLink)
 {
-    <NavLink @attributes="AdditionalAttributes">
+    <NavLink href="@To" target="@Target" @attributes="AdditionalAttributes">
         @ChildContent
     </NavLink>
 }
@@ -15,32 +15,39 @@ else
     <button @attributes="AdditionalAttributes">
         @ChildContent
     </button>
-}-->
+}
 
 @code{
-/*
+
     [Parameter(CaptureUnmatchedValues = true)]
     public IDictionary<string, object> AdditionalAttributes { get; set; }
 
     [Parameter]
-    public string Tag { get; set; }
+    public string Is { get; set; }
+
+    [Parameter]
+    public string Target { get; set; }
+
+    [Parameter]
+    public string To { get; set; }
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
-    private LinkType Link { get; set; }
+
+    private LinkType Link { get; set; } = LinkType.Button;
 
     protected override async Task OnParametersSetAsync()
     {
+        Link = GetLinkType(Is);
         await base.OnParametersSetAsync();
-        Link = GetLinkType(Tag);
     }
 
     private LinkType GetLinkType(string type)
     {   
-        var link = LinkType.A;
-        if(type.Equals("button"))
+        var link = LinkType.Button;
+        if(type.Equals("a"))
         {
-            link = LinkType.Button;
+            link = LinkType.A;
         }
         else if(type.Equals("navlink"))
         {
@@ -56,5 +63,4 @@ else
         Button,
         NavLink
     }
-    */
 }

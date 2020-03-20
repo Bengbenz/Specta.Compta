@@ -16,7 +16,7 @@ namespace Beng.Specta.Compta.ComponentLibrary.Shared
 
         if(match != null)
         {
-          rgb.Opacity = 1;
+          rgb.Opacity = opacity;
           hex = match.Value.Trim('#');
           if (hex.Length == 6)
           {
