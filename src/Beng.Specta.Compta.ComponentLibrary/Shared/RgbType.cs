@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace Beng.Specta.Compta.ComponentLibrary.Shared
 {
@@ -7,7 +8,7 @@ namespace Beng.Specta.Compta.ComponentLibrary.Shared
         public double Red { get; set; }
         public double Green { get; set; }
         public double Blue { get; set; }
-        public double Opacity { get; set; }
+        public double Opacity { get; set; } = 1;
 
         public double Min() => Math.Min(Math.Min(Red, Green), Blue);
 
@@ -23,11 +24,11 @@ namespace Beng.Specta.Compta.ComponentLibrary.Shared
         public override string ToString()
         {
             var css = $"rgb";
-			var r = String.Format("{0:0}", Red);
-			var g = String.Format("{0:0}", Green);
-			var b = String.Format("{0:0}", Blue);
-			var o = String.Format("{0:0.0}", Opacity);
-            css += (Opacity > 0 ? "a" : "") + "(";
+			var r = Red.ToString("F0", CultureInfo.InvariantCulture);
+			var g = Green.ToString("F0", CultureInfo.InvariantCulture);
+			var b = Blue.ToString("F0", CultureInfo.InvariantCulture);
+			var o = Opacity.ToString("F1", CultureInfo.InvariantCulture);
+            css += (Opacity != 1 ? "a" : "") + "(";
             css += $"{r},{g},{b}";
             css += (Opacity != 1 ? $",{o}" : "") + ")";
             return css;

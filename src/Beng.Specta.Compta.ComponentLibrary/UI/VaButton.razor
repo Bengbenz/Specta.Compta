@@ -1,11 +1,14 @@
-<a class="@ComputedClass"
+<GenericLink class="@ComputedClass"
     style="@ComputedStyle" disabled="@IsDisabled"
-    tabindex="0" @attributes="AdditionalAttributes"
-    Tag="@Is"
+    tabindex="0"
+    Is="@Is"
+    To="@To"
+    Target="@Target"
     @onmouseover="EnableHoverState"
     @onmouseout="DisableHoverState"
     @onfocus="EnableFocusState"
-    @onblur="DisableFocusState">
+    @onblur="DisableFocusState"
+    @attributes="AdditionalAttributes">
     <div class="va-button__content">
     @if(!string.IsNullOrWhiteSpace(Icon))
     {
@@ -26,7 +29,7 @@
               Name="@IconRight"/>
     }
     </div>
-</a>
+</GenericLink>
 
 @code{
 
@@ -37,16 +40,19 @@
   public ThemeStore ContextTheme { get; set; }
 
   [Parameter]
+  public string Is { get; set; } = "button";
+
+  [Parameter]
   public string Target { get; set; }
+
+  [Parameter]
+  public string To { get; set; }
 
   [Parameter]
   public string ExtraClass { get; set; }
 
   [Parameter]
   public string ActiveClass { get; set; }
-
-  [Parameter]
-  public string ExactActiveClass { get; set; }
 
   [Parameter]
   public string Icon { get; set; }
@@ -56,9 +62,6 @@
 
   [Parameter]
   public string Type { get; set; }
-
-  [Parameter]
-  public string Is { get; set; } = "button";
 
   [Parameter]
   public string Color { get; set; } = ThemeStore.PrimaryKey;
@@ -171,8 +174,12 @@
     {
         computedClass += " va-button--normal";
     }
+    if(!string.IsNullOrWhiteSpace(ActiveClass))
+    {
+      computedClass += $" {ActiveClass}";
+    }
 
-    return computedClass;
+    return computedClass.Trim();
   }
 
   private string GradientStyle()

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Beng.Specta.Compta.ComponentLibrary.Configs.Theme
@@ -18,7 +19,12 @@ namespace Beng.Specta.Compta.ComponentLibrary.Configs.Theme
         public bool IsShadow => ShadowType.Undifined != Shadow;
         public ShadowType Shadow { get; set; }
 
+        public Action OnToggle { get; set; }
+
+        public string Name { get; set; }
+
         public readonly static ThemeStore DEFAULT = new ThemeStore(
+                                                        name: "Original",
                                                         primary: "#40e583",
                                                         secondary: "#002c85",
                                                         success: "#40e583",
@@ -32,6 +38,7 @@ namespace Beng.Specta.Compta.ComponentLibrary.Configs.Theme
                                                         ShadowType.Large);
 
         public readonly static ThemeStore CORPORATE = new ThemeStore(
+                                                        name: "Corporate",
                                                         primary: "#6c7fee",
                                                         secondary: "#6e7ff1",
                                                         success: "#8ddc88",
@@ -44,6 +51,7 @@ namespace Beng.Specta.Compta.ComponentLibrary.Configs.Theme
                                                         isGradient: false,
                                                         ShadowType.Small);
         public ThemeStore(
+            string name,
             string primary,
             string secondary,
             string success,
@@ -65,6 +73,7 @@ namespace Beng.Specta.Compta.ComponentLibrary.Configs.Theme
             Add(GrayKey, gray);
             Add(DarkKey, dark);
 
+            Name = name;
             IsInverted = isInverted;
             IsGradient = isGradient;
             Shadow = shadow;
