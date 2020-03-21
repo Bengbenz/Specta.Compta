@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Components.Builder;
+﻿using System.Net.Http;
+
+using System.Reflection;
+
+using Microsoft.AspNetCore.Components.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 using Beng.Specta.Compta.Client.Configs;
+using Beng.Specta.Compta.Client.Services;
 using Beng.Specta.Compta.Client.ViewModels;
-
-using Blazor.Extensions.Logging;
+using System;
+using Microsoft.AspNetCore.Components;
 
 namespace Beng.Specta.Compta.Client
 {
@@ -18,6 +22,22 @@ namespace Beng.Specta.Compta.Client
             // services.AddSingleton<WeatherForecastService>();
             services.AddScoped<LayoutInfoVm>();
             services.AddScoped<AppSettings>();
+            services.AddScoped<SpinnerService>();
+            services.AddScoped<DisplaySpinnerAutomaticallyHttpMessageHandler>();
+            services.AddScoped(s =>
+            {
+                var blazorDisplaySpinnerAutomaticallyHttpMessageHandler = s.GetRequiredService<DisplaySpinnerAutomaticallyHttpMessageHandler>();
+                var wasmHttpMessageHandlerType = Assembly.Load("WebAssembly.Net.Http").GetType("WebAssembly.Net.Http.HttpClient.WasmHttpMessageHandler");
+
+                var wasmHttpMessageHandler = (HttpMessageHandler)Activator.CreateInstance(wasmHttpMessageHandlerType);
+               
+                blazorDisplaySpinnerAutomaticallyHttpMessageHandler.InnerHandler = wasmHttpMessageHandler;
+                var uriHelper = s.GetRequiredService<NavigationManager>();
+                return new HttpClient(blazorDisplaySpinnerAutomaticallyHttpMessageHandler)
+                {
+                    BaseAddress = new Uri(uriHelper.BaseUri)
+                };
+            });
 
             //services.AddLogging(builder => builder.AddBrowserConsole() // Add Blazor.Extensions.Logging.BrowserConsoleLogger
             //                                      .SetMinimumLevel(LogLevel.Trace));
@@ -25,12 +45,6 @@ namespace Beng.Specta.Compta.Client
             // Add auth services
             // services.AddAuthorizationCore();
             // services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
-
-            // add scss service
-            //services.AddWebOptimizer(pipeline =>
-            // {
-            //    pipeline.AddScssBundle("/css/site.css", "/scss/app.scss");
-            // });
         }
 
         public void Configure(IComponentsApplicationBuilder app)

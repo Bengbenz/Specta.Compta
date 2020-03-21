@@ -1,0 +1,40 @@
+@if(IsVisible)
+{
+<div class="auth-layout row align-content--center" style="@ComputedStyle">
+    <div class="flex xs12 pa-3 flex-center">
+      <NavLink class="py-5 flex-center" href="/">
+        <VaIconApp />
+      </NavLink>
+    </div>
+    <div class="flex xs12 pa-3">
+        <div class="d-flex justify--center">
+            <FingerprintSpinner Color="@Color" Size="@Size" AnimationDuration="@AnimationDuration" />
+        </div>
+    </div>
+</div>
+}
+
+@code{
+
+    [CascadingParameter]
+    public ThemeStore ContextTheme { get; set; }
+
+    [Parameter]
+    public bool IsVisible { get; set; }
+
+    [Parameter]
+    public int AnimationDuration { get; set; } = 1200;
+
+    private string ComputedStyle => ComputeStyle();
+
+    private int Size = 264;
+    private string Color => ContextTheme[ThemeStore.PrimaryKey];
+
+    private string ComputeStyle()
+    {
+        var color = !ContextTheme.IsInverted ? "linear-gradient(to right, #0e4ac4, #002c85)" : "white";
+        var style = new StyleType { BackgroundImage = color };
+        return style.ToString();
+    }
+   
+}

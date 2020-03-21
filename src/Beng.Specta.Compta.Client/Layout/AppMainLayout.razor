@@ -4,6 +4,10 @@
 
 <CascadingValue Value="LayoutInfo">
     <CascadingValue Value="ContextConfig.ThemeStore">
+    <LoadingSpinner />
+    <PageLoader IsVisible="@IsPageLoaderVisible" />
+    @if(!IsPageLoaderVisible)
+    {
     <div class="app-page-layout app-layout">
         <AppNavbar OnMinimized="@ToggleMinimized"/>
         <div class="app-layout__container">
@@ -15,10 +19,16 @@
             </div>
         </div>
     </div>
+    }
     </CascadingValue>
 </CascadingValue>
 
  @code{
+
+    private bool IsPageLoaderVisible { get; set; } = true;
+
+    private int AnimationDuration => 3000;
+
     public void ToggleMinimized()
     {
         LayoutInfo.ToggleMinimized();
@@ -30,10 +40,17 @@
         StateHasChanged();
     }
 
+    private async Task HidePageLoader()
+    {
+        await Task.Delay(AnimationDuration);
+        IsPageLoaderVisible = false;
+    }
+
     protected override async Task OnInitializedAsync()
     {
         ThemeStore.DEFAULT.OnToggle += ToggleInverted;
         ThemeStore.CORPORATE.OnToggle += ToggleInverted;
+        await HidePageLoader();
         await base.OnInitializedAsync();
     }
 }

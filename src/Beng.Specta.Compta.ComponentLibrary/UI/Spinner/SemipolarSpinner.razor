@@ -1,0 +1,60 @@
+<div class="semipolar-spinner" style="@SpinnerStyle">
+@foreach(var rs in RingsStyles)
+{
+    <div class="ring" style="@rs.Value" @key="rs.Key"></div>
+}
+</div>
+
+@code{
+
+    [Parameter]
+    public int AnimationDuration { get; set; } = 200;
+
+    [Parameter]
+    public int Size { get; set; } = 65;
+
+    [Parameter]
+    public string Color { get; set; } = "#fff";
+
+    private int _ringsNum = 5;
+
+    private string SpinnerStyle => ComputeSpinnerStyle();
+    private IDictionary<int, string> RingsStyles => ComputeRingsStyles();
+
+    private string ComputeSpinnerStyle() => (new StyleType { Height = $"{Size}", Width = $"{Size}" }).ToString();
+
+    private IDictionary<int, string> ComputeRingsStyles()
+    {
+        var delayModifier = 0.1;
+        var ringWidth = Size * 0.05;
+        var positionIncrement = ringWidth * 2;
+        var sizeDecrement = Size * 0.2;
+
+        var ringStyle = new StyleType
+        {
+            AnimationDuration = AnimationDuration,
+            BorderTopColor = Color,
+            BorderLeftColor = Color
+        };
+
+        var ringsStyles = new Dictionary<int, string>();
+        for (var i = 0; i < _ringsNum; i++)
+        {
+          var computedSize = $"{Size - sizeDecrement * i}";
+          var computedPosition = $"{positionIncrement * i}";
+          var style = new StyleType(ringStyle)
+          {
+            AnimationDelay = AnimationDuration * delayModifier * (_ringsNum - i - 1),
+            Height = computedSize,
+            Width = computedSize,
+            Left = computedPosition,
+            Top = computedPosition,
+            BorderWidth = $"{ringWidth}"
+          };
+          
+          ringsStyles.Add(i, style.ToString());
+        }
+
+        return ringsStyles;
+    }
+}
