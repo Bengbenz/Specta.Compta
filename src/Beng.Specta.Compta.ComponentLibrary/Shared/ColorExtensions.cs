@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Beng.Specta.Compta.ComponentLibrary.Shared
@@ -114,7 +113,7 @@ namespace Beng.Specta.Compta.ComponentLibrary.Shared
     public static string GetBoxShadowColor(this string color) => color.HexToRgb(0.6).ToString();
     public static string GetHoverColor(this string color) => color.HexToRgb(0.2).ToString();
     public static string GetFocusColor(this string color) => color.HexToRgb(0.3).ToString();
-    private static (string, string) GetGradientColor(this string color)
+    public static (string, string) GetGradientColor(this string color)
     {
       HslType first = color.HexToHsl();
       HslType second = color.HexToHsl();

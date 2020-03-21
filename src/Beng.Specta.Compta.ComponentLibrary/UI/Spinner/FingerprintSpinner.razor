@@ -1,0 +1,55 @@
+<div class="fingerprint-spinner" style="@SpinnerStyle">
+@foreach(var rs in RingsStyles)
+{
+    <div class="spinner-ring" style="@rs.Value" @key="rs.Key"></div>
+}
+</div>
+
+@code{
+
+    [Parameter]
+    public int AnimationDuration { get; set; } = 1500;
+
+    [Parameter]
+    public int Size { get; set; } = 60;
+
+    [Parameter]
+    public string Color { get; set; } = "#fff";
+
+    private int _ringsNum = 9;
+
+    private int _containerPadding = 2;
+
+    private string SpinnerStyle => ComputeSpinnerStyle();
+    private IDictionary<int, string> RingsStyles => ComputeRingsStyles();
+
+    private string ComputeSpinnerStyle() => (new StyleType  { Height = $"{Size}", Width = $"{Size}", Padding = $"{_containerPadding}" }).ToString();
+
+    private IDictionary<int, string> ComputeRingsStyles()
+    {
+        var outerRingSize = Size - _containerPadding * 2;
+        var ringBase = outerRingSize / _ringsNum;
+        var ringInc = ringBase;
+
+        var ringStyle = new StyleType
+        {
+            AnimationDuration = AnimationDuration,
+            BorderTopColor = Color
+        };
+
+        var ringsStyles = new Dictionary<int, string>();
+        for (var i = 0; i < _ringsNum; i++)
+        {
+          var style = new StyleType(ringStyle)
+          {
+            AnimationDelay = i * 50,
+            Height = $"{ringBase + (i - 1) * ringInc}",
+            Width = $"{ringBase + (i - 1) * ringInc}"
+          };
+
+          ringsStyles.Add(i, style.ToString());
+        }
+
+        return ringsStyles;
+    }
+}
