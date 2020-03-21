@@ -1,11 +1,11 @@
-<div class="va-dropdown @ExtraClass" @attributes="AdditionalAttributes">
+<div class="va-dropdown @ExtraClass" @attributes="@AdditionalAttributes">
   <div class="va-dropdown__anchor"
        @onmouseover="@OnMouseOver"
        @onmouseout="@OnMouseOut"
        @onclick="@OnAnchorClick">
     @Anchor
   </div>
-@if(ShowContent)
+@if(IsContentVisible)
 {
   <div class="va-dropdown__content" x-placement="bottom"
        style="position: fixed; will-change: transform; top: 0px; left: 0px; transform: translate3d(1207.87px, 60.2667px, 0px);"
@@ -46,7 +46,7 @@
   public RenderFragment Content { get; set; }
 
   [Parameter]
-  public bool ShowContent { get; set; }
+  public bool IsContentVisible { get; set; }
 
   private void OnMouseOver()
   {
@@ -60,7 +60,7 @@
 
   private void OnAnchorClick()
   {
-    ShowContent = !ShowContent;
+    IsContentVisible = !IsContentVisible;
   }
 }
 

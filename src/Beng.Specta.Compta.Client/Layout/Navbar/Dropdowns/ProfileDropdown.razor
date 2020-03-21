@@ -1,4 +1,4 @@
-<VaDropdown ExtraClass="@ComputedClass" ShowContent="@ShouldShowsContent" boundary-body offset="0, 16px">
+<VaDropdown ExtraClass="@ComputedClass" ShowContent="@ShouldShowsContent" boundary-body offset="0, 16px" @attributes="@AdditionalAttributes">
     <Anchor>
         <span class="profile-dropdown__anchor" style="@ComputedAnchorClass">
             @ChildContent
@@ -9,8 +9,8 @@
         <div class="profile-dropdown__content pl-4 pr-4 pt-2 pb-2">
         @foreach(var option in Options)
         {
-            <NavLink id="@option.Name" class="profile-dropdown__item pt-1 pb-1 mt-2 mb-2" href="@option.Url">
-                @option.Name
+            <NavLink id="@option.Label" class="profile-dropdown__item pt-1 pb-1 mt-2 mb-2" href="@option.Value">
+                @option.Label
             </NavLink>
         }
         </div>
@@ -48,17 +48,11 @@
         return anchorClass.ToString();
     }
 
-    private IReadOnlyCollection<OptionLink> Options => new List<OptionLink>
+    private IReadOnlyCollection<OptionType> Options => new List<OptionType>
     {
-        new OptionLink { Name = "Profile", Url = "/profile" },
-        new OptionLink { Name = "Logout", Url = "/login" },
+        new OptionType { Label = "Profile", Value = "/profile" },
+        new OptionType { Label = "Logout", Value = "/login" },
     };
-
-    private class OptionLink
-    {
-        public string Name { get; set; }
-        public string Url { get; set; }
-    }
 
     protected override async Task OnParametersSetAsync()
     {

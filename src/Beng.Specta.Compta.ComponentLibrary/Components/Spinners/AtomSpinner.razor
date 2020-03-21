@@ -1,0 +1,64 @@
+<div class="atom-spinner" style="@SpinnerStyle">
+  <div class="spinner-inner">
+    <div class="spinner-line" style="@LineStyle"></div>
+    <div class="spinner-line" style="@LineStyle"></div>
+    <div class="spinner-line" style="@LineStyle"></div>
+    <!--Chrome renders little circles malformed :(-->
+    <div class="spinner-circle" style="@CircleStyle">
+      &#9679;
+    </div>
+  </div>
+</div>
+
+@code{
+
+  [Parameter]
+  public int AnimationDuration { get; set; } = 1000;
+
+  [Parameter]
+  public int Size { get; set; } = 60;
+
+  [Parameter]
+  public string Color { get; set; } = "#fff";
+
+  private string SpinnerStyle
+  {
+    get
+    {
+      var style = new StyleType
+      { 
+        Height = $"{Size}",
+        Width = $"{Size}"
+      };
+      return style.ToString();
+    }
+  }
+
+  private string LineStyle
+  {
+    get
+    {
+      var style = new StyleType
+      { 
+        AnimationDuration = AnimationDuration,
+        BorderLeftWidth = $"{Size / 25}",
+        BorderTopWidth = $"{Size / 25}",
+        BorderLeftColor = $"{Color}"
+      };
+      return style.ToString();
+    }
+  }
+
+  private string CircleStyle
+  {
+    get
+    {
+      var style = new StyleType
+      { 
+        Color = $"{Color}",
+        FontSize = $"{Size * 0.24}"
+      };
+      return style.ToString();
+    }
+  }
+}

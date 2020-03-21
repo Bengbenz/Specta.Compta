@@ -2,9 +2,8 @@
 @inject ILogger<AppNavbarActions> Logger
 
 <div class="app-navbar-actions @ExtraClass" >
-    <NotificationDropdown ExtraClass="app-navbar-actions__item"/>
     <SettingsDropdown ExtraClass="app-navbar-actions__item" />
-    <!-- <LanguageDropdown ExtraClass="app-navbar-actions__item" /> -->
+    <NotificationDropdown ExtraClass="app-navbar-actions__item"/>
     <ProfileDropdown ExtraClass="app-navbar-actions__item app-navbar-actions__item--profile">
         <span>@UserName</span>
     </ProfileDropdown>

@@ -13,6 +13,8 @@ namespace Beng.Specta.Compta.ComponentLibrary.Shared
         public string BorderTopColor { get; set; } 
         public string BorderLeftColor { get; set; } 
         public string BorderWidth { get; set; } 
+        public string BorderTopWidth { get; set; } 
+        public string BorderLeftWidth { get; set; } 
         public string BoxShadow { get; set; }
         public string FontSize { get; set; }
         public string Filter { get; set; }
@@ -40,6 +42,8 @@ namespace Beng.Specta.Compta.ComponentLibrary.Shared
             BorderTopColor = style.BorderTopColor;
             BorderLeftColor = style.BorderLeftColor;
             BorderWidth = style.BorderWidth;
+            BorderTopWidth = style.BorderTopWidth;
+            BorderLeftWidth = style.BorderTopWidth;
             BoxShadow = style.BoxShadow;
             FontSize = style.FontSize;
             Filter = style.Filter;
@@ -90,6 +94,14 @@ namespace Beng.Specta.Compta.ComponentLibrary.Shared
             if (!string.IsNullOrWhiteSpace(BorderWidth))
             {
                 style.Append($" border-width: {ParsePixelValue(BorderWidth)};");
+            }
+            if (!string.IsNullOrWhiteSpace(BorderTopWidth))
+            {
+                style.Append($" border-top-width: {ParsePixelValue(BorderTopWidth)};");
+            }
+            if (!string.IsNullOrWhiteSpace(BorderLeftWidth))
+            {
+                style.Append($" border-left-width: {ParsePixelValue(BorderLeftWidth)};");
             }
             if (!string.IsNullOrWhiteSpace(BoxShadow))
             {
