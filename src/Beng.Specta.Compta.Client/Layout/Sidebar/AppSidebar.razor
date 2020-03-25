@@ -1,4 +1,5 @@
 @inject ILogger<AppSidebar> Logger
+@inject TenantService TenantService
 
 <aside class="@ComputedClass" style="@ComputedStyle">
   <ul class="app-sidebar__menu">
@@ -39,6 +40,8 @@
   [Parameter]
   public string Color { get; set; } = ThemeStore.SecondaryKey;
 
+  private TenantInfoDTO _tenantInfo => TenantService.TenantInfo;
+
   private string ComputedClass => ComputeClass();
   private string ComputedStyle => ComputeColorStyle();
 
@@ -67,28 +70,28 @@
 
   private IList<ModuleInfoVm> _menuItems => new List<ModuleInfoVm>
   {
-    new ModuleInfoVm("1", "Dashboard", new MetaInfoVm("/", "vuestic-iconset vuestic-iconset-dashboard")),
-    new ModuleInfoVm("2", "Projets", new MetaInfoVm("/stats", "vuestic-iconset vuestic-iconset-statistics"))
+    new ModuleInfoVm("1", "Dashboard", new MetaInfoVm($"{_tenantInfo}/", "vuestic-iconset vuestic-iconset-dashboard")),
+    new ModuleInfoVm("2", "Projets", new MetaInfoVm($"{_tenantInfo}/stats", "vuestic-iconset vuestic-iconset-statistics"))
     {
       Children = new List<ModuleInfoVm>
       {
-        new ModuleInfoVm("3", "Exercices comptables", new MetaInfoVm("/charts")),
-        new ModuleInfoVm("4", "Statistics", new MetaInfoVm("/progressbar")),
+        new ModuleInfoVm("3", "Exercices comptables", new MetaInfoVm($"{_tenantInfo}/charts")),
+        new ModuleInfoVm("4", "Statistics", new MetaInfoVm($"{_tenantInfo}/progressbar")),
       }
     },
-    new ModuleInfoVm("4", "Budget", new MetaInfoVm("/forms", "vuestic-iconset vuestic-iconset-forms")),
-    new ModuleInfoVm("5", "Financement", new MetaInfoVm("/tables", "vuestic-iconset vuestic-iconset-tables"))
+    new ModuleInfoVm("4", "Budget", new MetaInfoVm($"{_tenantInfo}/forms", "vuestic-iconset vuestic-iconset-forms")),
+    new ModuleInfoVm("5", "Financement", new MetaInfoVm($"{_tenantInfo}/tables", "vuestic-iconset vuestic-iconset-tables"))
     {
       Children = new List<ModuleInfoVm>
       {
-        new ModuleInfoVm("6", "Echéanciers", new MetaInfoVm("/markuptable")),
-        new ModuleInfoVm("7", "Tranches", new MetaInfoVm("/datatable")),
+        new ModuleInfoVm("6", "Echéanciers", new MetaInfoVm($"{_tenantInfo}/markuptable")),
+        new ModuleInfoVm("7", "Tranches", new MetaInfoVm($"{_tenantInfo}/datatable")),
         new ModuleInfoVm("11", "Encaissés", new MetaInfoVm("/datatable")),
       }
     },
-    new ModuleInfoVm("8", "Trésorerie", new MetaInfoVm("/uielements", "vuestic-iconset vuestic-iconset-ui-elements")),
-    new ModuleInfoVm("9", "Bilan", new MetaInfoVm("/maps", "vuestic-iconset vuestic-iconset-maps")),
-    new ModuleInfoVm("10", "Utilisateurs", new MetaInfoVm("/pages", "vuestic-iconset vuestic-iconset-files")),
+    new ModuleInfoVm("8", "Trésorerie", new MetaInfoVm($"{_tenantInfo}/uielements", "vuestic-iconset vuestic-iconset-ui-elements")),
+    new ModuleInfoVm("9", "Bilan", new MetaInfoVm($"{_tenantInfo}/maps", "vuestic-iconset vuestic-iconset-maps")),
+    new ModuleInfoVm("10", "Utilisateurs", new MetaInfoVm($"{_tenantInfo}/pages", "vuestic-iconset vuestic-iconset-files")),
   };
 
   protected override async Task OnParametersSetAsync()

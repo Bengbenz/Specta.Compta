@@ -1,9 +1,11 @@
 ﻿using System;
-using System.Linq;
+
+using Microsoft.Extensions.DependencyInjection;
+
 using Beng.Specta.Compta.Core.Entities;
 using Beng.Specta.Compta.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+
+using Finbuckle.MultiTenant;
 
 namespace Beng.Specta.Compta.Server
 {
@@ -25,23 +27,28 @@ namespace Beng.Specta.Compta.Server
             Description = "Make sure all the tests run and review what they are doing."
         };
 
-        public static void Initialize(IServiceProvider serviceProvider)
+        public static void Initialize(AppDbContext dbContext)
         {
-            using (var dbContext = new AppDbContext(
-                serviceProvider.GetRequiredService<DbContextOptions<AppDbContext>>(), null))
-            {
-                // Look for any TODO items.
-                if (dbContext.ToDoItems.Any())
-                {
-                    return;   // DB has been seeded
-                }
-
-                PopulateTestData(dbContext);
-
-
-            }
+            PopulateTodoItemsData(dbContext);
         }
-        public static void PopulateTestData(AppDbContext dbContext)
+
+        public static void InitDefaultTenantInfo(TenantStoreDbContext dbContext)
+        {
+            foreach (var item in dbContext.TenantInfo)
+            {
+                dbContext.Remove(item);
+            }
+            dbContext.SaveChanges();
+            // var scopeServices = serviceProvider.CreateScope().ServiceProvider;
+            // IMultiTenantStore store = scopeServices.GetRequiredService<IMultiTenantStore>();
+            var defaultTenant = new TenantInfo("default-tenant", "defaultTenant", "Default Tenant", "Data Source=BengSpectaCompta.sqlite", null);
+            dbContext.TenantInfo.Add(defaultTenant);
+            //store.TryAddAsync(defaultTenant).Wait();
+
+            dbContext.SaveChanges();
+        }
+
+        private static void PopulateTodoItemsData(AppDbContext dbContext)
         {
             foreach (var item in dbContext.ToDoItems)
             {
@@ -54,5 +61,7 @@ namespace Beng.Specta.Compta.Server
 
             dbContext.SaveChanges();
         }
+
+        
     }
 }

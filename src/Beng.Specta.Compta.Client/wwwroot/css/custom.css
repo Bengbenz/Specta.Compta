@@ -3509,7 +3509,8 @@ body {
   font-weight: 700;
   cursor: pointer;
   transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
-  background-color: #ffffff; }
+  background-color: #ffffff;
+  width: auto; }
   .va-button__content {
     display: flex; }
     .va-button__content__title, .va-button__content__icon {

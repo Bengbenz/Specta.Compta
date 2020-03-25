@@ -17,12 +17,24 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" PrivateAssets="all" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" />
+    <PackageReference Include="log4net" />
     <PackageReference Include="NETStandard.Library" />
   </ItemGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\Beng.Specta.Compta.Infrastructure\Beng.Specta.Compta.Infrastructure.csproj" />
     <ProjectReference Include="..\Beng.Specta.Compta.Client\Beng.Specta.Compta.Client.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="log4Net.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="log4Net.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

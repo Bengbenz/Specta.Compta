@@ -2,10 +2,11 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <PackageReference Update="Ardalis.EFCore.Extensions" Version="1.1.0" />
-    <PackageReference Update="Ardalis.GuardClauses" Version="1.2.9" />
+    <PackageReference Update="Dawn.Guard" Version="1.11.0" />
     <PackageReference Update="Autofac" Version="4.9.4" />
     <PackageReference Update="Autofac.Extensions.DependencyInjection" Version="5.0.0" />
     <PackageReference Update="Blazor.Extensions.Logging" Version="1.1.0-preview2" />
+    <PackageReference Update="Finbuckle.MultiTenant" Version="5.0.4" />
     <PackageReference Update="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
     <PackageReference Update="Microsoft.Web.LibraryManager.Build" Version="2.0.76" />
     <PackageReference Update="Microsoft.AspNetCore.Blazor" Version="3.1.0-preview4.19579.2" />
@@ -21,6 +22,8 @@
     <PackageReference Update="Microsoft.EntityFrameworkCore.PostgreSQL" Version="3.1.0" />
     <PackageReference Update="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0" />
     <PackageReference Update="Microsoft.EntityFrameworkCore.InMemory" Version="3.0.0" />
+    <PackageReference Update="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="3.1.0" />
+    <PackageReference Update="log4net" Version="2.0.8" />
     <PackageReference Update="NETStandard.Library" Version="2.0.3" />
     <PackageReference Update="SQLite" Version="3.13.0" />
     <PackageReference Update="System.ComponentModel.Annotations" Version="4.7.0"/>

@@ -21,7 +21,7 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
             // Create a new options instance telling the context to use an
             // InMemory database and the new service provider.
             var builder = new DbContextOptionsBuilder<AppDbContext>();
-            builder.UseInMemoryDatabase("cleanarchitecture")
+            builder.UseInMemoryDatabase("Beng.Specta.Compta.IntegrationTest")
                    .UseInternalServiceProvider(serviceProvider);
 
             return builder.Options;
@@ -30,9 +30,10 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
         protected EfRepository GetRepository()
         {
             var options = CreateNewContextOptions();
-            var mockDispatcher = new Mock<IDomainEventDispatcher>();
+            // var mockDispatcher = new Mock<IDomainEventDispatcher>();
 
-            _dbContext = new AppDbContext(options, mockDispatcher.Object);
+            //_dbContext = new AppDbContext(options, mockDispatcher.Object);
+            _dbContext = new AppDbContext(null, options);
             return new EfRepository(_dbContext);
         }
 

@@ -1,8 +1,11 @@
 ﻿using System.Linq;
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+
+using Beng.Specta.Compta.Core.DTOs;
 using Beng.Specta.Compta.Core.Entities;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
-using Beng.Specta.Compta.Server.ApiModels;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Beng.Specta.Compta.Server.Api
 {
@@ -10,7 +13,7 @@ namespace Beng.Specta.Compta.Server.Api
     {
         private readonly IRepository _repository;
 
-        public ToDoItemsController(IRepository repository)
+        public ToDoItemsController(IRepository repository, ILogger<ToDoItemsController> logger) : base(logger)
         {
             _repository = repository;
         }

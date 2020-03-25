@@ -621,6 +621,7 @@ body {
   cursor: pointer;
   transition: $btn-transition;
   background-color: $white;
+  width: auto;
 
   &__content {
     display: flex;
