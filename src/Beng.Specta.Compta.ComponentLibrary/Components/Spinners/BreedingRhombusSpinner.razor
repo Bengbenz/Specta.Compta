@@ -1,0 +1,87 @@
+<div class="breeding-rhombus-spinner" style="@SpinnerStyle">
+@foreach(var rs in RhombusesStyles)
+{
+  <div class="rhombus child-@(rs.Key + 1)" style="@rs.Value" @key="rs.Key" />
+}
+  <div class="rhombus big" style="@BigRhombusStyle"></div>
+</div>
+
+@code{
+
+  [Parameter]
+  public int AnimationDuration { get; set; } = 2000;
+
+  [Parameter]
+  public int Size { get; set; } = 60;
+
+  [Parameter]
+  public string Color { get; set; } = "#fff";
+
+  private string AnimationBaseName = "breeding-rhombus-spinner-animation-child";
+  private int RhombusesNum = 8;
+
+  private string RhombusStyle => ComputeRhombusStyle().ToString();
+
+  private string SpinnerStyle
+  {
+    get
+    {
+      var style = new StyleType
+      { 
+        Height = $"{Size}",
+        Width = $"{Size}"
+      };
+      return style.ToString();
+    }
+  }
+
+  private string BigRhombusStyle
+  {
+    get
+    {
+      var style = new StyleType
+      { 
+        Height = $"{Size / 3}",
+        Width = $"{Size / 3}",
+        AnimationDuration = AnimationDuration,
+        Top = $"{Size / 3}",
+        Left = $"{Size / 3}",
+        BackgroundColor = Color
+      };
+      return style.ToString();
+    }
+  }
+
+  private IDictionary<int, string> RhombusesStyles
+  {
+    get
+    {
+      var rhombusesStyles = new Dictionary<int, string>();
+      double delayModifier = AnimationDuration * 0.05;
+
+      for(var i = 1; i <= RhombusesNum; i++)
+      {
+        var style = new StyleType(ComputeRhombusStyle())
+        {
+          AnimationDelay = delayModifier * (i + 1)
+        };
+        rhombusesStyles.Add(i, style.ToString());
+      }
+
+      return rhombusesStyles;
+    }
+  }
+
+  private StyleType ComputeRhombusStyle()
+  {
+    return new StyleType
+    { 
+      Height = $"{Size / 7.5}",
+      Width = $"{Size / 7.5}",
+      AnimationDuration = AnimationDuration,
+      Top = $"{Size / 2.3077}",
+      Left = $"{Size / 2.3077}",
+      BackgroundColor = Color
+    };
+  }
+}
