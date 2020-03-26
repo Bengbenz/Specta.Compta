@@ -1,0 +1,56 @@
+<div class="fulfilling-bouncing-circle-spinner" style="@SpinnerStyle">
+  <div class="circle" style="@CircleStyle"></div>
+  <div class="orbit" style="@OrbitStyle"></div>
+</div>
+
+@code{
+
+  [Parameter]
+  public int AnimationDuration { get; set; } = 4000;
+
+  [Parameter]
+  public int Size { get; set; } = 60;
+
+  [Parameter]
+  public string Color { get; set; } = "#fff";
+
+  private string SpinnerStyle => ComputeSpinnerStyle().ToString();
+
+  private string OrbitStyle
+  {
+    get
+    {
+      var style = new StyleType(ComputeSpinnerStyle())
+      { 
+        BorderColor = $"{Color}",
+        BorderWidth = $"{Size * 0.03}"
+      };
+      return style.ToString();
+    }
+  }
+
+  private string CircleStyle
+  {
+    get
+    {
+      var style = new StyleType(ComputeSpinnerStyle())
+      { 
+        BorderColor = $"{Color}",
+        Color = $"{Color}",
+        BorderWidth = $"{Size * 0.1}"
+      };
+      return style.ToString();
+    }
+  }
+
+  private StyleType ComputeSpinnerStyle()
+  {
+    var style = new StyleType
+    { 
+      Height = $"{Size}",
+      Width = $"{Size}",
+      AnimationDuration = AnimationDuration
+    };
+    return style;
+  }
+}

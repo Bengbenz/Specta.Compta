@@ -1,6 +1,7 @@
 @page "/"
 @inject ILogger<Index> Logger
 @inject HttpClient HttpClient
+@inject TenantService TenantService;
 
 @if (string.IsNullOrWhiteSpace(_info))
 {
@@ -21,8 +22,9 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        string tenantId = TenantService.GetTenantIdentifier();
         // Call api/info Api
-        _info = await HttpClient.GetStringAsync("/info");
+        _info = await HttpClient.GetStringAsync($"{tenantId}/info");
         await base.OnInitializedAsync();
         Logger.LogDebug("Index initialized");
     }

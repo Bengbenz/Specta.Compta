@@ -1,41 +1,52 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Microsoft.EntityFrameworkCore;
+
 using Ardalis.EFCore.Extensions;
+
 using Beng.Specta.Compta.Core.Entities;
 using Beng.Specta.Compta.SharedKernel;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
-namespace Beng.Specta.Compta.Infrastructure.Data
-{
-    public class AppDbContext : DbContext
+using Finbuckle.MultiTenant;
+
+namespace Beng.Specta.Compta.Infrastructure.Data {
+    public class AppDbContext : MultiTenantDbContext
     {
         private readonly IDomainEventDispatcher _dispatcher;
 
-        //public AppDbContext(DbContextOptions options) : base(options)
-        //{
-        //}
-
-        public AppDbContext(DbContextOptions<AppDbContext> options, IDomainEventDispatcher dispatcher)
-            : base(options)
+        public AppDbContext(TenantInfo tenantInfo) : base(tenantInfo)
         {
-            _dispatcher = dispatcher;
+        }
+
+        public AppDbContext(
+            TenantInfo tenantInfo,
+            DbContextOptions<AppDbContext> options
+            //IDomainEventDispatcher dispatcher
+            ) : base(tenantInfo, options)
+        {
+            //_dispatcher = dispatcher;
         }
 
         public DbSet<ToDoItem> ToDoItems { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-
-            modelBuilder.ApplyAllConfigurationsFromCurrentAssembly();
-
-            // alternately this is built-in to EF Core 2.2
-            //modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            // Use Sqlite, but could be MsSql, MySql, Postgre, InMemory etc...
+            optionsBuilder.UseSqlite(ConnectionString); 
+            base.OnConfiguring(optionsBuilder);
         }
 
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyAllConfigurationsFromCurrentAssembly();
+
+            base.OnModelCreating(modelBuilder);
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             int result = await base.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
@@ -61,9 +72,6 @@ namespace Beng.Specta.Compta.Infrastructure.Data
             return result;
         }
 
-        public override int SaveChanges()
-        {
-            return SaveChangesAsync().GetAwaiter().GetResult();
-        }
+        public override int SaveChanges() => SaveChangesAsync().GetAwaiter().GetResult();
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Beng.Specta.Compta.Core.Entities;
 
-namespace Beng.Specta.Compta.Server.ApiModels
+namespace Beng.Specta.Compta.Core.DTOs
 {
     // Note: doesn't expose events or behavior
     public class ToDoItemDTO

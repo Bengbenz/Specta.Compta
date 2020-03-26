@@ -27,7 +27,7 @@ namespace Beng.Specta.Compta.FunctionalTests
                 // database for testing.
                 services.AddDbContext<AppDbContext>(options =>
                 {
-                    options.UseInMemoryDatabase("InMemoryDbForTesting");
+                    options.UseInMemoryDatabase("Beng.Specta.Compta.FonctionalTest");
                     options.UseInternalServiceProvider(serviceProvider);
                 });
 
@@ -52,7 +52,7 @@ namespace Beng.Specta.Compta.FunctionalTests
                     try
                     {
                         // Seed the database with test data.
-                        SeedData.PopulateTestData(db);
+                        SeedData.Initialize(db);
                     }
                     catch (Exception ex)
                     {

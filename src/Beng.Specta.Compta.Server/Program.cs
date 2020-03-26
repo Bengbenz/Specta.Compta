@@ -13,23 +13,8 @@ namespace Beng.Specta.Compta.Server
         {
             IHost host = CreateHostBuilder(args).Build();
 
-            using (var scope = host.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-
-                try
-                {
-                    var context = services.GetRequiredService<AppDbContext>();
-//                    context.Database.Migrate();
-                    context.Database.EnsureCreated();
-                    SeedData.Initialize(services);
-                }
-                catch (Exception ex)
-                {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred seeding the DB.");
-                }
-            }
+            // Initialize the database
+            InitializeDatabase(host);
 
             host.Run();
         }
@@ -40,5 +25,26 @@ namespace Beng.Specta.Compta.Server
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+
+        private static void InitializeDatabase(IHost host)
+        {
+            var scopeFactory = host.Services.GetRequiredService<IServiceScopeFactory>();
+            using(var scope = scopeFactory.CreateScope())
+            {
+                try
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                    if(dbContext.Database.EnsureCreated())
+                    {
+                        SeedData.Initialize(dbContext);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred seeding the DB.");
+                }
+            }
+        }
     }
 }

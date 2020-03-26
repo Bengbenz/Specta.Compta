@@ -1,7 +1,9 @@
 ﻿using System.Threading.Tasks;
-using Ardalis.GuardClauses;
+
 using Beng.Specta.Compta.Core.Events;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
+
+using Dawn;
 
 namespace Beng.Specta.Compta.Core.Services
 {
@@ -9,7 +11,7 @@ namespace Beng.Specta.Compta.Core.Services
     {
         public Task Handle(ToDoItemCompletedEvent domainEvent)
         {
-            Guard.Against.Null(domainEvent, nameof(domainEvent));
+            Guard.Argument(domainEvent, nameof(domainEvent)).NotNull();
 
             // Do Nothing
             return Task.CompletedTask;

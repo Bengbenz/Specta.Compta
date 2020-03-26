@@ -1,6 +1,6 @@
 @using System.Collections.Generic
 
-<VaDropdown ExtraClass="@ComputedClass" offset="0, 16px" boundary-body>
+<VaDropdown ExtraClass="@ComputedClass" offset="0, 16px" boundary-body @attributes="@AdditionalAttributes">
   <Anchor>
     <VaIconNotification ExtraClass="@IconNotificationClass" Color="@IconColor" />
   </Anchor>
@@ -23,7 +23,7 @@
         </div>
       }
       <div class="row justify--space-between">
-        <VaButton ExtraClass="ma-0 mb-2 mt-1" IsSmall="true">All notifications</VaButton>
+        <VaButton ExtraClass="ma-0 mb-2 mt-1 mr-2" IsSmall="true">All notifications</VaButton>
         <VaButton ExtraClass="ma-0 mb-2 mt-1" IsSmall="true" IsOutline="true"
                   IsDisabled="@AreAllRead" @onclick="@MarkAllAsRead">Mark as read</VaButton>
       </div>

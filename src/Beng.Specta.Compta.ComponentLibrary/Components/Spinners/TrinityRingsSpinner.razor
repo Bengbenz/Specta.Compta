@@ -1,0 +1,52 @@
+<div class="trinity-rings-spinner" style="@SpinnerStyle">
+  <div class="circle circle1" style="@Ring1Style"></div>
+  <div class="circle circle2" style="@Ring2Style"></div>
+  <div class="circle circle3" style="@Ring3Style"></div>
+</div>
+
+@code{
+
+  [Parameter]
+  public int AnimationDuration { get; set; } = 1500;
+
+  [Parameter]
+  public int Size { get; set; } = 60;
+
+  [Parameter]
+  public string Color { get; set; } = "#fff";
+
+  private int _containerPadding = 3;
+  private double OuterRingSize => Size - _containerPadding * 2;
+
+  private string SpinnerStyle
+  {
+    get
+    {
+      var style = new StyleType
+      { 
+        Height = $"{Size}",
+        Width = $"{Size}",
+        Padding = $"{_containerPadding}",
+      };
+      return style.ToString();
+    }
+  }
+
+  private string Ring1Style => ComputeBaseRingStyle().ToString();
+
+  private string Ring2Style => ComputeBaseRingStyle(0.65).ToString();
+
+  private string Ring3Style => ComputeBaseRingStyle(0.1).ToString();
+
+  private StyleType ComputeBaseRingStyle(double coeff = 1)
+  {
+    var style = new StyleType
+    { 
+      Height = $"{OuterRingSize * coeff}",
+      Width = $"{OuterRingSize * coeff}",
+      BorderColor = $"{Color}",
+      AnimationDuration = AnimationDuration
+    };
+    return style;
+  }
+}

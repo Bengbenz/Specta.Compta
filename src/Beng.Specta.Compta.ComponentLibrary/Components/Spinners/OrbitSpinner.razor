@@ -1,0 +1,43 @@
+<div class="orbit-spinner" style="@SpinnerStyle">
+  <div class="orbit one" style="@OrbitStyle"></div>
+  <div class="orbit two" style="@OrbitStyle"></div>
+  <div class="orbit three" style="@OrbitStyle"></div>
+</div>
+
+@code{
+
+  [Parameter]
+  public int AnimationDuration { get; set; } = 1000;
+
+  [Parameter]
+  public int Size { get; set; } = 50;
+
+  [Parameter]
+  public string Color { get; set; } = "#fff";
+
+  private string SpinnerStyle
+  {
+    get
+    {
+      var style = new StyleType
+      { 
+        Height = $"{Size}",
+        Width = $"{Size}"
+      };
+      return style.ToString();
+    }
+  }
+
+  private string OrbitStyle
+  {
+    get
+    {
+      var style = new StyleType
+      { 
+        BorderColor = $"{Color}",
+        AnimationDuration = AnimationDuration
+      };
+      return style.ToString();
+    }
+  }
+}

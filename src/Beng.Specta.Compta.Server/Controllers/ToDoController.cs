@@ -1,9 +1,11 @@
 ﻿using System.Linq;
+
+using Microsoft.AspNetCore.Mvc;
+
 using Beng.Specta.Compta.Core;
+using Beng.Specta.Compta.Core.DTOs;
 using Beng.Specta.Compta.Core.Entities;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
-using Beng.Specta.Compta.Server.ApiModels;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Beng.Specta.Compta.Server.Controllers
 {

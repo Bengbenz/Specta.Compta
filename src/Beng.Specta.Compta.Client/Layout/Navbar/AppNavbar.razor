@@ -1,3 +1,6 @@
+
+@inject HttpClient HttpClient
+@inject TenantService TenantService
 @inject ILogger<AppNavbar> Logger
 
 <nav class="app-navbar app-layout__navbar" style="@NavbarStyle">
@@ -16,14 +19,17 @@
         </a>
       </div>
       <div class="app-navbar__center lg5 md4">
+      @if(TenantInfo != null)
+      { 
         <VaButton  ExtraClass="app-navbar__button"
                    Icon="fa fa-github"
                    Color="#000000"
                    To="https://github.com/Bengbenz/Specta.Compta"
                    Target="_blank"
                    Is="a">
-            <text>Bengbenz</text>
+            <text>@TenantInfo.Name</text>
         </VaButton>
+      }
       </div>
       <AppNavbarActions ExtraClass="app-navbar__actions md5 lg4" UserName="@UserName" />
     </div>
@@ -43,6 +49,8 @@
 
   [Parameter]
   public EventCallback OnMinimized { get; set; }
+
+  private TenantInfoDTO TenantInfo { get; set; }
 
   private string NavbarStyle => ComputeNavbarStyle();
   private string ShapeStyle => ComputeShapeStyle();
@@ -102,7 +110,24 @@
 
   protected override async Task OnInitializedAsync()
   {
-      await base.OnInitializedAsync();
-      Logger.LogDebug($"{GetType().Name} initialized");
+    await GetTenantInfoAsync();
+    await base.OnInitializedAsync();
+    Logger.LogDebug($"{GetType().Name} initialized.");
+  }
+
+  protected async Task GetTenantInfoAsync()
+  {
+      string tenantId = TenantService.GetTenantIdentifier();
+      string apiRequest = "/tenant"; //$"/{tenantId}/tenantname";
+      try
+      {
+          TenantInfo = await HttpClient.GetJsonAsync<TenantInfoDTO>(apiRequest);
+          
+          Logger.LogDebug($"{GetType().Name} initializing... Requested={apiRequest}, Response={TenantInfo?.Name}");
+      }
+      catch(Exception ex)
+      {
+          Logger.LogError($"{GetType().Name} Can't get Tenant Info from Requested={apiRequest}./n {ex}");
+      }
   }
 }

@@ -23,6 +23,7 @@ namespace Beng.Specta.Compta.Client
             services.AddScoped<LayoutInfoVm>();
             services.AddScoped<AppSettings>();
             services.AddScoped<SpinnerService>();
+            services.AddScoped<TenantService>();
             services.AddScoped<DisplaySpinnerAutomaticallyHttpMessageHandler>();
             services.AddScoped(s =>
             {
