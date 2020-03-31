@@ -1,0 +1,185 @@
+<div class="va-card @ExtraClass" style="@ComputedCardStyle" @attributes="@AdditionalAttributes">
+@if(!string.IsNullOrWhiteSpace(Stripe))
+{
+    <div class="va-card__stripe" style="@ComputedStripeStyle" />
+}
+@if(!string.IsNullOrWhiteSpace(Image))
+{
+    <div class="va-card__image">
+      <img src="@Image" alt="@ImageAlt">
+      @if(IsOverlay)
+      {
+        <div class="va-card__image-overlay" />
+      }
+    </div>
+}
+@if(CanShowHeader)
+{
+    <div class="@ComputedCardHeaderClass" >
+      <div class="va-card__header-inner">
+          <div class="va-card__header-title" style="@ComputedHeaderTitleStyle">
+            <text>@Title</text>
+          </div>
+          <div class="va-card__header-actions">
+            @Actions
+          </div>
+      </div>
+    </div>
+}
+
+@if(BodyContent != null)
+{
+    <div class="@ComputedCardBodyClass">
+      @BodyContent
+    </div>
+}
+</div>
+
+@code{
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object> AdditionalAttributes { get; set; }
+
+    [CascadingParameter]
+    public ThemeStore ContextTheme { get; set; }
+
+    [Parameter]
+    public string ExtraClass { get; set; }
+
+    [Parameter]
+    public string Stripe { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string Image { get; set; }
+
+    [Parameter]
+    public string ImageAlt { get; set; }
+
+    [Parameter]
+    public string Color { get; set; }
+
+    [Parameter]
+    public bool IsPaddingV { get; set; } = true;
+    
+    [Parameter]
+    public bool IsPaddingH { get; set; } = true;
+
+    [Parameter]
+    public bool IsPadding { get; set; } = true;
+
+    [Parameter]
+    public bool IsOverlay { get; set; }
+
+    [Parameter]
+    public bool IsTitleOnImage { get; set; }
+
+    [Parameter]
+    public RenderFragment TitleContent { get; set; }
+
+    [Parameter]
+    public RenderFragment BodyContent { get; set; }
+
+    [Parameter]
+    public RenderFragment Actions { get; set; }
+
+    private bool CanShowHeader => !string.IsNullOrWhiteSpace(Title) || Actions != null; // || Header != null;
+    
+    private string ComputedColor => (ContextTheme != null) ? ContextTheme.ComputeColor(Color) : ThemeStore.PrimaryKey;
+
+    private string ComputedCardBodyClass
+    {
+        get
+        {
+            var cardBodyClass = "va-card__body";
+            if(!IsPaddingV)
+            {
+                cardBodyClass += " va-card__body--no-padding-v";
+            }
+            if(!IsPaddingH)
+            {
+                cardBodyClass += " va-card__body--no-padding-h";
+            }
+            if(!IsPadding)
+            {
+                cardBodyClass += " va-card__body--no-padding";
+            }
+            if((!CanShowHeader && IsPaddingV && IsPadding) || IsTitleOnImage)
+            {
+                cardBodyClass += " va-card__body--padding-top";
+            }
+            return cardBodyClass;
+        }
+    }
+
+    private string ComputedHeaderTitleStyle
+    {
+        get
+        {
+            var style = new StyleType
+            {
+                Color = (IsTitleOnImage) ? "white" : ContextTheme[ThemeStore.InfoKey]
+            };
+            return style.ToString();
+        }
+    }
+
+    private string ComputedCardHeaderClass
+    {
+        get
+        {
+            var cardClass = "va-card__header";
+            if(!string.IsNullOrWhiteSpace(Image) && IsTitleOnImage)
+            {
+                cardClass += " va-card__header--over";
+            }
+            return cardClass;
+        }
+    }
+
+    private string ComputedStripeStyle
+    {
+        get
+        {
+            var style = new StyleType
+            {
+                Background = ContextTheme.TryGetValue(Stripe, out var stripeColor) ? stripeColor : Stripe
+            };
+            return style.ToString();
+        }
+    }
+
+    private string ComputedCardStyle
+    {
+        get
+        {
+            var style = new StyleType
+            {
+                BoxShadow = BoxShadow()
+            };
+
+            if(!string.IsNullOrWhiteSpace(Color))
+            {
+                style.Color = "#fff";
+                style.Background = ContextTheme.IsGradient ? ComputedColor.GetGradientBackground() : ComputedColor;
+            }
+            return style.ToString();
+        }
+    }
+
+    private string BoxShadow()
+    {
+        string shadow = string.Empty;
+        if (ContextTheme.Shadow == ShadowType.Small)
+        {
+            shadow = "0 1px 1px 0 rgba(190, 190, 190, 0.25)";
+        }
+        if (ContextTheme.Shadow == ShadowType.Large)
+        {
+            shadow = "0 2px 3px 0 rgba(52, 56, 85, 0.25)";
+        }
+        return shadow;
+    }
+}

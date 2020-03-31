@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dawn.Guard" />
+    <PackageReference Include="NodaMoney" />
     <PackageReference Include="System.ComponentModel.Annotations" />
   </ItemGroup>
 

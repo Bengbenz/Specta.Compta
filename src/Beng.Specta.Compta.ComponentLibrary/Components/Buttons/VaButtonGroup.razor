@@ -16,23 +16,24 @@
     [Parameter]
     public bool IsLarge { get; set; }
 
-    private string ComputedClass => ComputeClass();
-
-    private string ComputeClass()
+    private string ComputedClass
     {
-        var groupButtonClass = "va-button-group";
-        if(IsLarge)
+        get
         {
-            groupButtonClass += " va-button-group--large";
+            var groupButtonClass = "va-button-group";
+            if(IsLarge)
+            {
+                groupButtonClass += " va-button-group--large";
+            }
+            if(IsSmall)
+            {
+                groupButtonClass += " va-button-group--small";
+            }
+            if(!IsLarge && !IsSmall)
+            {
+                groupButtonClass += " va-button-group--normal";
+            }
+            return groupButtonClass;
         }
-        if(IsSmall)
-        {
-            groupButtonClass += " va-button-group--small";
-        }
-        if(!IsLarge && !IsSmall)
-        {
-            groupButtonClass += " va-button-group--normal";
-        }
-        return groupButtonClass;
     }
 }

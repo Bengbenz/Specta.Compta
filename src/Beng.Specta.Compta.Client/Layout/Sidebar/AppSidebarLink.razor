@@ -56,44 +56,94 @@
 
   private bool IsHovered { get; set; }
   private bool IsActive { get; set; }
-  private string ComputedLinkClass => ComputeLinkClass();
-  private string ComputedLinkStyles => ComputeLinkStyles();
-  private string ComputedIconStyles => ComputeIconStyles();
 
-  private string ComputeLinkClass()
+  private string ComputedLinkClass
   {
-    var linkClass = "app-sidebar-link";
-    if (LayoutInfo == null)
+    get
     {
-      return linkClass;
-    }
+      var linkClass = "app-sidebar-link";
+      if (LayoutInfo == null)
+      {
+        return linkClass;
+      }
 
-    return LayoutInfo.IsMinimized ? $"{linkClass} app-sidebar-link--minimized" : linkClass;
+      return LayoutInfo.IsMinimized ? $"{linkClass} app-sidebar-link--minimized" : linkClass;
+    }
   }
 
-  private string ComputeIconStyles()
+  private string ComputedIconStyles
   {
-    var colorStyle = new StyleType { Color = "white" };
-    if (ContextTheme == null)
+    get
     {
+      var colorStyle = new StyleType { Color = "white" };
+      if (ContextTheme == null)
+      {
+        return colorStyle.ToString();
+      }
+
+      if (ContextTheme.IsInverted)
+      {
+        if (!IsHovered && !IsActive)
+        {
+          colorStyle.Color = ContextTheme[ThemeStore.GrayKey];
+        }
+      }
+      else
+      {
+        if (IsHovered || IsActive)
+        {
+          colorStyle.Color = ContextTheme[ThemeStore.PrimaryKey];
+        }
+      }
       return colorStyle.ToString();
     }
+  }
 
-    if (ContextTheme.IsInverted)
+  private string ComputedLinkStyles
+  {
+    get
     {
-      if (!IsHovered && !IsActive)
+      var style = new StyleType();
+      if (ContextTheme == null)
       {
-        colorStyle.Color = ContextTheme[ThemeStore.GrayKey];
+        return style.ToString();
       }
-    }
-    else
-    {
+
+      var primaryColor = ContextTheme[ThemeStore.PrimaryKey];
+      if (ContextTheme.IsInverted)
+      {
+        if (IsHovered || IsActive)
+        {
+          style.Color = "white";
+        }
+        else
+        {
+          style.Color = ContextTheme[ThemeStore.GrayKey];
+        }
+      }
+      else
+      {
+        style.Color = primaryColor;
+      }
+
       if (IsHovered || IsActive)
       {
-        colorStyle.Color = ContextTheme[ThemeStore.PrimaryKey];
+        style.BackgroundColor = ContextTheme.IsGradient ? 
+        ContextTheme[ThemeStore.SecondaryKey].ColorShiftHsl(new HslType(h: 0, s: -13, l: 15)).ToString() :
+        primaryColor;
+
+        if (ContextTheme.IsGradient)
+        {
+          style.BorderColor = IsActive ? primaryColor : "transparent";
+        }
+        else
+        {
+          style.BorderColor = primaryColor.ColorShiftHsl(new HslType(h: 0, s: 13, l: -15)).ToString();
+        }
       }
+
+      return style.ToString();
     }
-    return colorStyle.ToString();
   }
 
   private void UpdateHoverState(bool isHovered) => IsHovered = isHovered;
@@ -106,57 +156,11 @@
   {
     string currentUrlWithoutBase = NavigationManager.Uri.Substring(NavigationManager.BaseUri.Length - 1);
     IsActive = currentUrlWithoutBase == Url || IsActiveByDefault;
-    Logger.LogDebug($"{GetType().Name}: Current uri={currentUrlWithoutBase}, Link url={Url}, IsActive={IsActive}");
-  }
-
-  private string ComputeLinkStyles()
-  {
-    var style = new StyleType();
-    if (ContextTheme == null)
-    {
-      return style.ToString();
-    }
-
-    var primaryColor = ContextTheme[ThemeStore.PrimaryKey];
-    if (ContextTheme.IsInverted)
-    {
-      if (IsHovered || IsActive)
-      {
-        style.Color = "white";
-      }
-      else
-      {
-        style.Color = ContextTheme[ThemeStore.GrayKey];
-      }
-    }
-    else
-    {
-      style.Color = primaryColor;
-    }
-
-    if (IsHovered || IsActive)
-    {
-      style.BackgroundColor = ContextTheme.IsGradient ? 
-      ContextTheme[ThemeStore.SecondaryKey].ColorShiftHsl(new HslType(h: 0, s: -13, l: 15)).ToString() :
-      primaryColor;
-
-      if (ContextTheme.IsGradient)
-      {
-        style.BorderColor = IsActive ? primaryColor : "transparent";
-      }
-      else
-      {
-        style.BorderColor = primaryColor.ColorShiftHsl(new HslType(h: 0, s: 13, l: -15)).ToString();
-      }
-    }
-
-    return style.ToString();
   }
 
   protected override async Task OnInitializedAsync()
   {
       UpdateActiveState();
-      Logger.LogDebug($"{GetType().Name} initialized");
       await base.OnInitializedAsync();
 
   }

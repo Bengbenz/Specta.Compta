@@ -32,7 +32,7 @@
   public string Size { get; set; }
 
   [Parameter]
-  public string Color { get; set; }
+  public string Color { get; set; } = string.Empty;
 
   [Parameter]
   public string ExtraStyle { get; set; }
@@ -40,62 +40,59 @@
   [Parameter]
   public RenderFragment ChildContent { get; set; }
 
-  private string IconStyle => ComputeIconStyle();
+  private string IconStyle 
+  {
+    get
+    {
+      var iconStyle = new StyleType();
+      if(Rotation != 0)
+      {
+        iconStyle.Rotation = Rotation;
+      }
+      if(!string.IsNullOrWhiteSpace(Size))
+      {
+        iconStyle.FontSize = Size;
+      }
+      if(ContextTheme.TryGetValue(Color, out var color))
+      {
+        iconStyle.Color = color;
+      }
+      else if(!string.IsNullOrWhiteSpace(Color))
+      {
+        iconStyle.Color = Color;
+      }
 
-  private string IconClass => ComputeIconClass();
-
-  private string ComputeIconClass()
-  { 
-    var iconClass = $"va-icon";
-    if(!string.IsNullOrWhiteSpace(ExtraClass))
-    {
-      iconClass += $" {ExtraClass}";
+      return iconStyle.ToString();
     }
-    if(!string.IsNullOrWhiteSpace(Name))
-    {
-      iconClass += $" {Name}";
-    }
-    if(Large)
-    {
-      iconClass += " va-icon--large";
-    }
-    if(Small)
-    {
-      iconClass += " va-button--small";
-    }
-    if(FixedWidth)
-    {
-      iconClass += " va-button--fixed";
-    }
-
-    return iconClass.Trim();
   }
 
-  private string ComputeIconStyle()
+  private string IconClass
   {
-    var iconStyle = new StyleType();
-    if(Rotation != 0)
-    {
-      iconStyle.Rotation = Rotation;
-    }
-    if(!string.IsNullOrWhiteSpace(Size))
-    {
-      iconStyle.FontSize = Size;
-    }
-    if(ContextTheme != null && Color != null && ContextTheme.TryGetValue(Color, out var color))
-    {
-      iconStyle.Color = color;
-    }
-    if(!string.IsNullOrWhiteSpace(Color))
-    {
-      iconStyle.Color = Color;
-    }
+    get
+    { 
+      var iconClass = $"va-icon";
+      if(!string.IsNullOrWhiteSpace(ExtraClass))
+      {
+        iconClass += $" {ExtraClass}";
+      }
+      if(!string.IsNullOrWhiteSpace(Name))
+      {
+        iconClass += $" {Name}";
+      }
+      if(Large)
+      {
+        iconClass += " va-icon--large";
+      }
+      if(Small)
+      {
+        iconClass += " va-button--small";
+      }
+      if(FixedWidth)
+      {
+        iconClass += " va-button--fixed";
+      }
 
-    return iconStyle.ToString();
-  }
-
-  protected override async Task OnParametersSetAsync()
-  {
-    await base.OnParametersSetAsync();
+      return iconClass.Trim();
+    }
   }
 }

@@ -1,0 +1,72 @@
+@if(IsVisible)
+{
+<transition name="fade">
+    <div class="va-notification @ExtraClass" style="@NotificationStyle" @attributes="AdditionalAttributes">
+        <div class="va-notification__content">
+        @if(!string.IsNullOrWhiteSpace(BadgeText))
+        {
+        <VaBadge Color="@Color">@BadgeText</VaBadge>
+        }
+            @ChildContent
+        </div>
+
+    @if(IsClosable)
+    {
+      <div class="va-notification__close-icon" @onclick="HideNotification" >
+        <VaIcon Color="@Color" Name="ion-md-close ion" />
+      </div>
+    }
+    </div>
+</transition>
+}
+
+
+@code{
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object> AdditionalAttributes { get; set; }
+
+    [CascadingParameter]
+    public ThemeStore ContextTheme { get; set; }
+
+    [Parameter]
+    public string Color { get; set; } = ThemeStore.SuccessKey;
+
+    [Parameter]
+    public bool IsVisible { get; set; } = true;
+
+    [Parameter]
+    public bool IsClosable { get; set; } = true;
+
+    [Parameter]
+    public string ExtraClass { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public string BadgeText { get; set; }
+
+    private string NotificationStyle
+    { 
+        get
+        {
+            if(!ContextTheme.TryGetValue(Color, out var color))
+            {
+                return string.Empty;
+            }
+
+            var style = new StyleType
+            {
+                Background = color.GetHoverColor(),
+                BoxShadow = $"0 0.125rem 0.125rem 0 {color.GetBoxShadowColor()}"
+            };
+            return style.ToString();
+        }
+    }
+
+    private void HideNotification()
+    {
+      IsVisible = false;
+    }
+}
