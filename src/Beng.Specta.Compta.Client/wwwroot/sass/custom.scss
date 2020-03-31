@@ -1,6 +1,7 @@
 @import "./vuestic-ui/styles";
 @import "../lib/flag-icon-css/css/flag-icon.css";
-@import "./spinner.scss";
+@import "./spinner";
+@import "./syncfusion";
 
 // App body
 body {
@@ -810,5 +811,264 @@ body {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     border-left: 0;
+  }
+}
+
+// va-separator
+.va-separator {
+  height: 0.0625rem;
+  background-color: $separator-color;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  .va-tabs + & {
+    margin-top: 0;
+  }
+  .va-card .va-card__body:not(.va-card__body--no-padding-h, .va-card__body--no-padding) > & {
+    margin-right: -$card-padding;
+    margin-left: -$card-padding;
+  }
+}
+
+// va-card 
+.va-card {
+  border-radius: $card-border-radius;
+  border: none;
+  box-sizing: border-box;
+  word-wrap: break-word;
+  background-color: $white;
+  position: relative;
+  overflow: hidden;
+
+  &__header {
+    &-inner {
+      display: flex;
+      padding: 0.5rem $card-padding;
+      min-height: 3.5rem;
+      align-items: center;
+    }
+
+    &-title {
+      font-weight: $font-weight-bold;
+      font-size: $card-title-font-size;
+      letter-spacing: $card-title-letter-spacing;
+      text-transform: uppercase;
+      color: $card-title-color;
+    }
+
+    &-actions {
+      margin-left: auto;
+      flex: 0 0 auto;
+    }
+
+    &--over {
+      position: absolute;
+      padding-top: 56%;
+      width: 100%;
+      top: 0;
+      left: 0;
+
+      &:last-child {
+        height: 100%;
+      }
+
+      & > div {
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+        left: 0;
+      }
+    }
+  }
+
+  &__body {
+    padding: 0 $card-padding $card-padding;
+    flex: 1 1 auto;
+    overflow-x: auto;
+
+    &--no-padding-v {
+      padding: 0 $card-padding;
+    }
+
+    &--no-padding-h {
+      padding: $card-padding 0;
+    }
+
+    &--no-padding {
+      padding: 0;
+    }
+
+    &--padding-top {
+      padding-top: $card-padding;
+    }
+  }
+
+  &__image {
+    padding-bottom: 56%;
+    position: relative;
+    height: auto;
+    min-height: 100%;
+
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    &-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background-color: rgba(0, 0, 0, .3);
+      pointer-events: none;
+    }
+  }
+
+  &__stripe {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0.5rem;
+    z-index: 1;
+  }
+}
+
+// va-data-table
+.va-data-table {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow-x: auto;
+
+  &__vuetable {
+    width: 100%;
+
+    th {
+      &.sortable {
+        color: $brand-primary;
+      }
+
+      .sort-icon {
+        font-size: 0.625rem;
+      }
+    }
+
+    .vuetable-empty-result {
+      padding: 4.5rem 1rem;
+      font-size: 1rem;
+      color: $gray;
+    }
+  }
+
+  &__pagination {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+// .va-pagination
+.va-pagination {
+  .va-button--disabled {
+    i {
+      color: $brand-secondary;
+    }
+  }
+}
+
+// notification
+// Notifications
+$va-notification-margin-y: 0.25rem;
+$va-notification-padding-x: 0.5rem;
+$va-notification-padding-y: 0.75rem;
+$va-notification-border: 0;
+$va-notification-border-radius: 0.5rem;
+$va-notification-box-shadow: 0.125rem;
+
+// Badge
+$va-badge-margin-right: 0.5rem;
+$va-badge-padding-x: 0.5rem;
+$va-badge-padding-y: 0.125rem;
+$va-badge-border-radius: 0.5rem;
+$va-badge-font-size: 0.625rem;
+$va-badge-letter-spacing: 0.0625rem;
+
+// Close Icon
+$va-close-icon-padding-x: 0.5rem;
+$va-close-icon-padding-y: 0.0625rem;
+$va-close-icon-font-size: 1.5rem;
+
+.va-notification {
+  padding: $va-notification-padding-y $va-notification-padding-x;
+  margin: $va-notification-margin-y auto;
+  display: flex;
+  align-items: center;
+  border: $va-notification-border solid transparent;
+  border-radius: $va-notification-border-radius;
+
+  &__content {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+  }
+
+  &__close-icon {
+    padding: $va-close-icon-padding-y $va-close-icon-padding-x;
+    font-size: $va-close-icon-font-size;
+    cursor: pointer;
+  }
+
+  @include media-breakpoint-down(xs) {
+    @at-root {
+      .va-notification {
+        &__content {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        &__close-icon {
+          align-self: flex-start;
+          display: flex;
+          align-items: flex-start;
+          padding: 0;
+          padding-right: $va-close-icon-padding-x;
+          margin: 0;
+        }
+      }
+    }
+  }
+}
+
+// va-badge
+.va-badge {
+  display: inline-block;
+  padding: $chip-padding-y-sm $chip-padding-x-sm;
+  color: $white;
+  border: solid $chip-border-outline;
+  border-radius: $chip-border-radius-sm;
+  font-size: $chip-font-size-sm;
+  font-weight: bold;
+  font-family: $font-family-sans-serif;
+  text-transform: uppercase;
+  line-height: $chip-line-height-sm;
+  letter-spacing: $chip-letter-spacing-sm;
+  white-space: nowrap;
+
+  &__content {
+
+    &__title {
+      margin: auto;
+    }
+  }
+
+  &--outline {
+    background-color: transparent;
   }
 }

@@ -89,12 +89,10 @@
 
     private void ToggleValue(OptionType option)
     {
-        Value = option.Value;
-        option.OnSelectedItemHandler.Invoke();
-    }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        await base.OnParametersSetAsync();
+        if (option.Value != Value)
+        {
+            Value = option.Value;
+            option.OnSelectedItemHandler.Invoke();
+        }
     }
 }

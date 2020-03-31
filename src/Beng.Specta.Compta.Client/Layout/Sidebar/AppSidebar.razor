@@ -42,66 +42,63 @@
 
   private TenantInfoDTO _tenantInfo => TenantService.TenantInfo;
 
-  private string ComputedClass => ComputeClass();
-  private string ComputedStyle => ComputeColorStyle();
-
-  private string ComputeColorStyle()
+  private string ComputedStyle
   {
-    var style = new StyleType { BackgroundColor = "white" };
-    if(ContextTheme == null)
+    get
     {
+      var style = new StyleType { BackgroundColor = "white" };
+      if(ContextTheme == null)
+      {
+        return style.ToString();
+      }
+
+      style.BackgroundColor = !ContextTheme.IsInverted ? ContextTheme.ComputeColor(Color) : "white";
       return style.ToString();
     }
-
-    style.BackgroundColor = !ContextTheme.IsInverted ? ContextTheme.ComputeColor(Color) : "white";
-    return style.ToString();
   }
 
-  private string ComputeClass()
+  private string ComputedClass
   {
-    var style = "app-sidebar app-layout__sidebar";
-    if(LayoutInfo == null)
+    get
     {
-      return style;
-    }
+      var style = "app-sidebar app-layout__sidebar";
+      if(LayoutInfo == null)
+      {
+        return style;
+      }
 
-    return LayoutInfo.IsMinimized ? $"{style} app-sidebar--minimized" : style;
+      return LayoutInfo.IsMinimized ? $"{style} app-sidebar--minimized" : style;
+    }
   }
 
   private IList<ModuleInfoVm> _menuItems => new List<ModuleInfoVm>
   {
-    new ModuleInfoVm("1", "Dashboard", new MetaInfoVm($"{_tenantInfo}/", "vuestic-iconset vuestic-iconset-dashboard")),
-    new ModuleInfoVm("2", "Projets", new MetaInfoVm($"{_tenantInfo}/stats", "vuestic-iconset vuestic-iconset-statistics"))
+    new ModuleInfoVm("1", "Dashboard", new MetaInfoVm($"/", "vuestic-iconset vuestic-iconset-dashboard")),
+    new ModuleInfoVm("2", "Projets", new MetaInfoVm($"/projects", "vuestic-iconset vuestic-iconset-statistics"))
     {
       Children = new List<ModuleInfoVm>
       {
-        new ModuleInfoVm("3", "Exercices comptables", new MetaInfoVm($"{_tenantInfo}/charts")),
-        new ModuleInfoVm("4", "Statistics", new MetaInfoVm($"{_tenantInfo}/progressbar")),
+        new ModuleInfoVm("3", "Exercices comptables", new MetaInfoVm($"projects-calendar")),
+        new ModuleInfoVm("4", "Statistics", new MetaInfoVm($"projects/progressbar")),
       }
     },
-    new ModuleInfoVm("4", "Budget", new MetaInfoVm($"{_tenantInfo}/forms", "vuestic-iconset vuestic-iconset-forms")),
-    new ModuleInfoVm("5", "Financement", new MetaInfoVm($"{_tenantInfo}/tables", "vuestic-iconset vuestic-iconset-tables"))
+    new ModuleInfoVm("4", "Budget", new MetaInfoVm($"/budget", "vuestic-iconset vuestic-iconset-forms")),
+    new ModuleInfoVm("5", "Financement", new MetaInfoVm($"/funding", "vuestic-iconset vuestic-iconset-tables"))
     {
       Children = new List<ModuleInfoVm>
       {
-        new ModuleInfoVm("6", "Echéanciers", new MetaInfoVm($"{_tenantInfo}/markuptable")),
-        new ModuleInfoVm("7", "Tranches", new MetaInfoVm($"{_tenantInfo}/datatable")),
-        new ModuleInfoVm("11", "Encaissés", new MetaInfoVm("/datatable")),
+        new ModuleInfoVm("6", "Plan de Financement", new MetaInfoVm($"/funding-plan")),
+        new ModuleInfoVm("7", "Echéanciers", new MetaInfoVm($"/funding-steps")),
+        new ModuleInfoVm("11", "Facturation", new MetaInfoVm("/funding-billing"))
       }
     },
-    new ModuleInfoVm("8", "Trésorerie", new MetaInfoVm($"{_tenantInfo}/uielements", "vuestic-iconset vuestic-iconset-ui-elements")),
-    new ModuleInfoVm("9", "Bilan", new MetaInfoVm($"{_tenantInfo}/maps", "vuestic-iconset vuestic-iconset-maps")),
-    new ModuleInfoVm("10", "Utilisateurs", new MetaInfoVm($"{_tenantInfo}/pages", "vuestic-iconset vuestic-iconset-files")),
+    new ModuleInfoVm("8", "Trésorerie", new MetaInfoVm($"/treasury", "vuestic-iconset vuestic-iconset-ui-elements")),
+    new ModuleInfoVm("9", "Intégration comptable", new MetaInfoVm($"/accounting", "vuestic-iconset vuestic-iconset-maps")),
+    new ModuleInfoVm("10", "Utilisateurs", new MetaInfoVm($"/pages", "vuestic-iconset vuestic-iconset-files")),
   };
-
-  protected override async Task OnParametersSetAsync()
-  {
-    await base.OnParametersSetAsync();
-  }
 
   protected override async Task OnInitializedAsync()
   {
       await base.OnInitializedAsync();
-      Logger.LogDebug($"{GetType().Name} initialized");
   }
 }

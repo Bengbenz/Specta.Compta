@@ -66,10 +66,73 @@
   private bool IsHovered { get; set; }
   private bool IsExpanded { get; set; }
   private string Color => ThemeStore.SecondaryKey;
-  private string ComputedClass => ComputeClass();
-  private string ComputedSubmenuColor => ComputeSubmenuColor();
-  private string ComputedLinkStyles => ComputeLinkStyles();
-  private string ComputedIconStyles => ComputeIconStyles();
+  private string ComputedClass
+  {
+    get
+    { 
+      string result = "app-sidebar-link-group";
+      if(LayoutInfo == null)
+      {
+        return result;
+      }
+
+      if(LayoutInfo.IsMinimized)
+      {
+        result += " app-sidebar-link-group--minimized";
+      }
+      if(IsActive)
+      {
+        result += " app-sidebar-link-group--isActive";
+      }
+      return result.Trim();
+    }
+  }
+
+  private string ComputedSubmenuColor
+  {
+    get
+    {
+      var subMenuStyle = new StyleType { Color = "white" };
+      if(!ContextTheme.IsInverted)
+      {
+        subMenuStyle.Color = ContextTheme.TryGetValue(Color, out var color) ? color : Color;
+      }
+
+      return subMenuStyle.ToString();
+    }
+  }
+
+  private string ComputedLinkStyles
+  {
+    get
+    {
+      var style = new StyleType();
+
+      var primaryColor = ContextTheme[ThemeStore.PrimaryKey];
+      if (IsHovered || IsActive)
+      {
+        style.Color = primaryColor;
+        style.BackgroundColor = ContextTheme[ThemeStore.SecondaryKey].ColorShiftHsl(new HslType(h: 0, s: -13, l: 15)).ToString();
+        style.BorderColor = IsActive ? primaryColor : "transparent";
+      }
+
+      return style.ToString();
+    }
+  }
+  
+  private string ComputedIconStyles
+  {
+    get
+    {
+      var iconColor = "white";
+
+      if (IsHovered || IsActive)
+      {
+        iconColor = ContextTheme[ThemeStore.PrimaryKey];
+      }
+      return iconColor;
+    }
+  }
 
   private void ToggleMenuItem() => IsExpanded = !IsExpanded;
 
@@ -79,81 +142,11 @@
 
   private void DisableHoverState() => UpdateHoverState(false);
 
-  private string ComputeClass()
-  { 
-    string result = "app-sidebar-link-group";
-    if(LayoutInfo == null)
-    {
-      return result;
-    }
-
-    if(LayoutInfo.IsMinimized)
-    {
-      result += " app-sidebar-link-group--minimized";
-    }
-    if(IsActive)
-    {
-      result += " app-sidebar-link-group--isActive";
-    }
-    return result.Trim();
-  }
-
-  private string ComputeSubmenuColor()
-  {
-    var subMenuStyle = new StyleType { Color = "white" };
-    if(ContextTheme == null)
-    {
-      return subMenuStyle.ToString();
-    }
-
-    if(!ContextTheme.IsInverted)
-    {
-      subMenuStyle.Color = ContextTheme[Color];
-    }
-
-    return subMenuStyle.ToString();
-  }
-
-  private string ComputeIconStyles()
-  {
-    var iconColor = "white";
-    if (ContextTheme == null)
-    {
-      return iconColor.ToString();
-    }
-
-    if (IsHovered || IsActive)
-    {
-      iconColor = ContextTheme[ThemeStore.PrimaryKey];
-    }
-    return iconColor;
-  }
-
-  private string ComputeLinkStyles()
-  {
-    var style = new StyleType();
-    if (ContextTheme == null)
-    {
-      return style.ToString();
-    }
-
-    var primaryColor = ContextTheme[ThemeStore.PrimaryKey];
-    if (IsHovered || IsActive)
-    {
-      style.Color = primaryColor;
-      style.BackgroundColor = ContextTheme[ThemeStore.SecondaryKey].ColorShiftHsl(new HslType(h: 0, s: -13, l: 15)).ToString();
-      style.BorderColor = IsActive ? primaryColor : "transparent";
-    }
-
-    return style.ToString();
-  }
-
   private void UpdateActiveState()
   {
     string currentUrlWithoutBase = NavigationManager.Uri.Substring(NavigationManager.BaseUri.Length - 1);
     bool isActive = Children.Any(x => x.Meta.Url == currentUrlWithoutBase);
     IsActive = LayoutInfo.IsMinimized ? isActive : false;
     IsExpanded = isActive;
-    Logger.LogDebug($"{GetType().Name}: Current uri={currentUrlWithoutBase}, IsActive={IsActive}");
   }
 }

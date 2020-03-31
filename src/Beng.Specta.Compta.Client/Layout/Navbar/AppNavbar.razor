@@ -52,67 +52,51 @@
 
   private TenantInfoDTO TenantInfo { get; set; }
 
-  private string NavbarStyle => ComputeNavbarStyle();
-  private string ShapeStyle => ComputeShapeStyle();
-  private string ComputedColor => ComputeColor();
+  private string ComputedColor => (ContextTheme.IsInverted) ? ContextTheme[ThemeStore.GrayKey] : "white";
 
-  private string ComputeColor()
+  private string NavbarStyle
   {
-    var color = "white";
-    if(ContextTheme == null)
+    get
     {
-      return color;
-    }
-
-    if(ContextTheme.IsInverted)
-    {
-      color = ContextTheme[ThemeStore.GrayKey];
-    }
-    return color;
-  }
-  private string ComputeNavbarStyle()
-  {
-    var style = new StyleType { BackgroundColor =  "white" };
-    if(ContextTheme == null)
-    {
+      var style = new StyleType { BackgroundColor =  "white" };
+      if (ContextTheme.IsGradient)
+      {
+        style.BackgroundColor = ContextTheme[ThemeStore.SecondaryKey]
+                                  .ColorShiftHsl(new HslType(h: 0, s: -13, l: 15))
+                                  .ToString();
+      }
+      if (ContextTheme.Shadow == ShadowType.Small)
+      {
+        style.BoxShadow = "0 2px 3px 0 rgba(52, 56, 85, 0.25)";
+      }
       return style.ToString();
     }
+  }
 
-    if (ContextTheme.IsGradient)
+  private string ShapeStyle
+  {
+    get
     {
-      style.BackgroundColor = ContextTheme[ThemeStore.SecondaryKey]
-                                .ColorShiftHsl(new HslType(h: 0, s: -13, l: 15))
+      var style = new StyleType { BorderTopColor = "transparent" };
+      if(ContextTheme == null)
+      {
+        return style.ToString();
+      }
+
+      if(ContextTheme.IsGradient)
+      {
+        style.BorderTopColor = ContextTheme[ThemeStore.SecondaryKey]
+                                .ColorShiftHsl(new HslType(h: -1, s: -11, l: 10))
                                 .ToString();
-    }
-    if (ContextTheme.Shadow == ShadowType.Small)
-    {
-      style.BoxShadow = "0 2px 3px 0 rgba(52, 56, 85, 0.25)";
-    }
-    return style.ToString();
-  }
-
-  private string ComputeShapeStyle()
-  {
-    var style = new StyleType { BorderTopColor = "transparent" };
-    if(ContextTheme == null)
-    {
+      }
       return style.ToString();
     }
-
-    if(ContextTheme.IsGradient)
-    {
-      style.BorderTopColor = ContextTheme[ThemeStore.SecondaryKey]
-                              .ColorShiftHsl(new HslType(h: -1, s: -11, l: 10))
-                              .ToString();
-    }
-    return style.ToString();
   }
 
   protected override async Task OnInitializedAsync()
   {
     await GetTenantInfoAsync();
     await base.OnInitializedAsync();
-    Logger.LogDebug($"{GetType().Name} initialized.");
   }
 
   protected async Task GetTenantInfoAsync()

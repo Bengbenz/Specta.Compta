@@ -98,14 +98,130 @@
 
   private bool IsHoverState { get; set; }
   private bool IsFocusState { get; set; }
-  private string ComputedColor => ComputeColor();
-  private string ComputedClass => ComputeClass();
-  private string ComputedStyle => ComputeStyle();
+  private string ComputedColor => (ContextTheme != null) ? ContextTheme.ComputeColor(Color) : ThemeStore.PrimaryKey;
   private bool HasTitle => ChildContent != null;
-
-  protected override async Task OnParametersSetAsync()
+  private string ComputedClass
   {
-    await base.OnParametersSetAsync();
+    get
+    {
+      var computedClass = $"va-button {ExtraClass}";
+      if(!IsFlat && !IsOutline)
+      {
+          computedClass += " va-button--default";
+      }
+      if(IsFlat)
+      {
+          computedClass += " va-button--flat";
+      }
+      if(IsOutline)
+      {
+          computedClass += " va-button--outline";
+      }
+      if(IsDisabled)
+      {
+          computedClass += " va-button--disabled";
+      }
+      if(IsHoverState)
+      {
+          computedClass += " va-button--hover";
+      }
+      if(IsFocusState)
+      {
+          computedClass += " va-button--focus";
+      }
+      if(!HasTitle)
+      {
+          computedClass += " va-button--without-title";
+      }
+      if(!string.IsNullOrWhiteSpace(Icon))
+      {
+          computedClass += " va-button--with-left-icon";
+      }
+      if(!string.IsNullOrWhiteSpace(IconRight))
+      {
+          computedClass += " va-button--with-right-icon";
+      }
+      if(IsLarge)
+      {
+          computedClass += " va-button--large";
+      }
+      if(IsSmall)
+      {
+          computedClass += " va-button--small";
+      }
+      if(!IsLarge && !IsSmall)
+      {
+          computedClass += " va-button--normal";
+      }
+      if(!string.IsNullOrWhiteSpace(ActiveClass))
+      {
+        computedClass += $" {ActiveClass}";
+      }
+
+      return computedClass.Trim();
+    }
+  }
+  private string ComputedStyle
+  {
+    get
+    {
+      var computedStyle = new StyleType();
+      if(ExtraStyle != null)
+      {
+        computedStyle = new StyleType(ExtraStyle);
+      }
+
+      if (IsFocusState)
+      {
+        if (IsOutline || IsFlat)
+        {
+          if (string.IsNullOrWhiteSpace(computedStyle.Color))
+          {
+            computedStyle.Color = ComputedColor;
+          }
+          computedStyle.BorderColor = IsOutline ? ComputedColor : string.Empty;
+          computedStyle.Background = ComputedColor.GetFocusColor();
+        }
+        else
+        {
+          computedStyle.BackgroundImage = GradientStyle();
+        }
+      }
+      else if (IsHoverState)
+      {
+        if (IsOutline || IsFlat)
+        {
+          if (string.IsNullOrWhiteSpace(computedStyle.Color))
+          {
+            computedStyle.Color = ComputedColor;
+          }
+          computedStyle.BorderColor = IsOutline ? ComputedColor : string.Empty;
+          computedStyle.Background = ComputedColor.GetHoverColor();
+        }
+        else
+        {
+          computedStyle.BackgroundImage = GradientStyle();
+        }
+      }
+      else
+      {
+        if (string.IsNullOrWhiteSpace(computedStyle.Color))
+        {
+          computedStyle.Color = IsFlat || IsOutline ? ComputedColor : "#ffffff";
+        }
+        computedStyle.BorderColor = IsOutline ? ComputedColor : string.Empty;
+        computedStyle.BackgroundImage = GradientStyle();
+        computedStyle.BoxShadow = ShadowStyle();
+      }
+
+      if (!IsOutline && !IsFlat && (!string.IsNullOrWhiteSpace(VaColorKey) || !ContextTheme.IsGradient))
+      {
+        computedStyle.Background = !string.IsNullOrWhiteSpace(Color) ? ComputedColor : ContextTheme.TryGetValue(VaColorKey, out var vaColor) ? vaColor : Color;
+        computedStyle.BackgroundImage = string.Empty;
+      }
+
+      return computedStyle.ToString();
+    }
   }
 
   private void UpdateHoverState (bool isHover) => IsHoverState = isHover;
@@ -114,73 +230,6 @@
   private void UpdateFocusState (bool isHover) => IsFocusState = isHover;
   private void EnableFocusState() => UpdateFocusState(true);
   private void DisableFocusState() => UpdateFocusState(false);
-
-  private string ComputeColor()
-  {
-    if(ContextTheme == null)
-    {
-      return ThemeStore.PrimaryKey;
-    }
-    return ContextTheme.ComputeColor(Color);
-  }
-  private string ComputeClass()
-  {
-    var computedClass = $"va-button {ExtraClass}";
-    if(!IsFlat && !IsOutline)
-    {
-        computedClass += " va-button--default";
-    }
-    if(IsFlat)
-    {
-        computedClass += " va-button--flat";
-    }
-    if(IsOutline)
-    {
-        computedClass += " va-button--outline";
-    }
-    if(IsDisabled)
-    {
-        computedClass += " va-button--disabled";
-    }
-    if(IsHoverState)
-    {
-        computedClass += " va-button--hover";
-    }
-    if(IsFocusState)
-    {
-        computedClass += " va-button--focus";
-    }
-    if(!HasTitle)
-    {
-        computedClass += " va-button--without-title";
-    }
-    if(!string.IsNullOrWhiteSpace(Icon))
-    {
-        computedClass += " va-button--with-left-icon";
-    }
-    if(!string.IsNullOrWhiteSpace(IconRight))
-    {
-        computedClass += " va-button--with-right-icon";
-    }
-    if(IsLarge)
-    {
-        computedClass += " va-button--large";
-    }
-    if(IsSmall)
-    {
-        computedClass += " va-button--small";
-    }
-    if(!IsLarge && !IsSmall)
-    {
-        computedClass += " va-button--normal";
-    }
-    if(!string.IsNullOrWhiteSpace(ActiveClass))
-    {
-      computedClass += $" {ActiveClass}";
-    }
-
-    return computedClass.Trim();
-  }
 
   private string GradientStyle()
   {
@@ -214,66 +263,5 @@
       return $"0 0.125rem 0.19rem 0 {ComputedColor.GetBoxShadowColor()}";
     }
     return string.Empty;
-  }
-
-  private string ComputeStyle()
-  {
-    // ComputedStyle = "background-image: linear-gradient(to right, rgb(45, 30, 26), rgb(0, 0, 0)); color: rgb(255, 255, 255); box-shadow: rgba(0, 0, 0, 0.6) 0px 0.125rem 0.19rem 0px;";
-     var computedStyle = new StyleType();
-    if(ExtraStyle != null)
-    {
-      computedStyle = new StyleType(ExtraStyle);
-    }
-
-    if (IsFocusState)
-    {
-      if (IsOutline || IsFlat)
-      {
-        if (string.IsNullOrWhiteSpace(computedStyle.Color))
-        {
-          computedStyle.Color = ComputedColor;
-        }
-        computedStyle.BorderColor = IsOutline ? ComputedColor : string.Empty;
-        computedStyle.Background = ComputedColor.GetFocusColor();
-      }
-      else
-      {
-        computedStyle.BackgroundImage = GradientStyle();
-      }
-    }
-    else if (IsHoverState)
-    {
-      if (IsOutline || IsFlat)
-      {
-        if (string.IsNullOrWhiteSpace(computedStyle.Color))
-        {
-          computedStyle.Color = ComputedColor;
-        }
-        computedStyle.BorderColor = IsOutline ? ComputedColor : string.Empty;
-        computedStyle.Background = ComputedColor.GetHoverColor();
-      }
-      else
-      {
-        computedStyle.BackgroundImage = GradientStyle();
-      }
-    }
-    else
-    {
-      if (string.IsNullOrWhiteSpace(computedStyle.Color))
-      {
-        computedStyle.Color = IsFlat || IsOutline ? ComputedColor : "#ffffff";
-      }
-      computedStyle.BorderColor = IsOutline ? ComputedColor : string.Empty;
-      computedStyle.BackgroundImage = GradientStyle();
-      computedStyle.BoxShadow = ShadowStyle();
-    }
-
-    if (!IsOutline && !IsFlat && (!string.IsNullOrWhiteSpace(VaColorKey) || !ContextTheme.IsGradient))
-    {
-      computedStyle.Background = !string.IsNullOrWhiteSpace(Color) ? ComputedColor : ContextTheme.TryGetValue(VaColorKey, out var vaColor) ? vaColor : Color;
-      computedStyle.BackgroundImage = string.Empty;
-    }
-
-    return computedStyle.ToString();
   }
 }

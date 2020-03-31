@@ -12,6 +12,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Blazor.Build" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Blazor.HttpClient" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" />
+    <PackageReference Include="NodaMoney" />
+    <PackageReference Include="Syncfusion.Blazor" />
+    <PackageReference Include="Syncfusion.Licensing" />
   </ItemGroup>
 
   <ItemGroup>

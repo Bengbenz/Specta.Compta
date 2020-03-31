@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
+    <PackageReference Include="Syncfusion.Blazor" />
   </ItemGroup>
 
 </Project>
