@@ -1,126 +1,112 @@
 @page "/funding-plan"
 @using Beng.Specta.Compta.Core.Entities.Funding
 @using Beng.Specta.Compta.Core.ValueTypes.Funding
-@using NodaMoney
+@using Beng.Specta.Compta.Core.ValueTypes.Ids
 @inject ILogger<FundingPlan> Logger
 @inject HttpClient HttpClient
 
-<VaCard Title="Plan de Financement" ExtraClass="mb-2">
+<VaCard ExtraClass="mb-2">
+    <Header>
+        <VaIcon Name="vuestic-iconset vuestic-iconset-tables" Color="@ThemeStore.InfoKey" />
+        <h5 class="ml-2 mt-0 mb-0" style="color:@(ContextTheme[ThemeStore.InfoKey])">Plan de Financement</h5>
+    </Header>
+    <Actions>
+        <VaButton icon="fa fa-refresh" @onclick="GetFundingItems" />
+    </Actions>
     <BodyContent>
         <VaNotification BadgeText="Error" Color="@ThemeStore.DangerKey" IsVisible="@(ErrorDetails != null)" ExtraClass="mb-4">@ErrorDetails</VaNotification>
-    @if (FundingItems == null)
-    {
-        <h1>Loading...</h1>
-    }
-    else
-    {
-        /**
-        // <GridForeignColumn DataSource="@FundindGroups" TValue="FundingGroup" Field="@nameof(FundingItem.Organization)" HeaderText="Organisation" ForeignKeyValue="Name" Width="150" ></GridForeignColumn>
-
-                    <EditTemplate>
-                        <SfAutoComplete ID="Organization" Value="@((context as FundingItem).Organization)" DataSource="@FundingItems">
-                            <AutoCompleteFieldSettings Value="Organization"></AutoCompleteFieldSettings>
-                        </SfAutoComplete>
-                    </EditTemplate>
-                    <GridAggregateColumns>
-                        <GridAggregateColumn Field=@nameof(FundingItem.AmountHT) Type="AggregateType.Sum" Format="C2">
-                            <FooterTemplate>
+        @if (FundingItems == null)
+        {
+            <h1>Loading...</h1>
+        }
+        else
+        {
+            <SfGrid DataSource="@FundingItems"
+                    Toolbar="@Tools"
+                    ContextMenuItems="@ContextMenuItems"
+                    AllowGrouping="true"
+                    AllowSorting="true"
+                    AllowResizing="true"
+                    ShowColumnChooser="true"
+                    AllowExcelExport="true">
+                <GridEvents TValue="FundingItem" OnActionFailure="@ActionFailure"></GridEvents>
+                <GridGroupSettings Columns="@GroupedColumns"></GridGroupSettings>
+                <GridEditSettings AllowAdding="true"
+                                  AllowEditing="true"
+                                  AllowDeleting="true"
+                                  Mode=EditMode.Dialog
+                                  ShowDeleteConfirmDialog="true"></GridEditSettings>
+                <GridAggregates>
+                    <GridAggregate>
+                        <GridAggregateColumns>
+                            <GridAggregateColumn Field=@nameof(FundingItem.IsComplete) Type="AggregateType.TrueCount">
+                                <GroupCaptionTemplate>
+                                    @{
+                                        var aggregate = (context as AggregateTemplateContext);
+                                        <div>
+                                            <p><b>@aggregate.TrueCount</b> Facturé(s)</p>
+                                        </div>
+                                    }
+                                </GroupCaptionTemplate>
+                            </GridAggregateColumn>
+                        </GridAggregateColumns>
+                    </GridAggregate>
+                </GridAggregates>
+                <GridColumns>
+                    <GridColumn Field=@nameof(FundingItem.Id)
+                                HeaderText="Funding Id"
+                                IsPrimaryKey="true"
+                                Visible="false"
+                                ShowInColumnChooser="false"></GridColumn>
+                    <GridColumn Field="Organization.Name"
+                                HeaderText="Groupe"
+                                EditType="EditType.DropDownEdit"
+                                Width="100"
+                                ShowInColumnChooser="false">
+                    </GridColumn>
+                    <GridColumn Field=@nameof(FundingItem.Title)
+                                HeaderText="Titre"
+                                Width="220"></GridColumn>
+                    <GridColumn Field=@nameof(FundingItem.Amount)
+                                HeaderText="Montant HT"
+                                TextAlign="TextAlign.Right"
+                                Width="120">
+                        <Template>
                             @{
-                                var aggregate = (context as AggregateTemplateContext);
                                 <div>
-                                    <p>Total HT: <b>@aggregate.Sum</b></p>
+                                    <p>@((context as FundingItem).AmountHT)</p>
                                 </div>
                             }
-                            </FooterTemplate>
-                        </GridAggregateColumn>
-                    </GridAggregateColumns>
-        */
-        <SfGrid DataSource="@FundingItems"
-                Toolbar="@Tools"
-                ContextMenuItems="@ContextMenuItems" 
-                AllowGrouping="true"
-                AllowSorting="true"
-                AllowResizing="true"
-                ShowColumnChooser="true"
-                AllowExcelExport="true">
-            <GridEvents TValue="FundingItem" OnActionFailure="@ActionFailure"></GridEvents>
-            <GridGroupSettings Columns="@GroupedColumns"></GridGroupSettings>
-            <GridEditSettings AllowAdding="true" 
-                              AllowEditing="true"
-                              AllowDeleting="true"
-                              Mode=EditMode.Dialog
-                              ShowDeleteConfirmDialog="true"></GridEditSettings>
-            <GridAggregates>
-                <GridAggregate>
-                    <GridAggregateColumns>
-                        <GridAggregateColumn Field=@nameof(FundingItem.IsComplete) Type="AggregateType.TrueCount">
-                            <GroupCaptionTemplate>
-                            @{
-                                var aggregate = (context as AggregateTemplateContext);
-                                <div>
-                                    <p><b>@aggregate.TrueCount</b> Facturé(s)</p>
-                                </div>
-                            }
-                            </GroupCaptionTemplate>
-                        </GridAggregateColumn>
-                    </GridAggregateColumns>
-                </GridAggregate>
-            </GridAggregates>
-            <GridColumns>
-                <GridColumn Field=@nameof(FundingItem.Id)
-                            HeaderText="Funding Id"
-                            IsPrimaryKey="true"
-                            Visible="false"
-                            ShowInColumnChooser="false"></GridColumn>
-                <GridColumn Field="Organization.Name"
-                            HeaderText="Groupe"
-                            EditType="EditType.DropDownEdit"
-                            Width="100"
-                            ShowInColumnChooser="false" >
-                </GridColumn>
-                <GridColumn Field=@nameof(FundingItem.Title)
-                            HeaderText="Titre"
-                            Width="220"></GridColumn>
-                <GridColumn Field=@nameof(FundingItem.AmountHT)
-                            HeaderText="Montant HT"
-                            TextAlign="TextAlign.Right"
-                            Width="120">
-                    <Template>
-                    @{
-                        <div>
-                            <p>@((context as FundingItem).AmountHT)</p>
-                        </div>
-                    }
-                    </Template>
-                    <EditTemplate>
-                        <div>
-                            <SfNumericTextBox ID="AmountHT" Value="@((context as FundingItem).AmountHT.Amount)" TValue="decimal?"></SfNumericTextBox>
-                        </div>
-                    </EditTemplate>
-                </GridColumn>
-                <GridColumn Field=@nameof(FundingItem.BillingDate)
-                            HeaderText="Date de facturation"
-                            EditType="EditType.DatePickerEdit"
-                            Format="d"
-                            Type="ColumnType.Date"
-                            TextAlign="TextAlign.Right"
-                            Width="110"></GridColumn>
-                <GridColumn Field=@nameof(FundingItem.PaymentDate)
-                            HeaderText="Date de paiement"
-                            EditType="EditType.DatePickerEdit" 
-                            Format="d"
-                            Type="ColumnType.Date"
-                            TextAlign="TextAlign.Right"
-                            Width="110"></GridColumn>
-                <GridColumn Field=@nameof(FundingItem.IsComplete)
-                            HeaderText="Facturaction"
-                            EditType="EditType.BooleanEdit"
-                            DisplayAsCheckBox="true"
-                            TextAlign="TextAlign.Center"
-                            Width="80"></GridColumn>
-            </GridColumns>
-        </SfGrid>
-    }
+                        </Template>
+                        <EditTemplate>
+                            <div>
+                                <SfNumericTextBox ID="AmountHT" Value="@((context as FundingItem).AmountHT.Amount)" TValue="decimal?"></SfNumericTextBox>
+                            </div>
+                        </EditTemplate>
+                    </GridColumn>
+                    <GridColumn Field=@nameof(FundingItem.BillingDate)
+                                HeaderText="Date de facturation"
+                                EditType="EditType.DatePickerEdit"
+                                Format="d"
+                                Type="ColumnType.Date"
+                                TextAlign="TextAlign.Right"
+                                Width="110"></GridColumn>
+                    <GridColumn Field=@nameof(FundingItem.PaymentDate)
+                                HeaderText="Date de paiement"
+                                EditType="EditType.DatePickerEdit"
+                                Format="d"
+                                Type="ColumnType.Date"
+                                TextAlign="TextAlign.Right"
+                                Width="110"></GridColumn>
+                    <GridColumn Field=@nameof(FundingItem.IsComplete)
+                                HeaderText="Facturaction"
+                                EditType="EditType.BooleanEdit"
+                                DisplayAsCheckBox="true"
+                                TextAlign="TextAlign.Center"
+                                Width="80"></GridColumn>
+                </GridColumns>
+            </SfGrid>
+        }
     </BodyContent>
 </VaCard>
 
@@ -129,14 +115,13 @@
     [CascadingParameter]
     public ThemeStore ContextTheme { get; set; }
 
+    private string ErrorDetails;
     private IList<FundingItem> FundingItems { get; set; }
     private IList<FundingGroup> FundindGroups { get; set; }
 
-    private string[] Tools = new string[] { "Add", "Edit", "Delete", "Update", "Cancel", "ExcelExport", "ColumnChooser", "Search"  }; //"Add", "Edit", "Delete", "Update", "Delete", "ExcelExport", "ColumnChooser", "Search" 
-    private string[] ContextMenuItems = new string[] { "AutoFit", "AutoFitAll", "SortAscending", "SortDescending","Copy", "Edit", "Delete", "Save", "Cancel" }; //"AutoFit", "AutoFitAll", "SortAscending", "SortDescending","Copy", "Edit", "Delete", "Save", "Cancel","PdfExport", "ExcelExport", "CsvExport", "FirstPage", "PrevPage","LastPage", "NextPage" 
-    private string[] GroupedColumns = new string[] { "Organization.Name"  };
-
-    private string ErrorDetails;
+    private string[] Tools = new string[] { "Add", "Edit", "Delete", "Update", "Cancel", "ExcelExport", "ColumnChooser", "Search" }; //"Add", "Edit", "Delete", "Update", "Delete", "ExcelExport", "ColumnChooser", "Search"
+    private string[] ContextMenuItems = new string[] { "AutoFit", "AutoFitAll", "SortAscending", "SortDescending", "Copy", "Edit", "Delete", "Save", "Cancel" }; //"AutoFit", "AutoFitAll", "SortAscending", "SortDescending","Copy", "Edit", "Delete", "Save", "Cancel","PdfExport", "ExcelExport", "CsvExport", "FirstPage", "PrevPage","LastPage", "NextPage"
+    private string[] GroupedColumns = new string[] { "Organization.Name" };
 
     protected override async Task OnInitializedAsync()
     {
@@ -146,14 +131,13 @@
     public void ActionFailure(Syncfusion.Blazor.Grids.FailureEventArgs args)
     {
         ErrorDetails = $"Exception: {args}";
-        GetFundingItems();
         StateHasChanged();
     }
 
     private void GetFundingItems()
     {
         var titles = new string[]
-        { 
+        {
             "A la signature du contrat",
             "Au titre de la convention de développement",
             "Acceptation scénarios 1 à 26",
@@ -161,9 +145,9 @@
             "50% Signature Contrat",
             "25% Livraison et accepta° eps 27 à 52",
             "Échéance 5 - Score - Validation 37 à 44"
-        };
+            };
         var groups = new string[]
-        { 
+        {
             "TF1",
             "M6",
             "France 2",
@@ -171,19 +155,19 @@
             "UNE MUSIQUE (TF1)",
             "Préventes",
             "CANAL+"
-        };
-        var states = new bool[]{ true, false };
+            };
+        var states = new bool[] { true, false };
         FundindGroups = groups.Select(x => new FundingGroup(x)).ToList();
 
-        int id = 0;
+        long id = 0;
         FundingItems = Enumerable.Range(1, 75).Select(x => new FundingItem(titles[new Random().Next(titles.Length)],
                                                             100000.25m * x,
                                                             DateTime.Now.AddDays(-x),
                                                             DateTime.Now.AddDays(x),
                                                             states[new Random().Next(states.Length)],
                                                             new FundingOrganization(groups[new Random().Next(groups.Length)]))
-                                                            {
-                                                                Id = ++id
-                                                            }).ToList();
+        {
+            Id = ++id
+        }).ToList();
     }
 }

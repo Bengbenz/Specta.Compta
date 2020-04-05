@@ -1,38 +1,45 @@
 <div class="va-card @ExtraClass" style="@ComputedCardStyle" @attributes="@AdditionalAttributes">
-@if(!string.IsNullOrWhiteSpace(Stripe))
-{
+    @if (!string.IsNullOrWhiteSpace(Stripe))
+    {
     <div class="va-card__stripe" style="@ComputedStripeStyle" />
-}
-@if(!string.IsNullOrWhiteSpace(Image))
-{
+    }
+    @if (!string.IsNullOrWhiteSpace(Image))
+    {
     <div class="va-card__image">
-      <img src="@Image" alt="@ImageAlt">
-      @if(IsOverlay)
-      {
-        <div class="va-card__image-overlay" />
-      }
+        <img src="@Image" alt="@ImageAlt">
+        @if (IsOverlay)
+        {
+            <div class="va-card__image-overlay" />
+        }
     </div>
-}
-@if(CanShowHeader)
-{
-    <div class="@ComputedCardHeaderClass" >
-      <div class="va-card__header-inner">
-          <div class="va-card__header-title" style="@ComputedHeaderTitleStyle">
-            <text>@Title</text>
-          </div>
-          <div class="va-card__header-actions">
-            @Actions
-          </div>
-      </div>
+    }
+    @if (CanShowHeader)
+    {
+    <div class="@ComputedCardHeaderClass">
+        <div class="va-card__header-inner">
+            @if (Header != null)
+            {
+                @Header
+            }
+            else
+            {
+            <div class="va-card__header-title" style="@ComputedHeaderTitleStyle">
+                @Title
+            </div>
+            }
+            <div class="va-card__header-actions">
+                @Actions
+            </div>
+        </div>
     </div>
-}
+    }
 
-@if(BodyContent != null)
-{
+    @if (BodyContent != null)
+    {
     <div class="@ComputedCardBodyClass">
-      @BodyContent
+        @BodyContent
     </div>
-}
+    }
 </div>
 
 @code{
@@ -63,7 +70,7 @@
 
     [Parameter]
     public bool IsPaddingV { get; set; } = true;
-    
+
     [Parameter]
     public bool IsPaddingH { get; set; } = true;
 
@@ -77,7 +84,7 @@
     public bool IsTitleOnImage { get; set; }
 
     [Parameter]
-    public RenderFragment TitleContent { get; set; }
+    public RenderFragment Header { get; set; }
 
     [Parameter]
     public RenderFragment BodyContent { get; set; }
@@ -85,8 +92,8 @@
     [Parameter]
     public RenderFragment Actions { get; set; }
 
-    private bool CanShowHeader => !string.IsNullOrWhiteSpace(Title) || Actions != null; // || Header != null;
-    
+    private bool CanShowHeader => !string.IsNullOrWhiteSpace(Title) || Actions != null || Header != null;
+
     private string ComputedColor => (ContextTheme != null) ? ContextTheme.ComputeColor(Color) : ThemeStore.PrimaryKey;
 
     private string ComputedCardBodyClass

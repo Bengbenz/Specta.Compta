@@ -3878,4 +3878,77 @@ body {
   .va-badge--outline {
     background-color: transparent; }
 
+.va-tab {
+  align-items: center;
+  display: inline-flex;
+  flex: 0 1 auto;
+  font-weight: 700;
+  line-height: normal;
+  height: inherit;
+  max-width: 264px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0.4375rem 0.75rem;
+  font-weight: 700;
+  cursor: pointer; }
+  .va-tab:not(.va-tab--active) {
+    opacity: .5; }
+  .va-tab__content {
+    align-items: center;
+    color: inherit;
+    display: flex;
+    flex: 1 1 auto;
+    height: 100%;
+    justify-content: center;
+    max-width: inherit;
+    text-decoration: none;
+    transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+    user-select: none;
+    white-space: normal; }
+  .va-tab .va-tab--disabled {
+    pointer-events: none;
+    cursor: inherit; }
+    .va-tab .va-tab--disabled .va-tab__container {
+      cursor: default;
+      opacity: 0.4; }
+
+.va-tabs {
+  position: relative; }
+  .va-tabs--right {
+    display: flex;
+    justify-content: flex-end; }
+  .va-tabs .va-tabs__wrapper {
+    overflow-x: auto;
+    overflow-y: hidden;
+    contain: content;
+    display: flex; }
+    .va-tabs--mobile-scroll .va-tabs .va-tabs__wrapper {
+      padding-bottom: 0.5rem; }
+  .va-tabs .va-tabs__container {
+    flex: 1 0 auto;
+    display: flex;
+    height: 2.5rem;
+    list-style-type: none;
+    transition: transform 0.6s cubic-bezier(0.86, 0, 0.07, 1);
+    white-space: nowrap;
+    position: relative; }
+    .va-tabs .va-tabs__container--grow .va-tab {
+      flex: 1 0 auto;
+      max-width: none; }
+    .va-tabs .va-tabs__container--center > .va-tab:first-child, .va-tabs .va-tabs__container--right > .va-tab:first-child {
+      margin-left: auto; }
+    .va-tabs .va-tabs__container--center .va-tabs__slider-wrapper + .va-tab, .va-tabs .va-tabs__container--right .va-tabs__slider-wrapper + .va-tab {
+      margin-left: auto; }
+    .va-tabs .va-tabs__container--center > .va-tab:last-child {
+      margin-right: auto; }
+  .va-tabs .va-tabs__slider-wrapper {
+    bottom: 0;
+    margin: 0 !important;
+    position: absolute;
+    z-index: 4000;
+    transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1); }
+    .va-tabs .va-tabs__slider-wrapper .va-tabs__slider {
+      width: 100%;
+      height: 0.125rem; }
+
 /*# sourceMappingURL=custom.css.map */

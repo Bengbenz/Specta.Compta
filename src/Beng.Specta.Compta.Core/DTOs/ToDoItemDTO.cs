@@ -4,9 +4,8 @@ using Beng.Specta.Compta.Core.Entities;
 namespace Beng.Specta.Compta.Core.DTOs
 {
     // Note: doesn't expose events or behavior
-    public class ToDoItemDTO
+    public class ToDoItemDTO : BaseDTO
     {
-        public int Id { get; set; }
         [Required]
         public string Title { get; set; }
         public string Description { get; set; }
