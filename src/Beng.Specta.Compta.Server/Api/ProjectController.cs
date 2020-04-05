@@ -25,39 +25,40 @@ namespace Beng.Specta.Compta.Server.Api
         public IActionResult List()
         {
             var items = _repository.List<Project>()
-                            .Select(ToDoItemDTO.FromToDoItem);
+                            .Select(x => x.ToDTO());
             return Ok(items);
         }
 
         // GET: api/Projects
-        [HttpGet("{id:int}")]
-        public IActionResult GetById(int id)
+        [HttpGet("{id:long}")]
+        public IActionResult GetById(long id)
         {
-            var item = ToDoItemDTO.FromToDoItem(_repository.GetById<Project>(id));
+            var item = _repository.GetById<Project>(id)?.ToDTO();
             return Ok(item);
         }
 
         // POST: api/Projects
         [HttpPost]
-        public IActionResult Post([FromBody] ToDoItemDTO item)
+        public IActionResult Post([FromBody] ProjectDTO item)
         {
-            var todoItem = new Project()
-            {
-                Title = item.Title,
-                Description = item.Description
-            };
-            _repository.Add(todoItem);
-            return Ok(ToDoItemDTO.FromToDoItem(todoItem));
+            var projectItem = new Project(item.Code,
+                                          item.Name,
+                                          item.Description,
+                                          item.StartDate,
+                                          item.Duration);
+            _repository.Add(projectItem);
+            return Ok(projectItem.ToDTO());
         }
 
-        [HttpPatch("{id:int}/complete")]
-        public IActionResult Complete(int id)
+        /*
+        [HttpPatch("{id:long}/complete")]
+        public IActionResult Complete(long id)
         {
-            var toDoItem = _repository.GetById<ToDoItem>(id);
-            toDoItem.MarkComplete();
-            _repository.Update(toDoItem);
+            var projectItem = _repository.GetById<Project>(id);
+            projectItem.MarkComplete();
+            _repository.Update(projectItem);
 
-            return Ok(ToDoItemDTO.FromToDoItem(toDoItem));
-        }
+            return Ok(projectItem.ToDTO());
+        }*/
     }
 }

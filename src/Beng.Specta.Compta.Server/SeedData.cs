@@ -29,27 +29,6 @@ namespace Beng.Specta.Compta.Server
 
         public static void Initialize(AppDbContext dbContext)
         {
-            PopulateTodoItemsData(dbContext);
-        }
-
-        public static void InitDefaultTenantInfo(TenantStoreDbContext dbContext)
-        {
-            foreach (var item in dbContext.TenantInfo)
-            {
-                dbContext.Remove(item);
-            }
-            dbContext.SaveChanges();
-            // var scopeServices = serviceProvider.CreateScope().ServiceProvider;
-            // IMultiTenantStore store = scopeServices.GetRequiredService<IMultiTenantStore>();
-            var defaultTenant = new TenantInfo("default-tenant", "defaultTenant", "Default Tenant", "Data Source=BengSpectaCompta.sqlite", null);
-            dbContext.TenantInfo.Add(defaultTenant);
-            //store.TryAddAsync(defaultTenant).Wait();
-
-            dbContext.SaveChanges();
-        }
-
-        private static void PopulateTodoItemsData(AppDbContext dbContext)
-        {
             foreach (var item in dbContext.ToDoItems)
             {
                 dbContext.Remove(item);
@@ -62,6 +41,24 @@ namespace Beng.Specta.Compta.Server
             dbContext.SaveChanges();
         }
 
-        
+        public static void InitDefaultTenantInfo(TenantStoreDbContext dbContext, IServiceProvider serviceProvider)
+        {
+            foreach (var item in dbContext.TenantInfo)
+            {
+                dbContext.Remove(item);
+            }
+            dbContext.SaveChanges();
+
+            IMultiTenantStore store = serviceProvider.GetRequiredService<IMultiTenantStore>();
+            var defaultTenant = new TenantInfo("finprod",
+                                               "finprod",
+                                               "Fin' Prod",
+                                               "Data Source=FinProd.sqlite",
+                                               null);
+            //dbContext.TenantInfo.Add(defaultTenant);
+            store.TryAddAsync(defaultTenant).Wait();
+
+            dbContext.SaveChanges();
+        } 
     }
 }

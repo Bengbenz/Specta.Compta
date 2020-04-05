@@ -13,7 +13,8 @@ namespace Beng.Specta.Compta.Server
         {
             IHost host = CreateHostBuilder(args).Build();
 
-            // Initialize the database
+            // Initialize the tenant database
+            InitDefaultTenant(host);
             InitializeDatabase(host);
 
             host.Run();
@@ -42,7 +43,28 @@ namespace Beng.Specta.Compta.Server
                 catch (Exception ex)
                 {
                     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred seeding the DB.");
+                    logger.LogError(ex, "An error occurred seeding the App DB.");
+                }
+            }
+        }
+
+        private static void InitDefaultTenant(IHost host)
+        {
+            var scopeFactory = host.Services.GetRequiredService<IServiceScopeFactory>();
+            using(var scope = scopeFactory.CreateScope())
+            {
+                try
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<TenantStoreDbContext>();
+                    if(dbContext.Database.EnsureCreated())
+                    {
+                        SeedData.InitDefaultTenantInfo(dbContext, scope.ServiceProvider);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred on adding the default tenannt in the DB.");
                 }
             }
         }

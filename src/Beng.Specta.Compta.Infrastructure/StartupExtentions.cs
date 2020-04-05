@@ -42,16 +42,16 @@ namespace Beng.Specta.Compta.Infrastructure
 		{
 			return builder
 						  // For example, a request to "https://www.example.com/contoso" would use "contoso" as the identifier when resolving the tenant.
-						  .WithBasePathStrategy()
+						  //.WithBasePathStrategy()
 						  // For example, a request to "https://www.example.com/contoso/home/" and a route configuration of {__tenant__}/{controller=Home}/{action=Index} would use "contoso" as the identifier when resolving the tenant.
 						  //.WithRouteStrategy(); 
 						  // A template pattern can be specified with the overloaded version. The default pattern is "__tenant__.*"
 						  // For example, a request to "https://contoso.example.com/abc123" would use "contoso" as the identifier when resolving the tenant.
-						  //.WithHostStrategy()
+						  .WithHostStrategy()
 						  // If the called with e.g. "not_a_tenant.mysite.com" and the identifer "not_a_tenant"
 						  // is not in the store, then the identifier "defaultTenant" will be used as a fallback.
 						  // Make sure to include a multitenant store !
-						  .WithFallbackStrategy("defaultTenant");
+						  .WithFallbackStrategy("finprod");
 						  // .WithRemoteAuthentication() for per-tenant remote authentification
 		}
 	}

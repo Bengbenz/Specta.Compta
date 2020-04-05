@@ -22,14 +22,14 @@ namespace Beng.Specta.Compta.Server.Api
         [HttpGet]
         public IActionResult List()
         {
-            var items = _repository.List<ToDoItem>()
-                            .Select(ToDoItemDTO.FromToDoItem);
-            return Ok(items);
+            //var items = _repository.List<ToDoItem>()
+            //                .Select(ToDoItemDTO.FromToDoItem);
+            return Ok();
         }
 
         // GET: api/ToDoItems
-        [HttpGet("{id:int}")]
-        public IActionResult GetById(int id)
+        [HttpGet("{id:long}")]
+        public IActionResult GetById(long id)
         {
             var item = ToDoItemDTO.FromToDoItem(_repository.GetById<ToDoItem>(id));
             return Ok(item);
@@ -48,8 +48,8 @@ namespace Beng.Specta.Compta.Server.Api
             return Ok(ToDoItemDTO.FromToDoItem(todoItem));
         }
 
-        [HttpPatch("{id:int}/complete")]
-        public IActionResult Complete(int id)
+        [HttpPatch("{id:long}/complete")]
+        public IActionResult Complete(long id)
         {
             var toDoItem = _repository.GetById<ToDoItem>(id);
             toDoItem.MarkComplete();

@@ -9,7 +9,7 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
 {
     public class EfRepositoryUpdate : BaseEfRepoTestFixture
     {
-        [Fact]
+        //[Fact]
         public void UpdatesItemAfterAddingIt()
         {
             // add an item

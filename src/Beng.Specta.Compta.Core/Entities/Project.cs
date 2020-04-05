@@ -15,9 +15,9 @@ namespace Beng.Specta.Compta.Core.Entities
         public Project(
             string code,
             string name,
+            string description,
             DateTime startDate,
-            int duration,
-            string description="")
+            int duration)
         {
             Code = code;
             Name = name;

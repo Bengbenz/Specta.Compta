@@ -46,13 +46,13 @@ namespace Beng.Specta.Compta.FunctionalTests
                     var logger = scopedServices
                         .GetRequiredService<ILogger<CustomWebApplicationFactory<TStartup>>>();
 
-                    // Ensure the database is created.
-                    db.Database.EnsureCreated();
-
                     try
                     {
                         // Seed the database with test data.
-                        SeedData.Initialize(db);
+                        if(db.Database.EnsureCreated())
+                        {
+                            SeedData.Initialize(db);
+                        }
                     }
                     catch (Exception ex)
                     {

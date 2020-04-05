@@ -46,8 +46,7 @@ namespace Beng.Specta.Compta.Server
             });
 
             //Tenants Store
-            services.AddDbContext<TenantStoreDbContext>(options =>
-                options.UseSqlite(Configuration.GetConnectionString("TenantConnection")));
+            services.AddDbContext<TenantStoreDbContext>();
 
             // Add Beng.Specta.Compta app service from infrastructure
             services.AddDbContext()
@@ -104,28 +103,7 @@ namespace Beng.Specta.Compta.Server
                 endpoints.MapControllers();
                 endpoints.MapFallbackToClientSideBlazor<Client.Startup>("index.html");
             });
-
-            // Seed the database the multitenant store will need.
-            InitDefaultTenant(app.ApplicationServices);
 		}
-
-        private void InitDefaultTenant(IServiceProvider serviceProvider)
-        {
-            var scopeServices = serviceProvider.CreateScope().ServiceProvider;
-            try
-            {
-                var dbContext = scopeServices.GetRequiredService<TenantStoreDbContext>();
-                if(dbContext.Database.EnsureCreated())
-                {
-                    SeedData.InitDefaultTenantInfo(dbContext);
-                }
-            }
-            catch (Exception ex)
-            {
-                var logger = scopeServices.GetRequiredService<ILogger<Startup>>();
-                logger.LogError(ex, "An error occurred on adding the default tenannt in the DB.");
-            }
-        }
 
         public class ActivityIdHelper
         {
@@ -138,7 +116,7 @@ namespace Beng.Specta.Compta.Server
 
             public override string ToString() => _activityId;
         }
-
+        
         public class WebRequestInfo
         {
             private readonly string _message;

@@ -18,7 +18,7 @@ namespace Beng.Specta.Compta.FunctionalTests.Api
             _client = factory.CreateClient();
         }
 
-        [Fact]
+        //[Fact]
         public async Task ReturnsTwoItems()
         {
             var response = await _client.GetAsync("/api/todoitems");

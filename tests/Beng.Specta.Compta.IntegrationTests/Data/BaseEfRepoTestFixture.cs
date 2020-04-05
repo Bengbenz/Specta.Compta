@@ -1,7 +1,10 @@
 ﻿using Beng.Specta.Compta.Infrastructure.Data;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+
 using Moq;
 
 namespace Beng.Specta.Compta.IntegrationTests.Data
@@ -31,9 +34,10 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
         {
             var options = CreateNewContextOptions();
             // var mockDispatcher = new Mock<IDomainEventDispatcher>();
+            var mockConfig = new Mock<IConfiguration>();
 
             //_dbContext = new AppDbContext(options, mockDispatcher.Object);
-            _dbContext = new AppDbContext(null, options);
+            _dbContext = new AppDbContext(null, options, mockConfig.Object);
             return new EfRepository(_dbContext);
         }
 

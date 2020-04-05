@@ -7,21 +7,19 @@ namespace Beng.Specta.Compta.Infrastructure.Data
 {
     public class TenantStoreDbContext : EFCoreStoreDbContext
     {
-        private IConfiguration Configuration { get; }
+        private readonly IConfiguration _configuration;
 
         public TenantStoreDbContext(
             DbContextOptions<TenantStoreDbContext> options,
             IConfiguration configuration) : base(options)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
-/*
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // optionsBuilder.UseSqlite(Configuration.GetConnectionString("TenantConnection"));
-            optionsBuilder.UseSqlite("Data Source=TenantStoreDb.sqlite"); // will be created in web project root
+            optionsBuilder.UseSqlite(_configuration.GetConnectionString("TenantConnection"));// will be created in server project root
             base.OnConfiguring(optionsBuilder);
-        }*/
+        }
     }
 }

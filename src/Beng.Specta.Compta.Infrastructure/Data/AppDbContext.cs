@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 using Ardalis.EFCore.Extensions;
 
@@ -16,6 +17,7 @@ namespace Beng.Specta.Compta.Infrastructure.Data {
     public class AppDbContext : MultiTenantDbContext
     {
         private readonly IDomainEventDispatcher _dispatcher;
+        private readonly IConfiguration _configuration;
 
         public AppDbContext(TenantInfo tenantInfo) : base(tenantInfo)
         {
@@ -23,11 +25,13 @@ namespace Beng.Specta.Compta.Infrastructure.Data {
 
         public AppDbContext(
             TenantInfo tenantInfo,
-            DbContextOptions<AppDbContext> options
+            DbContextOptions<AppDbContext> options,
+            IConfiguration configuration
             //IDomainEventDispatcher dispatcher
             ) : base(tenantInfo, options)
         {
             //_dispatcher = dispatcher;
+            _configuration = configuration;
         }
 
         public DbSet<ToDoItem> ToDoItems { get; set; }
@@ -35,7 +39,8 @@ namespace Beng.Specta.Compta.Infrastructure.Data {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // Use Sqlite, but could be MsSql, MySql, Postgre, InMemory etc...
-            optionsBuilder.UseSqlite(ConnectionString); 
+            // Use ConnectionString to have Per-tenant data-base
+            optionsBuilder.UseSqlite(_configuration?.GetConnectionString("AppConnection")); 
             base.OnConfiguring(optionsBuilder);
         }
 
