@@ -3,39 +3,70 @@
 # Add steps that run tests, create a NuGet package, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
-trigger:
-- master
+pr:
+  branches:
+    include:
+      - master
+      - releases/*
+      - feature/*
+      - bugfix/*
+      - refactoring/*
+      - test/*
+    exclude:
+      - doc/*
+  paths:
+    exclude:
+      - doc/*
+      - '**/*.md'
 
 pool:
-  vmImage: 'Ubuntu-16.04'
+  vmImage: 'ubuntu-latest'
 
 variables:
   buildConfiguration: 'Release'
 
 steps:
 - task: UseDotNet@2
-  displayName: 'Use dotnet sdk 3.x'
+  displayName: 'Install and Use .NET Core SDK 3.x'
   inputs:
     version: 3.x
 
+# do this before your build tasks
+- task: DotNetCoreCLI@2
+  displayName: Restore
+  inputs:
+    command: restore
+    projects: '**/*.csproj'
+    #feedsToUse: config
+    #nugetConfigPath: NuGet.config    # Relative to root of the repository
+    #externalFeedCredentials: <Name of the NuGet service connection>
+
 - script: dotnet build --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
-
-# Run all tests with "/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura" to generate the code coverage file
+# ou
 - task: DotNetCoreCLI@2
-  displayName: dotnet test
+  displayName: 'Build with config $(buildConfiguration)'
+  inputs:
+    # command: build, by default DotNetCoreCLI command is build. Not need to mention it.
+    projects: '**/*.csproj'
+    arguments: '--configuration $(BuildConfiguration)'
+
+# Run all tests with (Tonerdo/Coverlet) "/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura" to generate the code coverage file
+- task: DotNetCoreCLI@2
+  displayName: 'Run Test and collect code coverage data'
   inputs:
     command: test
     arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
     projects: 'tests/**/*.csproj'
     nobuild: true
 
+# Palmedia.ReportGenerator task
 - task: Palmmedia.reportgenerator.reportgenerator-build-release-task.reportgenerator@4
-  displayName: ReportGenerator
+  displayName: 'Code coverage ReportGenerator'
   inputs:
     reports: '$(Build.SourcesDirectory)/tests/**/coverage.cobertura.xml'
     targetdir: '$(Build.SourcesDirectory)/CodeCoverage'
-    reporttypes: 'HtmlInline_AzurePipelines;Cobertura;Badges'
+    reporttypes: 'HtmlInline_AzurePipelines;Cobertura;Badges' #TeamCitySummary, HtmlChart
     assemblyfilters: '-xunit*'
 
 # Publish the code coverage result (summary and web site)
@@ -47,3 +78,19 @@ steps:
     codeCoverageTool: Cobertura
     summaryFileLocation: '$(Build.SourcesDirectory)/CodeCoverage/Cobertura.xml'
     reportDirectory: '$(Build.SourcesDirectory)/CodeCoverage'
+
+# Publish App output
+- task: DotNetCoreCLI@2
+  displayName: 'Publish App'
+  inputs:
+    command: publish
+    publishWebProjects: True
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: True
+
+# this code takes all the files in $(Build.ArtifactStagingDirectory) and uploads them as an artifact of your build.
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifacts'
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+    artifactName: 'finprod-artifacts'

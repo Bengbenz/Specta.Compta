@@ -74,26 +74,33 @@
   private IList<ModuleInfoVm> _menuItems => new List<ModuleInfoVm>
   {
     new ModuleInfoVm("1", "Dashboard", new MetaInfoVm($"/", "vuestic-iconset vuestic-iconset-dashboard")),
-    new ModuleInfoVm("2", "Projets", new MetaInfoVm($"/projects", "vuestic-iconset vuestic-iconset-statistics"))
+    new ModuleInfoVm("2", "Projet", new MetaInfoVm($"/projects", "vuestic-iconset vuestic-iconset-statistics"))
     {
       Children = new List<ModuleInfoVm>
       {
-        new ModuleInfoVm("3", "Exercices comptables", new MetaInfoVm($"projects-calendar")),
-        new ModuleInfoVm("4", "Statistics", new MetaInfoVm($"projects/progressbar")),
+        new ModuleInfoVm("3", "Calendrier projets", new MetaInfoVm($"projects-calendar")),
+        new ModuleInfoVm("4", "Projets", new MetaInfoVm($"projects/progressbar")),
       }
     },
     new ModuleInfoVm("4", "Budget", new MetaInfoVm($"/budget", "vuestic-iconset vuestic-iconset-forms")),
-    new ModuleInfoVm("5", "Financement", new MetaInfoVm($"/funding", "vuestic-iconset vuestic-iconset-tables"))
+    new ModuleInfoVm("5", "Finance", new MetaInfoVm($"/funding", "vuestic-iconset vuestic-iconset-tables"))
     {
       Children = new List<ModuleInfoVm>
       {
         new ModuleInfoVm("6", "Plan de Financement", new MetaInfoVm($"/funding-plan")),
         new ModuleInfoVm("7", "Echéanciers", new MetaInfoVm($"/funding-steps")),
-        new ModuleInfoVm("11", "Facturation", new MetaInfoVm("/funding-billing"))
+        new ModuleInfoVm("7", "Groupe de financiers", new MetaInfoVm($"/funding-groups"))
+      }
+    },
+    new ModuleInfoVm("9", "Comptabilité", new MetaInfoVm($"/accounting", "vuestic-iconset vuestic-iconset-maps"))
+    {
+      Children = new List<ModuleInfoVm>
+      {
+        new ModuleInfoVm("6", "Plan Analytique", new MetaInfoVm($"/accounting-plan")),
+        new ModuleInfoVm("7", "Groupe Analytique", new MetaInfoVm($"/accounting-steps"))
       }
     },
     new ModuleInfoVm("8", "Trésorerie", new MetaInfoVm($"/treasury", "vuestic-iconset vuestic-iconset-ui-elements")),
-    new ModuleInfoVm("9", "Intégration comptable", new MetaInfoVm($"/accounting", "vuestic-iconset vuestic-iconset-maps")),
     new ModuleInfoVm("10", "Utilisateurs", new MetaInfoVm($"/pages", "vuestic-iconset vuestic-iconset-files")),
   };
 

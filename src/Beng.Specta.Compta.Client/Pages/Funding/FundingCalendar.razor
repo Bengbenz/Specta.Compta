@@ -1,9 +1,102 @@
-@page "/projects-steps"
+@page "/funding-steps"
 @using Beng.Specta.Compta.Core.Entities.Funding
+@using Beng.Specta.Compta.Core.ValueTypes.Funding
 @inject ILogger<FundingCalendar> Logger
 @inject HttpClient HttpClient
 
-Les Projects
+<VaCard ExtraClass="mb-2">
+    <Header>
+        <VaIcon Name="vuestic-iconset vuestic-iconset-tables" Color="@ThemeStore.InfoKey" />
+        <h5 class="ml-2 mt-0 mb-0" style="color:@(ContextTheme[ThemeStore.InfoKey])">Calendrier de Financement</h5>
+    </Header>
+    <Actions>
+        <VaButton icon="fa fa-refresh" @onclick="GetFundingItems" />
+    </Actions>
+    <BodyContent>
+        <VaNotification BadgeText="Error" Color="@ThemeStore.DangerKey" IsVisible="@(ErrorDetails != null)" ExtraClass="mb-4">@ErrorDetails</VaNotification>
+        @if (FundingItems == null)
+        {
+            <h1>Loading...</h1>
+        }
+        else
+        {
+            <SfTab OverflowMode="OverflowMode.Popup">
+                <TabItems>
+                    <TabItem>
+                        <ChildContent>
+                            <TabHeader Text="Plan"></TabHeader>
+                        </ChildContent>
+                        <ContentTemplate>
+                            <div>HyperText Markup Language, commonly referred to as HTML, is the standard markup language used to create web pages. Along with CSS, and JavaScript, HTML is a cornerstone technology, used by most websites to create visually engaging web pages, user interfaces for web applications, and user interfaces for many mobile applications.[1] Web browsers can read HTML files and render them into visible or audible web pages. HTML describes the structure of a website semantically along with cues for presentation, making it a markup language, rather than a programming language.</div>
+                        </ContentTemplate>
+                    </TabItem>
+                    <TabItem>
+                        <ChildContent>
+                            <TabHeader Text="Calendrier"></TabHeader>
+                        </ChildContent>
+                        <ContentTemplate>
+                            Bonjour
+                        </ContentTemplate>
+                    </TabItem>
+                </TabItems>
+            </SfTab>
+        }
+    </BodyContent>
+</VaCard>
+
 @code{
 
+    [CascadingParameter]
+    public ThemeStore ContextTheme { get; set; }
+
+    private string ErrorDetails;
+    private IList<FundingItem> FundingItems { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        GetFundingItems();
+    }
+
+    public void ActionFailure(Syncfusion.Blazor.Grids.FailureEventArgs args)
+    {
+        ErrorDetails = $"Exception: {args}";
+        StateHasChanged();
+    }
+
+    private void GetFundingItems()
+    {
+        var titles = new string[]
+        {
+            "A la signature du contrat",
+            "Au titre de la convention de développement",
+            "Acceptation scénarios 1 à 26",
+            "Acceptation des storyboards 1 à 26",
+            "50% Signature Contrat",
+            "25% Livraison et accepta° eps 27 à 52",
+            "Échéance 5 - Score - Validation 37 à 44"
+                };
+        var groups = new string[]
+        {
+            "TF1",
+            "M6",
+            "France 2",
+            "CREDIT IMPOT ",
+            "UNE MUSIQUE (TF1)",
+            "Préventes",
+            "CANAL+"
+                };
+        var states = new bool[] { true, false };
+        //FundindGroups = groups.Select(x => new FundingGroup(x)).ToList();
+
+        long id = 0;
+        FundingItems = Enumerable.Range(1, 75).Select(x => new FundingItem(titles[new Random().Next(titles.Length)],
+                                                            100000.25m * x,
+                                                            DateTime.Now.AddDays(-x),
+                                                            DateTime.Now.AddDays(x),
+                                                            states[new Random().Next(states.Length)],
+                                                            new FundingOrganization(groups[new Random().Next(groups.Length)]))
+        {
+            Id = ++id
+        }).ToList();
+    }
 }
