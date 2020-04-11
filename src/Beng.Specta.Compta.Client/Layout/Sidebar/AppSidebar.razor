@@ -74,34 +74,34 @@
   private IList<ModuleInfoVm> _menuItems => new List<ModuleInfoVm>
   {
     new ModuleInfoVm("1", "Dashboard", new MetaInfoVm($"/", "vuestic-iconset vuestic-iconset-dashboard")),
-    new ModuleInfoVm("2", "Projet", new MetaInfoVm($"/projects", "vuestic-iconset vuestic-iconset-statistics"))
-    {
-      Children = new List<ModuleInfoVm>
-      {
-        new ModuleInfoVm("3", "Calendrier projets", new MetaInfoVm($"projects-calendar")),
-        new ModuleInfoVm("4", "Projets", new MetaInfoVm($"projects/progressbar")),
-      }
-    },
+    new ModuleInfoVm("2", "Projets", new MetaInfoVm($"/projects", "vuestic-iconset vuestic-iconset-statistics")),
     new ModuleInfoVm("4", "Budget", new MetaInfoVm($"/budget", "vuestic-iconset vuestic-iconset-forms")),
-    new ModuleInfoVm("5", "Finance", new MetaInfoVm($"/funding", "vuestic-iconset vuestic-iconset-tables"))
+    new ModuleInfoVm("5", "Finances", new MetaInfoVm($"/funding", "vuestic-iconset vuestic-iconset-tables"))
     {
       Children = new List<ModuleInfoVm>
       {
         new ModuleInfoVm("6", "Plan de Financement", new MetaInfoVm($"/funding-plan")),
-        new ModuleInfoVm("7", "Echéanciers", new MetaInfoVm($"/funding-steps")),
         new ModuleInfoVm("7", "Contrats", new MetaInfoVm($"/funding-contracts"))
       }
     },
-    new ModuleInfoVm("9", "Comptabilité", new MetaInfoVm($"/accounting", "vuestic-iconset vuestic-iconset-maps"))
+    new ModuleInfoVm("8", "Comptabilité", new MetaInfoVm($"/accounting", "vuestic-iconset vuestic-iconset-files"))
     {
       Children = new List<ModuleInfoVm>
       {
-        new ModuleInfoVm("6", "Plan Analytique", new MetaInfoVm($"/accounting-plan")),
-        new ModuleInfoVm("7", "Groupe Analytique", new MetaInfoVm($"/accounting-steps"))
+        new ModuleInfoVm("9", "Intégration", new MetaInfoVm($"/accounting-integration")),
+        new ModuleInfoVm("10", "Plan Analytique", new MetaInfoVm($"/accounting-analytic-plan"))
       }
     },
-    new ModuleInfoVm("8", "Trésorerie", new MetaInfoVm($"/treasury", "vuestic-iconset vuestic-iconset-ui-elements")),
-    new ModuleInfoVm("10", "Utilisateurs", new MetaInfoVm($"/pages", "vuestic-iconset vuestic-iconset-files")),
+    new ModuleInfoVm("12", "Trésorerie", new MetaInfoVm($"/treasury", "vuestic-iconset vuestic-iconset-ui-elements")),
+    new ModuleInfoVm("13", "Administration", new MetaInfoVm($"/settings", "vuestic-iconset vuestic-iconset-settings"))
+    {
+      Children = new List<ModuleInfoVm>
+      {
+        new ModuleInfoVm("14", "Utilisateurs", new MetaInfoVm($"/settings-users")),
+        new ModuleInfoVm("15", "Rôles", new MetaInfoVm($"/settings-roles")),
+        new ModuleInfoVm("16", "Permissions", new MetaInfoVm($"/settings-permissions"))
+      }
+    }
   };
 
   protected override async Task OnInitializedAsync()

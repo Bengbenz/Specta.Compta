@@ -1,0 +1,85 @@
+<div class="row row-equal">
+    <div class="flex xl6 xs12">
+        <div class="row">
+        @foreach(var idx in InfoTitles)
+        {
+            <div class="flex xs12 sm4"
+                @key="idx" >
+                <VaCard class="mb-4" Color="@ThemeStore.InfoKey">
+                    <p class="display-2 mb-0" style="color: white;">{{ info.value }}</p>
+                    <p>{{$t('dashboard.info.' + info.text)}}</p>
+                </VaCard>
+            </div>
+        }
+        </div>
+
+        <div class="row">
+            <div class="flex xs12 md6">
+                <VaCard>
+                    <p class="display-2 mb-1" style="color: @ContextTheme[ThemeStore.PrimaryKey]">291</p>
+                    <p class="no-wrap">{{$t('dashboard.info.completedPullRequests')}}</p>
+                </VaCard>
+            </div>
+            <div class="flex xs12 md6">
+                <VaCard>
+                <div class="row row-separated">
+                    <div class="flex xs4">
+                        <p class="display-2 mb-1 text--center" style="color: @ContextTheme[ThemeStore.PrimaryKey]">3</p>
+                        <p class="text--center mb-1">{{$t('dashboard.info.users')}}</p>
+                    </div>
+                    <div class="flex xs4">
+                        <p class="display-2 mb-1 text--center" style="color: @ContextTheme[ThemeStore.InfoKey]">24</p>
+                        <p class="text--center no-wrap mb-1">{{$t('dashboard.info.points')}}</p>
+                    </div>
+                    <div class="flex xs4">
+                        <p class="display-2 mb-1 text--center" style="color: @ContextTheme[ThemeStore.WarningKey]">91</p>
+                        <p class="text--center mb-1">{{$t('dashboard.info.units')}}</p>
+                    </div>
+                </div>
+                </VaCard>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex xs12 md6 xl3">
+        <VaCard Stripe="@ThemeStore.InfoKey"
+                Title="$t('dashboard.info.componentRichTheme')" >
+            Buying the right telescope to take your love of astronomy to the
+            next level is a big next step.
+
+            <div class="row mt-3">
+                <VaButton color="primary" target="_blank" href="https://github.com/epicmaxco/vuestic-ui">
+                {{$t('dashboard.info.viewLibrary')}}
+                </VaButton>
+            </div>
+        </VaCard>
+    </div>
+
+    <div class="flex xs12 md6 xl3">
+        <VaCard >
+            <Header>
+            </Header>
+        </VaCard>
+    </div>
+</div>
+
+@code
+{
+
+    [CascadingParameter]
+    public ThemeStore ContextTheme { get; set; }
+    
+    private string[] InfoTitles { get; } =
+    {
+        "pexels-photo.jpg",
+        "pexels-photo-39811.jpeg",
+        "pexels-photo-235615.jpeg",
+        "pexels-photo-247431.jpeg",
+        "pexels-photo-247478.jpeg",
+        "pexels-photo-257840.jpeg",
+        "pexels-photo-459059.jpeg",
+        "fall-autumn-red-season.jpg",
+        "woodland-road-falling-leaf-natural-38537.jpeg"
+    };
+
+}
