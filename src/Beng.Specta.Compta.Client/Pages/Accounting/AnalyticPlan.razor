@@ -1,0 +1,38 @@
+@page "/accounting-analytic-plan"
+@using Beng.Specta.Compta.Core.DTOs
+@inject ILogger<AnalyticPlan> Logger
+@inject HttpClient HttpClient
+
+<GenericPage Title="Plan analytique"
+             Loader="@LoadItems"
+             Icon="vuestic-iconset vuestic-iconset-files"
+             NewText="Ajouter une entrée">
+    <Loading>
+        <h1>Loading...</h1>
+    </Loading>
+    <Empty>
+        Vous n'avez aucune entrée dans votre plan analytique.
+    </Empty>
+    <Item Context="item">
+        <div class="col">
+            <h5>@item.Name</h5>
+            Code:
+            <strong>@item.Code</strong>;
+            Date de début:
+            <strong>£@item.StartDate</strong>
+        </div>
+        <div class="col">
+            Durée: <strong>@item.Duration</strong>
+        </div>
+    </Item>
+</GenericPage>
+
+@code{
+    
+    protected async Task<IList<ProjectDTO>> LoadItems()
+    {
+        //await Task.Delay(3000);
+        
+        return new List<ProjectDTO>();//GetProjects();
+    }
+}

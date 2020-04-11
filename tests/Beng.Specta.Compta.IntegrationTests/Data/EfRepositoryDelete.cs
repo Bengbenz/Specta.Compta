@@ -7,7 +7,7 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
 {
     public class EfRepositoryDelete : BaseEfRepoTestFixture
     {
-        //[Fact]
+        [Fact(Skip = "To fix after")]
         public void DeletesItemAfterAddingIt()
         {
             // add an item

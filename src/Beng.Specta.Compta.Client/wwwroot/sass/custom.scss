@@ -984,7 +984,6 @@ body {
 }
 
 // notification
-// Notifications
 $va-notification-margin-y: 0.25rem;
 $va-notification-padding-x: 0.5rem;
 $va-notification-padding-y: 0.75rem;
@@ -1181,4 +1180,48 @@ $va-close-icon-font-size: 1.5rem;
             height: 0.125rem;
         }
     }
+}
+
+// dashboard
+.row-equal .flex {
+    .va-card {
+      height: 100%;
+    }
+  }
+
+.dashboard {
+  .va-card {
+    margin-bottom: 0 !important;
+  }
+}
+
+.chart {
+    height: 400px;
+  }
+
+// dashboard info block
+.row-separated {
+    .flex + .flex {
+      border-left: 1px solid #e3eaeb;
+    }
+
+  @include media-breakpoint-down(xs) {
+    p:not(.display-2) {
+      font-size: 0.875rem;
+    }
+  }
+}
+
+.dashboard {
+  .va-card__header--over {
+    @include media-breakpoint-up(md) {
+      padding-top: 0 !important;
+    }
+  }
+
+  .va-card__image {
+    @include media-breakpoint-up(md) {
+      padding-bottom: 0 !important;
+    }
+  }
 }

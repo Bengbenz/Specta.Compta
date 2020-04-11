@@ -1,8 +1,64 @@
-@page "/projects-calendar"
+@page "/projects"
+@using Beng.Specta.Compta.Core.DTOs
 @inject ILogger<ProjectCalendar> Logger
 @inject HttpClient HttpClient
 
-Les Projects
+<GenericPage Title="Projects"
+             Loader="@LoadProjects"
+             Icon="vuestic-iconset vuestic-iconset-statistics"
+             NewText="Initier un projet">
+    <Loading>
+        <h1>Loading...</h1>
+    </Loading>
+    <Empty>
+        Vous n'avez pas encore de projets en cours.
+    </Empty>
+    <Item Context="item">
+        <div class="col">
+            <h5>@item.Name</h5>
+            Code:
+            <strong>@item.Code</strong>;
+            Date de début:
+            <strong>£@item.StartDate</strong>
+        </div>
+        <div class="col">
+            Durée: <strong>@item.Duration</strong>
+        </div>
+    </Item>
+</GenericPage>
+
 @code{
 
+    private async Task<IList<ProjectDTO>> LoadProjects()
+    {
+        //await Task.Delay(3000);
+        
+        return new List<ProjectDTO>();//GetProjects();
+    }
+
+    private async Task<IList<ProjectDTO>> GetProjects()
+    {
+        var groups = new string[]
+        {
+            "ZZ",
+            "TT",
+            "Tchoupi",
+            "Kouroukour",
+            "Birao",
+            "Bangassou",
+            "Bambari"
+            };
+
+        long id = 0;
+        var projectDtos = Enumerable.Range(1, 5).Select(x => new ProjectDTO
+        {
+            Id = ++id,
+            Code = groups[new Random().Next(groups.Length)].Substring(0, 2).Trim() + $"_{id}",
+            Name = groups[new Random().Next(groups.Length)],
+            StartDate = DateTime.Now.AddDays(id),
+            Duration = (int)id
+        }).ToList();
+
+        return projectDtos;
+    }
 }

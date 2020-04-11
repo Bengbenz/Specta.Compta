@@ -1,0 +1,57 @@
+@page "/"
+@using Beng.Specta.Compta.Core.DTOs
+@inject ILogger<Index> Logger
+@inject HttpClient HttpClient
+@inject TenantService TenantService;
+@inject NavigationManager NavigationManager
+
+<GenericPage Title="Dashboard"
+             Loader="@LoadItems"
+             Icon="vuestic-iconset vuestic-iconset-forms"
+             NewText="Initier un Projet"
+             AddAction="NavigateToProject">
+    <Loading>
+        <h1>Loading...</h1>
+    </Loading>
+    <Empty>
+        Aucun rapport disponible. Vous n'avez pas de projets disponibles.
+    </Empty>
+    <Item Context="item">
+        <div class="dashboard">
+            <DashboardCharts />
+            <DashboardInfoBlock />
+        </div>
+    </Item>
+</GenericPage>
+
+@code{
+
+    [CascadingParameter]
+    public ThemeStore ContextTheme { get; set; }
+
+    private string _info;
+
+    protected override async Task OnInitializedAsync()
+    {
+        string tenantId = TenantService.GetTenantIdentifier();
+        // Call api/info Api
+        _info = await HttpClient.GetStringAsync($"{tenantId}/info");
+        await base.OnInitializedAsync();
+        Logger.LogDebug("Index initialized");
+    }
+
+    protected async Task<IList<ProjectDTO>> LoadItems()
+    {
+        //await Task.Delay(3000);
+        
+        return new List<ProjectDTO>();
+        //{
+        //    new ProjectDTO()
+        //};
+    }
+
+    private void NavigateToProject()
+    {
+        NavigationManager.NavigateTo("projects");
+    }
+}

@@ -7,7 +7,7 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
 {
     public class EfRepositoryAdd : BaseEfRepoTestFixture
     {
-        //[Fact]
+        [Fact(Skip = "To fix after")]
         public void AddsItemAndSetsId()
         {
             var repository = GetRepository();

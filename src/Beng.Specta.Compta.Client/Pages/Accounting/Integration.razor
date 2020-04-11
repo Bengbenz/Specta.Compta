@@ -1,0 +1,38 @@
+@page "/accounting-integration"
+@using Beng.Specta.Compta.Core.DTOs
+@inject ILogger<Integration> Logger
+@inject HttpClient HttpClient
+
+<GenericPage Title="Intégration comptable"
+             Loader="@LoadItems"
+             Icon="vuestic-iconset vuestic-iconset-files"
+             NewText="Intégration comptable">
+    <Loading>
+        <h1>Loading...</h1>
+    </Loading>
+    <Empty>
+        Vous n'avez encore jamais effectué une intégration comptable dans le projet en cours.
+    </Empty>
+    <Item Context="item">
+        <div class="col">
+            <h5>@item.Name</h5>
+            Code:
+            <strong>@item.Code</strong>;
+            Date de début:
+            <strong>£@item.StartDate</strong>
+        </div>
+        <div class="col">
+            Durée: <strong>@item.Duration</strong>
+        </div>
+    </Item>
+</GenericPage>
+
+@code{
+    
+    protected async Task<IList<ProjectDTO>> LoadItems()
+    {
+        //await Task.Delay(3000);
+        
+        return new List<ProjectDTO>();//GetProjects();
+    }
+}

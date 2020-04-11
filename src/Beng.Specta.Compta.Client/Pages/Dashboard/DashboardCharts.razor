@@ -1,0 +1,41 @@
+<div class="row row-equal">
+    <div class="flex xs12 xl6">
+      <VaCard Title="$t('dashboard.charts.trendyTrends')">
+        <Actions>
+            <VaButton
+                IsSmall="true"
+                Color="danger"
+                ExtraClass="mr-0" >
+            <!-- disabled="lineChartData.labels.length < 2" > -->
+            {{ $t('dashboard.charts.showInMoreDetail') }}
+            </VaButton>
+        </Actions>
+        
+        <!-- <va-chart class="chart" ref="lineChart" :data="lineChartData" type="line"/> -->
+      </VaCard>
+    </div>
+
+    <div class="flex xs12 md6 xl3">
+      <VaCard Title="$t('dashboard.charts.loadingSpeed')">
+        <Actions>
+            <VaButton
+                Icon="fa fa-print"
+                IsFlat="true"
+                ExtraClass="mr-0"/>
+        </Actions>
+        <!-- <va-chart class="chart chart--donut" :data="donutChartData" type="donut"/> -->
+      </VaCard>
+    </div>
+
+    <div class="flex xs12 md6 xl3">
+      <!-- <dashboard-contributors-chart/> -->
+    </div>
+</div>
+
+@code
+{
+
+    [CascadingParameter]
+    public ThemeStore ContextTheme { get; set; }
+
+}

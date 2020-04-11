@@ -1,0 +1,38 @@
+@page "/treasury"
+@using Beng.Specta.Compta.Core.DTOs
+@inject ILogger<Treasury> Logger
+@inject HttpClient HttpClient
+
+<GenericPage Title="Trésorerie"
+             Loader="@LoadItems"
+             Icon="vuestic-iconset vuestic-iconset-ui-elements"
+             NewText="Initier la Trésorerie">
+    <Loading>
+        <h1>Loading...</h1>
+    </Loading>
+    <Empty>
+        Vous n'avez pas encore initier la Trésorerie pour le projet en cours.
+    </Empty>
+    <Item Context="item">
+        <div class="col">
+            <h5>@item.Name</h5>
+            Code:
+            <strong>@item.Code</strong>;
+            Date de début:
+            <strong>£@item.StartDate</strong>
+        </div>
+        <div class="col">
+            Durée: <strong>@item.Duration</strong>
+        </div>
+    </Item>
+</GenericPage>
+
+@code{
+    
+    protected async Task<IList<ProjectDTO>> LoadItems()
+    {
+        //await Task.Delay(3000);
+        
+        return new List<ProjectDTO>();//GetProjects();
+    }
+}
