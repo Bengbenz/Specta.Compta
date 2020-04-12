@@ -354,3 +354,5 @@ src/.DS_Store
 tests/**/coverage.cobertura.xml
 CodeCoverage/
 tests/.DS_Store
+**/*.DS_Store
+src/Beng.Specta.Compta.ComponentLibrary/IconSet/*.svg
