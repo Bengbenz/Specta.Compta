@@ -64,7 +64,7 @@ namespace Beng.Specta.Compta.Server
                 catch (Exception ex)
                 {
                     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred on adding the default tenannt in the DB.");
+                    logger.LogError(ex, "An error occurred on adding the default tenant in the DB.");
                 }
             }
         }

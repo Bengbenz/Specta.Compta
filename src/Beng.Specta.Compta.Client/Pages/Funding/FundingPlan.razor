@@ -126,6 +126,7 @@
     protected override async Task OnInitializedAsync()
     {
         GetFundingItems();
+        await base.OnInitializedAsync();
     }
 
     public void ActionFailure(Syncfusion.Blazor.Grids.FailureEventArgs args)

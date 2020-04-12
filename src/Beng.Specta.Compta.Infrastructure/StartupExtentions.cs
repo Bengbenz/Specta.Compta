@@ -1,6 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using System.IO;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 
 using Beng.Specta.Compta.Infrastructure.Data;
+
 
 namespace Beng.Specta.Compta.Infrastructure
 {
@@ -8,8 +14,22 @@ namespace Beng.Specta.Compta.Infrastructure
 	{
 		public static IServiceCollection AddDbContext(this IServiceCollection services)
 		{
+			var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+			var configuration = new ConfigurationBuilder()
+                                    .SetBasePath(Path.Combine(Directory.GetCurrentDirectory()))
+                                    .AddJsonFile("appsettings.json", optional: false)
+                                    .AddJsonFile($"appsettings.{envName}.json", optional: true)
+                                    .Build();
+
+			//Tenants Store
+            services.AddDbContext<TenantStoreDbContext>(options =>                    
+    					options.UseSqlite(configuration.GetConnectionString("TenantConnection"))); // will be created in server project root
+
 			// App store : Per-tenant Data Store
-			return services.AddDbContext<AppDbContext>();
+			// Use Sqlite, but could be MsSql, MySql, Postgre, InMemory etc...
+            // Use ConnectionString to have Per-tenant data-base
+			return services.AddDbContext<AppDbContext>(options =>                    
+    					options.UseSqlite(configuration.GetConnectionString("AppConnection")));
 		}
 
 		public static IServiceCollection AddMultiTenantInfra(this IServiceCollection services)

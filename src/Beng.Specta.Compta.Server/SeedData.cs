@@ -55,7 +55,7 @@ namespace Beng.Specta.Compta.Server
                                                "Fin' Prod",
                                                "Data Source=FinProd.sqlite",
                                                null);
-            //dbContext.TenantInfo.Add(defaultTenant);
+                                               
             store.TryAddAsync(defaultTenant).Wait();
 
             dbContext.SaveChanges();

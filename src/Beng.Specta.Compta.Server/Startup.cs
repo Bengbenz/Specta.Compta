@@ -45,9 +45,6 @@ namespace Beng.Specta.Compta.Server
                     new[] { MediaTypeNames.Application.Octet });
             });
 
-            //Tenants Store
-            services.AddDbContext<TenantStoreDbContext>();
-
             // Add Beng.Specta.Compta app service from infrastructure
             services.AddDbContext()
                     .AddMultiTenantInfra();
@@ -116,7 +113,7 @@ namespace Beng.Specta.Compta.Server
 
             public override string ToString() => _activityId;
         }
-        
+
         public class WebRequestInfo
         {
             private readonly string _message;
