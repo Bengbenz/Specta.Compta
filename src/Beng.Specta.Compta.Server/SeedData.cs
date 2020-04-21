@@ -1,63 +1,69 @@
 ﻿using System;
-
-using Microsoft.Extensions.DependencyInjection;
-
 using Beng.Specta.Compta.Core.Entities;
 using Beng.Specta.Compta.Infrastructure.Data;
-
 using Finbuckle.MultiTenant;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Beng.Specta.Compta.Server
 {
     public static class SeedData
     {
-        public static readonly ToDoItem ToDoItem1 = new ToDoItem
-        {
-            Title = "Get Sample Working",
-            Description = "Try to get the sample to build."
-        };
-        public static readonly ToDoItem ToDoItem2 = new ToDoItem
-        {
-            Title = "Review Solution",
-            Description = "Review the different projects in the solution and how they relate to one another."
-        };
-        public static readonly ToDoItem ToDoItem3 = new ToDoItem
-        {
-            Title = "Run and Review Tests",
-            Description = "Make sure all the tests run and review what they are doing."
-        };
+        private static TenantInfo _defaultTenant;
 
-        public static void Initialize(AppDbContext dbContext)
+        public static void PopulateAppDatabase(IServiceProvider serviceProvider)
         {
-            foreach (var item in dbContext.ToDoItems)
+            var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
+            dbContext.Database.EnsureCreated();
+            // dbContext.Database.Migrate();
+
+            bool hasInitData = dbContext.ToDoItems.AnyAsync().GetAwaiter().GetResult();
+            if (hasInitData)
             {
-                dbContext.Remove(item);
+                return;
             }
-            dbContext.SaveChanges();
-            dbContext.ToDoItems.Add(ToDoItem1);
-            dbContext.ToDoItems.Add(ToDoItem2);
-            dbContext.ToDoItems.Add(ToDoItem3);
+
+            dbContext.ToDoItems.Add(new ToDoItem
+            {
+                Title = "Get Sample Working",
+                Description = "Try to get the sample to build."
+            });
+            dbContext.ToDoItems.Add(new ToDoItem
+            {
+                Title = "Review Solution",
+                Description = "Review the different projects in the solution and how they relate to one another."
+            });
+            dbContext.ToDoItems.Add(new ToDoItem
+            {
+                Title = "Run and Review Tests",
+                Description = "Make sure all the tests run and review what they are doing."
+            });
 
             dbContext.SaveChanges();
         }
 
-        public static void InitDefaultTenantInfo(TenantStoreDbContext dbContext, IServiceProvider serviceProvider)
+        public static void PopulateDefaultTenantInfo(IServiceProvider serviceProvider)
         {
-            foreach (var item in dbContext.TenantInfo)
+            var dbContext = serviceProvider.GetRequiredService<TenantStoreDbContext>();
+
+            dbContext.Database.EnsureCreated();
+            // dbContext.Database.Migrate();
+
+            var hasInitData = dbContext.TenantInfo.AnyAsync().GetAwaiter().GetResult();
+            if (hasInitData)
             {
-                dbContext.Remove(item);
+                return;
             }
-            dbContext.SaveChanges();
 
-            IMultiTenantStore store = serviceProvider.GetRequiredService<IMultiTenantStore>();
-            var defaultTenant = new TenantInfo("finprod",
-                                               "finprod",
-                                               "Fin' Prod",
-                                               "Data Source=FinProd.sqlite",
-                                               null);
-                                               
-            store.TryAddAsync(defaultTenant).Wait();
-
+            var configuration = serviceProvider.GetRequiredService<IConfiguration>()
+                                               .GetSection("DefaultTenant");
+            _defaultTenant = new TenantInfo(configuration.GetValue<string>("Id"),
+                                            configuration.GetValue<string>("Identifier"),
+                                            configuration.GetValue<string>("Name"),
+                                            configuration.GetValue<string>("ConnectionString"),
+                                            null);
+            dbContext.TenantInfo.Add(_defaultTenant);
             dbContext.SaveChanges();
         } 
     }

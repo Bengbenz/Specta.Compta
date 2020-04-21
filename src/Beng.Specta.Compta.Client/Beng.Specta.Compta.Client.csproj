@@ -23,5 +23,4 @@
     <ProjectReference Include="..\Beng.Specta.Compta.Core\Beng.Specta.Compta.Core.csproj" />
     <ProjectReference Include="..\Beng.Specta.Compta.ComponentLibrary\Beng.Specta.Compta.ComponentLibrary.csproj" />
   </ItemGroup>
-
 </Project>

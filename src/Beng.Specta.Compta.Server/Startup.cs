@@ -1,11 +1,11 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net.Mime;
 
 using log4net;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -14,8 +14,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 using Beng.Specta.Compta.Infrastructure;
-using Beng.Specta.Compta.Infrastructure.Data;
-using Microsoft.AspNetCore.Http;
 
 namespace Beng.Specta.Compta.Server
 {
@@ -26,6 +24,7 @@ namespace Beng.Specta.Compta.Server
             Configuration = configuration;
             Env = env;
         }
+
 		public IConfiguration Configuration { get; }
 
         public IWebHostEnvironment Env { get; }
@@ -47,11 +46,8 @@ namespace Beng.Specta.Compta.Server
 
             // Add Beng.Specta.Compta app service from infrastructure
             services.AddDbContext()
-                    .AddMultiTenantInfra();
-                    //.AddRepository();
-
-            //Allows accessing HttpContext in Blazor
-            services.AddHttpContextAccessor();
+                    .AddMultiTenantInfra()
+                    .AddAppWebServices(typeof(Startup).Assembly);
         }
 
         ///<summary>
@@ -97,7 +93,8 @@ namespace Beng.Specta.Compta.Server
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute("default", "{__tenant__=}/{controller}/{action}");
-                endpoints.MapControllers();
+                //endpoints.MapControllers();
+                endpoints.MapDefaultControllerRoute();
                 endpoints.MapFallbackToClientSideBlazor<Client.Startup>("index.html");
             });
 		}

@@ -7,6 +7,6 @@ namespace Beng.Specta.Compta.SharedKernel
     {
         public long Id { get; set; }
 
-        public List<BaseDomainEvent> Events = new List<BaseDomainEvent>();
+        public ICollection<BaseDomainEvent> Events = new List<BaseDomainEvent>();
     }
 }

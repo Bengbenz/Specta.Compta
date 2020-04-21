@@ -2,7 +2,7 @@
 {
 <div class="auth-layout row align-content--center" style="@ComputedStyle">
     <div class="flex xs12 pa-3 flex-center">
-      <NavLink class="py-5 flex-center" href="/">
+      <NavLink class="py-5 d-flex justify--center" href="/">
         <VaIconApp />
       </NavLink>
     </div>
@@ -29,9 +29,9 @@
     {
         get
         {
-        var color = !ContextTheme.IsInverted ? "linear-gradient(to right, #0e4ac4, #002c85)" : "white";
-        var style = new StyleType { BackgroundImage = color };
-        return style.ToString();
+            var color = !ContextTheme.IsInverted ? "linear-gradient(to right, #0e4ac4, #002c85)" : "white";
+            var style = new StyleType { BackgroundImage = color };
+            return style.ToString();
         }
     }
 

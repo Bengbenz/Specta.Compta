@@ -1,6 +1,8 @@
 ﻿using Beng.Specta.Compta.Infrastructure.Data;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
 
+using Finbuckle.MultiTenant;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
@@ -11,7 +13,9 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
 {
     public abstract class BaseEfRepoTestFixture
     {
-        protected AppDbContext _dbContext;
+        protected AppDbContext AppDbContext { get; private set; }
+
+        // protected AppDbContext TennantDbContext { get; private set; }
 
         protected static DbContextOptions<AppDbContext> CreateNewContextOptions()
         {
@@ -32,14 +36,12 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
 
         protected EfRepository GetRepository()
         {
-            var options = CreateNewContextOptions();
             // var mockDispatcher = new Mock<IDomainEventDispatcher>();
 
             //_dbContext = new AppDbContext(options, mockDispatcher.Object);
-            _dbContext = new AppDbContext(null, options);
-            return new EfRepository(_dbContext);
+            var defaultTenant = new TenantInfo("defaultTenant", "defaultTenant", "Default Tenant", "", null);
+            AppDbContext = new AppDbContext(defaultTenant, CreateNewContextOptions());
+            return new EfRepository(AppDbContext);
         }
-
-
     }
 }

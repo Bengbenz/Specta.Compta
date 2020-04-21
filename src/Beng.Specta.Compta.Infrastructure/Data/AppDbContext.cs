@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Ardalis.EFCore.Extensions;
 
 using Beng.Specta.Compta.Core.Entities;
+using Beng.Specta.Compta.Core.Entities.Funding;
 using Beng.Specta.Compta.SharedKernel;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
 
@@ -33,11 +34,15 @@ namespace Beng.Specta.Compta.Infrastructure.Data {
 
         public DbSet<ToDoItem> ToDoItems { get; set; }
 
+        public DbSet<Project> Projects { get; set; }
+
+        //public DbSet<FundingContract> Contracts { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyAllConfigurationsFromCurrentAssembly();
-
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.ApplyAllConfigurationsFromCurrentAssembly();
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))

@@ -1,8 +1,10 @@
 ﻿using System;
+
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+
 using Beng.Specta.Compta.Infrastructure.Data;
 
 namespace Beng.Specta.Compta.Server
@@ -14,8 +16,7 @@ namespace Beng.Specta.Compta.Server
             IHost host = CreateHostBuilder(args).Build();
 
             // Initialize the tenant database
-            InitDefaultTenant(host);
-            InitializeDatabase(host);
+            InitAppDatabase(host);
 
             host.Run();
         }
@@ -27,44 +28,20 @@ namespace Beng.Specta.Compta.Server
                     webBuilder.UseStartup<Startup>();
                 });
 
-        private static void InitializeDatabase(IHost host)
+        private static void InitAppDatabase(IHost host)
         {
-            var scopeFactory = host.Services.GetRequiredService<IServiceScopeFactory>();
-            using(var scope = scopeFactory.CreateScope())
+            using (var scope = host.Services.CreateScope())
             {
+                var serviceProvider = scope.ServiceProvider;
                 try
                 {
-                    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                    if(dbContext.Database.EnsureCreated())
-                    {
-                        SeedData.Initialize(dbContext);
-                    }
+                    SeedData.PopulateDefaultTenantInfo(serviceProvider);
+                    //SeedData.PopulateAppDatabase(serviceProvider);
                 }
                 catch (Exception ex)
                 {
                     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred seeding the App DB.");
-                }
-            }
-        }
-
-        private static void InitDefaultTenant(IHost host)
-        {
-            var scopeFactory = host.Services.GetRequiredService<IServiceScopeFactory>();
-            using(var scope = scopeFactory.CreateScope())
-            {
-                try
-                {
-                    var dbContext = scope.ServiceProvider.GetRequiredService<TenantStoreDbContext>();
-                    if(dbContext.Database.EnsureCreated())
-                    {
-                        SeedData.InitDefaultTenantInfo(dbContext, scope.ServiceProvider);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred on adding the default tenant in the DB.");
+                    logger.LogError(ex, $"An error occurred seeding the App DBs. Error: {ex.Message}");
                 }
             }
         }

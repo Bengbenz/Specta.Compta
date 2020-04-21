@@ -50,7 +50,7 @@
     public ThemeStore ContextTheme { get; set; }
 
     private string ErrorDetails;
-    private IList<FundingItem> FundingItems { get; set; }
+    private IList<ContractStep> FundingItems { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -90,7 +90,7 @@
         //FundindGroups = groups.Select(x => new FundingGroup(x)).ToList();
 
         long id = 0;
-        FundingItems = Enumerable.Range(1, 75).Select(x => new FundingItem(titles[new Random().Next(titles.Length)],
+        FundingItems = Enumerable.Range(1, 75).Select(x => new ContractStep(titles[new Random().Next(titles.Length)],
                                                             100000.25m * x,
                                                             DateTime.Now.AddDays(-x),
                                                             DateTime.Now.AddDays(x),
