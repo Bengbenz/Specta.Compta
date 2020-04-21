@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using Beng.Specta.Compta.Core.DTOs;
 using Beng.Specta.Compta.Core.Entities;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Beng.Specta.Compta.Server.Api
 {
@@ -20,11 +22,12 @@ namespace Beng.Specta.Compta.Server.Api
 
         // GET: api/ToDoItems
         [HttpGet]
-        public IActionResult List()
+        public ActionResult<IEnumerable<ToDoItemDTO>> List()
         {
-            //var items = _repository.List<ToDoItem>()
-            //                .Select(ToDoItemDTO.FromToDoItem);
-            return Ok();
+            IEnumerable<ToDoItemDTO> items = _repository.List<ToDoItem>()
+                                                        .Select(ToDoItemDTO.FromToDoItem);
+            Logger.LogInformation(string.Join(", ", items.Select(x => x.Title)));
+            return items.ToList();
         }
 
         // GET: api/ToDoItems
@@ -39,7 +42,7 @@ namespace Beng.Specta.Compta.Server.Api
         [HttpPost]
         public IActionResult Post([FromBody] ToDoItemDTO item)
         {
-            var todoItem = new ToDoItem()
+            var todoItem = new ToDoItem
             {
                 Title = item.Title,
                 Description = item.Description

@@ -24,7 +24,6 @@
     <ProjectReference Include="..\Beng.Specta.Compta.Infrastructure\Beng.Specta.Compta.Infrastructure.csproj" />
     <ProjectReference Include="..\Beng.Specta.Compta.Client\Beng.Specta.Compta.Client.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <None Remove="log4Net.xml" />
   </ItemGroup>

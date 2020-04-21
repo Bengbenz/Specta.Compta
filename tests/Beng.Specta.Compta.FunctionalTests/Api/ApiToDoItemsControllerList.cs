@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Beng.Specta.Compta.Core.Entities;
 using Beng.Specta.Compta.Server;
+using Microsoft.AspNetCore.Components;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -18,21 +20,16 @@ namespace Beng.Specta.Compta.FunctionalTests.Api
             _client = factory.CreateClient();
         }
 
-        [Fact(Skip = "To fix after")]
-        public async Task ReturnsTwoItems()
+        [Fact(Skip = "To fix later")]
+        public async Task ReturnsThreeItems()
         {
-            var response = await _client.GetAsync("/api/todoitems");
+            HttpResponseMessage response = await _client.GetAsync("api/todoitems");
             response.EnsureSuccessStatusCode();
-            var stringResponse = await response.Content.ReadAsStringAsync();
+            string stringResponse = await response.Content.ReadAsStringAsync();
+
             var result = JsonConvert.DeserializeObject<IEnumerable<ToDoItem>>(stringResponse).ToList();
 
             Assert.Equal(3, result.Count());
-            Assert.Contains(result, i => i.Title == SeedData.ToDoItem1.Title);
-            Assert.Contains(result, i => i.Title == SeedData.ToDoItem2.Title);
-            Assert.Contains(result, i => i.Title == SeedData.ToDoItem3.Title);
-            Assert.Equal(1, result.Count(a => a == SeedData.ToDoItem1));
-            Assert.Equal(1, result.Count(a => a == SeedData.ToDoItem2));
-            Assert.Equal(1, result.Count(a => a == SeedData.ToDoItem3));
         }
     }
 }

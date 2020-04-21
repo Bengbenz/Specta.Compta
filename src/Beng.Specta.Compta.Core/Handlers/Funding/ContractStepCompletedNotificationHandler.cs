@@ -7,9 +7,9 @@ using Dawn;
 
 namespace Beng.Specta.Compta.Core.Services.Funding
 {
-    public class FundingItemNotificationHandler : IHandle<FundingItemCompletedEvent>
+    public class ContractStepCompletedNotificationHandler : IHandle<ContractStepCompletedEvent>
     {
-        public Task Handle(FundingItemCompletedEvent domainEvent)
+        public Task Handle(ContractStepCompletedEvent domainEvent)
         {
             Guard.Argument(domainEvent, nameof(domainEvent)).NotNull();
 

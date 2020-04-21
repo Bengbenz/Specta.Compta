@@ -11,4 +11,7 @@
     <ProjectReference Include="..\..\src\Beng.Specta.Compta.Server\Beng.Specta.Compta.Server.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
+  </ItemGroup>
 </Project>
