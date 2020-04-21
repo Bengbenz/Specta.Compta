@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 
 using Beng.Specta.Compta.Core.Events.Funding;
 using Beng.Specta.Compta.Core.ValueTypes.Funding;
-using Beng.Specta.Compta.Core.ValueTypes.Ids;
 using Beng.Specta.Compta.SharedKernel;
 
 using Dawn;
@@ -13,11 +12,11 @@ using NodaMoney;
 namespace Beng.Specta.Compta.Core.Entities.Funding
 {
     /// <summary>
-    /// Funding Steps (Echanciers)
+    /// Contract Steps (Echanciers)
     /// </summary>
-    public class FundingItem : BaseEntity
+    public class ContractStep : BaseEntity
     {
-        public FundingItem(
+        public ContractStep(
             string title,
             Money amountHT,
             DateTime billingDate,
@@ -26,14 +25,14 @@ namespace Beng.Specta.Compta.Core.Entities.Funding
         {
             Guard.Argument(title, nameof(title)).NotNull();
 
-            this.Title = title;
-            this.AmountHT = amountHT;
-            this.BillingDate = billingDate;
-            this.PaymentDate = paymentDate;
-            this.IsComplete = isComplete;
+            Title = title;
+            AmountHT = amountHT;
+            BillingDate = billingDate;
+            PaymentDate = paymentDate;
+            IsComplete = isComplete;
         }
 
-        public FundingItem(
+        public ContractStep(
             string title,
             Money amountHT,
             DateTime billingDate,
@@ -41,7 +40,7 @@ namespace Beng.Specta.Compta.Core.Entities.Funding
             bool isComplete,
             FundingOrganization name) : this(title, amountHT, billingDate, paymentDate, isComplete)
         {
-            this.Organization = name;
+            Organization = name;
         }
 
         [Required]
@@ -75,7 +74,7 @@ namespace Beng.Specta.Compta.Core.Entities.Funding
         public void MarkComplete()
         {
             IsComplete = true;
-            Events.Add(new FundingItemCompletedEvent(this));
+            Events.Add(new ContractStepCompletedEvent(this));
         }
     }
 }

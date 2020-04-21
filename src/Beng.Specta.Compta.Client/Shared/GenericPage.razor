@@ -1,6 +1,6 @@
 @typeparam TItem
 
-<VaCard ExtraClass="mb-2"
+<VaCard ExtraClass="@ComputedClass"
         Title="@Title"
         Image="@ImageForEmpty"
         IsOverlay="true"
@@ -57,6 +57,9 @@
     public string Icon { get; set; }
 
     [Parameter]
+    public string ExtraClass { get; set; }
+
+    [Parameter]
     public Func<Task<IList<TItem>>> Loader { get; set; }
 
     [Parameter]
@@ -104,6 +107,8 @@
             return imageSrc;
         }
     }
+
+    private string ComputedClass => ExtraClass ?? "mb-2";
 
     protected override async Task OnParametersSetAsync()
     {

@@ -41,11 +41,15 @@ namespace Beng.Specta.Compta.Server.Api
         [HttpPost]
         public IActionResult Post([FromBody] ProjectDTO item)
         {
-            var projectItem = new Project(item.Code,
-                                          item.Name,
-                                          item.Description,
-                                          item.StartDate,
-                                          item.Duration);
+            var projectItem = new Project
+            {
+                Code = item.Code,
+                Name = item.Name,
+                Description = item.Description,
+                StartDate = item.StartDate,
+                Duration = item.Duration
+            };
+
             _repository.Add(projectItem);
             return Ok(projectItem.ToDTO());
         }

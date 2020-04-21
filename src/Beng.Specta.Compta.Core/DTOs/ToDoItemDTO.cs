@@ -13,7 +13,7 @@ namespace Beng.Specta.Compta.Core.DTOs
 
         public static ToDoItemDTO FromToDoItem(ToDoItem item)
         {
-            return new ToDoItemDTO()
+            return new ToDoItemDTO
             {
                 Id = item.Id,
                 Title = item.Title,

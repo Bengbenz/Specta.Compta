@@ -1,18 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-using Beng.Specta.Compta.Core.Entities;
-
-using Finbuckle.MultiTenant.EntityFrameworkCore;
+﻿using Beng.Specta.Compta.Core.Entities;
 
 namespace Beng.Specta.Compta.Infrastructure.Data.Config
 {
-    public class ToDoConfiguration : IEntityTypeConfiguration<ToDoItem>
+    public class ToDoConfiguration : BaseEntityConfiguration<ToDoItem>
     {
-        public void Configure(EntityTypeBuilder<ToDoItem> builder)
+        protected override void Configure()
         {
-            builder.IsMultiTenant();
-            builder.Property(t => t.Title)
+            Builder.Property(t => t.Title)
                    .IsRequired();
         }
     }

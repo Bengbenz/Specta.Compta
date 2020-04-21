@@ -17,7 +17,7 @@ namespace Beng.Specta.Compta.FunctionalTests.Api
         [Fact]
         public async Task ReturnsVersionAndLastUpdateDate()
         {
-            var response = await _client.GetAsync("/info");
+            HttpResponseMessage response = await _client.GetAsync("/info");
             response.EnsureSuccessStatusCode();
             var stringResponse = await response.Content.ReadAsStringAsync();
 

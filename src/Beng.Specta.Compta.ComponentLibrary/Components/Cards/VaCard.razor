@@ -1,3 +1,5 @@
+@if(IsVisible)
+{
 <div class="va-card @ExtraClass" style="@ComputedCardStyle" @attributes="@AdditionalAttributes">
     @if (!string.IsNullOrWhiteSpace(Stripe))
     {
@@ -41,6 +43,7 @@
     </div>
     }
 </div>
+}
 
 @code{
 
@@ -82,6 +85,9 @@
 
     [Parameter]
     public bool IsTitleOnImage { get; set; }
+    
+    [Parameter]
+    public bool IsVisible { get; set; } = true;
 
     [Parameter]
     public RenderFragment Header { get; set; }

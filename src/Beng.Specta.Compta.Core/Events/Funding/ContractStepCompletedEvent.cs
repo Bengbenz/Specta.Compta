@@ -5,15 +5,15 @@ using Dawn;
 
 namespace Beng.Specta.Compta.Core.Events.Funding
 {
-    public class FundingItemCompletedEvent : BaseDomainEvent
+    public class ContractStepCompletedEvent : BaseDomainEvent
     {
-        public FundingItem CompletedItem { get; set; }
+        public ContractStep CompletedStep { get; set; }
 
-        public FundingItemCompletedEvent(FundingItem completedItem)
+        public ContractStepCompletedEvent(ContractStep completedItem)
         {
             Guard.Argument(completedItem, nameof(completedItem)).NotNull();
             
-            CompletedItem = completedItem;
+            CompletedStep = completedItem;
         }
     }
 }

@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 using Beng.Specta.Compta.Core.ValueTypes.Funding;
-using Beng.Specta.Compta.Core.ValueTypes.Ids;
 using Beng.Specta.Compta.SharedKernel;
 
 using Dawn;
@@ -15,28 +14,31 @@ namespace Beng.Specta.Compta.Core.Entities.Funding
     /// <summary>
     /// Funding Contract
     /// </summary>
-    public class FundingGroup : BaseEntity
+    public class FundingContract : BaseEntity
     {
-        public FundingGroup(FundingOrganization name)
+        public FundingContract(FundingOrganization name)
         {
             Guard.Argument(name, nameof(name)).NotNull();
 
-            this.FundingSource = name;
+            FundingPartner = name;
         }
 
-        public FundingGroup(string name)
+        public FundingContract(string name)
         {
             Guard.Argument(name, nameof(name)).NotNull().NotEmpty();
 
-            this.FundingSource = new FundingOrganization(name);
+            FundingPartner = new FundingOrganization(name);
         }
 
         [Required]
-        public FundingOrganization FundingSource { get; set; }
+        public FundingOrganization FundingPartner { get; set; }
 
-        private Money GetHTTotalAmount()
+        [Required]
+        public Money AmountHT { get; set; }
+
+        public Money GetHTTotalFromContracts()
         {
-            var subContractSum = SubContracts.Aggregate(Money.Euro(0m), (m, item) => m + item.GetHTTotalAmount());
+            var subContractSum = SubContracts.Aggregate(Money.Euro(0m), (m, item) => m + item.GetHTTotalFromContracts());
             return PaymentSteps.Aggregate(subContractSum, (m, item) => m + item.AmountHT);
         }
 
@@ -44,13 +46,13 @@ namespace Beng.Specta.Compta.Core.Entities.Funding
         /// List of payment steps of the contracts
         /// </summary>
         /// <remarks>References (OneToMany) to Steps</remarks>
-        public IList<FundingItem> PaymentSteps { get; set; } = new List<FundingItem>();
+        public ICollection<ContractStep> PaymentSteps { get; private set; } = new List<ContractStep>();
 
 
         /// <summary>
         /// List of the sub-contracts
         /// </summary>
         /// <remarks>References (OneToMany) to Contracts</remarks>
-        public IList<FundingGroup> SubContracts { get; set; } = new List<FundingGroup>();
+        public ICollection<FundingContract> SubContracts { get; private set; } = new List<FundingContract>();
     }
 }
