@@ -22,6 +22,5 @@ namespace Beng.Specta.Compta.Client
             _spinnerService.Hide();
             return response;            
         }
-        
     }
 }

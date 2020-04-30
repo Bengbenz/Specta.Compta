@@ -559,11 +559,50 @@ body {
     }
   }
 
-  // .va-dropdown
+// .va-dropdown
 .va-dropdown {
   &__content {
     /*overflow: hidden;*/
     z-index: 100;
+  }
+}
+
+// .va-button-dropdown 
+.va-button-dropdown {
+  .va-dropdown__anchor {
+    display: inline-block;
+    margin: $btn-margin;
+  }
+  .va-button {
+    margin: 0;
+  }
+  &--split {
+    .va-dropdown {
+      .va-dropdown__anchor {
+        margin: 0;
+      }
+      .va-button {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        font-size: 1.5rem;
+      }
+    }
+    &.va-button-dropdown--small {
+      .va-dropdown .va-button {
+        font-size: 1.6rem;
+      }
+    }
+    &.va-button-dropdown--large {
+      .va-dropdown .va-button {
+        font-size: 1.7rem;
+      }
+    }
+  }
+  &__content {
+    background: $dropdown-background;
+    box-shadow: $dropdown-box-shadow;
+    padding: $dropdown-padding;
+    border-radius: $dropdown-border-radius;
   }
 }
 
@@ -1223,5 +1262,280 @@ $va-close-icon-font-size: 1.5rem;
     @include media-breakpoint-up(md) {
       padding-bottom: 0 !important;
     }
+  }
+}
+
+// auth-layout
+.auth-layout {
+  min-height: 100vh;
+  background-image: linear-gradient(to right, #0e4ac4, #002c85);
+
+  &__card {
+    width: 100%;
+    max-width: 600px;
+  }
+
+  &__options {
+    @include media-breakpoint-down(xs) {
+      flex-direction: column;
+    }
+  }
+}
+
+// va-input
+.va-input {
+  &__container {
+    display: flex;
+    position: relative;
+    width: 100%;
+    min-height: 2.375rem;
+    border-style: solid;
+    border-width: 0 0 thin 0;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+
+    &__content-wrapper {
+      display: flex;
+      position: relative;
+      align-items: flex-end;
+      width: 100%;
+      /*min-width: 100%;*/
+    }
+
+    &__icon-wrapper {
+      display: flex;
+      align-items: center;
+
+      &--start {
+        margin-left: 0.5rem;
+      }
+
+      &--end {
+        margin-right: 0.5rem;
+      }
+    }
+
+    &__close-icon {
+      cursor: pointer;
+      margin-left: 0.25rem;
+    }
+
+    &__label {
+      position: absolute;
+      bottom: 0.875rem;
+      left: 0.5rem;
+      margin-bottom: 0.5rem;
+      max-width: calc(100% - 0.25rem);
+      color: $vue-green;
+      font-size: 0.625rem;
+      letter-spacing: 0.0375rem;
+      line-height: 1.2;
+      font-weight: bold;
+      text-transform: uppercase;
+      @include va-ellipsis();
+      transform-origin: top left;
+    }
+
+    &.va-input__container--textarea &__label {
+      bottom: auto;
+      top: 0.125rem;
+    }
+
+    &__input {
+      width: 100%;
+      height: 1.5rem;
+      margin-bottom: 0.125rem;
+      padding: 0.25rem 0.5rem;
+      color: #34495e;
+      background-color: transparent;
+      border-style: none;
+      outline: none;
+      font-size: 1rem;
+      font-family: $font-family-sans-serif;
+      font-weight: normal;
+      font-style: normal;
+      font-stretch: normal;
+      line-height: 1.5;
+      letter-spacing: normal;
+
+      &::placeholder {
+        color: $brand-secondary;
+      }
+
+      &:placeholder-shown {
+        padding-bottom: 0.875rem;
+      }
+    }
+
+    &.va-input__container--textarea &__input {
+      resize: vertical;
+      height: inherit;
+    }
+  }
+}
+
+// va-input wrapper
+.va-input-wrapper {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: flex-end;
+  font-size: 1rem;
+  text-align: left;
+  margin-bottom: 1rem;
+
+  &__control, &__content {
+    width: 100%;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__prepend-inner, &__append-inner {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &__prepend-inner {
+    margin-right: 0.5rem;
+  }
+
+  &__append-inner {
+    margin-left: 0.5rem;
+  }
+
+  &__slot {
+    display: flex;
+    position: relative;
+  }
+
+  &__details {
+    padding: 0 0.5rem;
+    width: 100%;
+  }
+
+  &__messages__wrapper {
+    font-size: 0.875rem;
+  }
+  .va-select {
+    margin-bottom: 0;
+  }
+}
+
+// va-message-list
+.va-message-list {
+  &__message {
+    vertical-align: middle;
+    font-size: $font-size-mini;
+  }
+}
+
+// va-checkbox
+va-checkbox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  &__input-container {
+    align-items: center;
+    display: flex;
+    cursor: pointer;
+
+    @at-root {
+      .va-checkbox--disabled & {
+        @include va-disabled();
+      }
+
+      .va-checkbox--readonly & {
+        cursor: initial;
+      }
+
+      .va-checkbox--disabled & {
+        cursor: default;
+      }
+    }
+  }
+
+  #{&}__square {
+    @include flex-center();
+    width: 2rem;
+    height: 2rem;
+    position: relative;
+    flex: 0 0 2rem;
+    @at-root {
+      .va-checkbox--on-keyboard-focus#{&} {
+        background-color: $light-gray;
+        transition: all, 0.6s, ease-in;
+        border-radius: 5rem;
+      }
+    }
+  }
+
+  #{&}__input {
+    height: 1.375rem;
+    width: 1.375rem;
+    cursor: inherit;
+    color: $white;
+    background-color: $white;
+    border: solid 0.125rem $gray-light;
+    border-radius: 0.25rem;
+
+    &:focus {
+      outline: none;
+    }
+
+    @at-root {
+      .va-checkbox--selected#{&} {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 1.4rem;
+        width: 1.4rem;
+        color: $white;
+        background-color: $vue-green;
+        border: 0;
+      }
+
+      .va-checkbox--error#{&} {
+        border-color: $theme-red;
+      }
+    }
+  }
+
+  #{&}__label-text {
+    display: inline-block;
+    position: relative;
+    margin-left: 0.25rem;
+    @at-root {
+      .va-checkbox--error#{&} {
+        color: $theme-red;
+      }
+    }
+  }
+
+  &__error-message {
+    vertical-align: middle;
+    color: $theme-red;
+    font-size: $font-size-mini;
+  }
+
+  &__icon-selected {
+    pointer-events: none;
+    position: absolute;
+    color: $white;
+  }
+
+  &__error-message-container {
+    flex: 0 0 100%;
+    margin-left: 0.3rem; // To fit with checkbox.
+  }
+
+  &__label-container {
+    margin-left: 2rem;
+  }
+
+  &__content {
+    flex-direction: row;
   }
 }

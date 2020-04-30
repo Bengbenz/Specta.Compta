@@ -1,7 +1,7 @@
 using System;
 using System.Globalization;
 
-namespace Beng.Specta.Compta.ComponentLibrary.Shared
+namespace Beng.Specta.Compta.ComponentLibrary.Common
 {
     public class RgbType
     {

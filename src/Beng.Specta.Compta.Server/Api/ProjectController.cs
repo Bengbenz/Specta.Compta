@@ -7,6 +7,8 @@ using Beng.Specta.Compta.Core.DTOs;
 using Beng.Specta.Compta.Core.Entities;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
 
+using Dawn;
+
 namespace Beng.Specta.Compta.Server.Api
 {
     public class ProjectController : BaseApiController
@@ -41,6 +43,8 @@ namespace Beng.Specta.Compta.Server.Api
         [HttpPost]
         public IActionResult Post([FromBody] ProjectDTO item)
         {
+            Guard.Argument(item, nameof(item)).NotNull();
+
             var projectItem = new Project
             {
                 Code = item.Code,

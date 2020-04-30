@@ -1,152 +1,104 @@
-@inject ILogger<AppSidebarGroupLink> Logger
-@inject NavigationManager NavigationManager
+@using Syncfusion.Blazor.Popups
+
+@typeparam TSubMenuItem
 
 <li class="@ComputedClass" >
-  @if(!LayoutInfo.IsMinimized)
+  @if (!IsMinimized)
   {
     <div>
-      <div @onclick="ToggleMenuItem">
-        <AppSidebarLink Icon="@Icon"
-                        IconRight="fa fa-angle-down" 
-                        Title="@Title" />
-      </div>
-
-      <transition-expand>
-      @if(IsExpanded)
-      {
-        <ul class="app-sidebar-link-group__submenu" >
-          @ChildContent
-        </ul>
-      }
-      </transition-expand>
+        <div @onclick="OnExpand">
+            <AppSidebarLink Icon="@Icon"
+                  IconRight="@IconRight"
+                  Title="@Title"/>
+        </div>
+        <transition-expand>
+        @if (IsExpanded)
+        {
+            <ul class="app-sidebar-link-group__submenu" >
+            @foreach(var subMenuItem in SubMenuItems)
+            {
+                @SubMenuItemTemplate(subMenuItem)
+            }
+            </ul>
+        }
+        </transition-expand>
     </div>
   }
   else
   {
-    <VaDropdown position="right" fixed :preventOverflow="false" ref="dropdown">
-      <Anchor>
-        <AppSidebarLink Icon="@Icon"
-                        IconRight="material-icons"
-                        IconRightContent="more_horiz"
-                        IsActiveByDefault="@IsActive"/>
-      </Anchor>
-      <Content>
-        <ul class="app-sidebar-link-group__submenu" style="@ComputedSubmenuColor" >
-          @ChildContent
-        </ul>
-      </Content>
+      <VaDropdown position="@PositionType.Right" IsFixed="true" IsPreventOverflow="false">
+          <Anchor>
+                <AppSidebarLink Icon="@Icon"
+                    IconRight="material-icons"
+                    IconRightContent="more_horiz"
+                    IsActive="@IsActive"
+                    IsMinimized="true"/>
+          </Anchor>
+          <Content>
+              <ul class="app-sidebar-link-group__submenu" style="@ComputedSubMenuColor" >
+                @foreach(var subMenuItem in SubMenuItems)
+                {
+                  @SubMenuItemTemplate(subMenuItem)
+                }
+              </ul>
+          </Content>
     </VaDropdown>
   }
 </li>
 
 @code{
 
-  [Parameter]
-  public string Title { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [Parameter] public string Title { get; set; }
+    [Parameter] public string Icon { get; set; }
+    [Parameter] public bool IsActive { get; set; }
+    [Parameter] public bool IsExpanded { get; set; }
+    [Parameter] public bool IsMinimized { get; set; }
+    [Parameter] public RenderFragment<TSubMenuItem> SubMenuItemTemplate { get; set; }
+    [Parameter] public Func<Task<IReadOnlyCollection<TSubMenuItem>>> Loader { get; set; }
+    [Parameter] public EventCallback OnExpand { get; set; }
 
-  [Parameter]
-  public string Icon { get; set; }
+    private IReadOnlyCollection<TSubMenuItem> SubMenuItems { get; set; }
+    private bool IsHovered { get; set; }
 
-  [Parameter]
-  public string IconRight { get; set; }
+    private string IconRight => IsExpanded ? "fa fa-angle-up" : "fa fa-angle-down";
 
-  [Parameter]
-  public IReadOnlyCollection<ModuleInfoVm> Children { get; set; }
+    private string ComputedClass =>
+        CssBuilder.Default("app-sidebar-link-group")
+            .AddClass("app-sidebar-link-group--minimized", IsMinimized)
+            .AddClass("app-sidebar-link-group--isActive", IsActive)
+            .Build();
 
-  [CascadingParameter]
-  public LayoutInfoVm LayoutInfo { get; set; }
+    private string ComputedLinkStyle =>
+        StyleBuilder.Empty()
+            .AddStyle("color", "white", !IsHovered && !IsActive)
+            .AddStyle("color", ContextTheme[ThemeDictionary.PrimaryKey], IsHovered || IsActive)
+            .AddStyle("background-color", ContextTheme[ThemeDictionary.SecondaryKey]
+                .ColorShiftHsl(new HslType(h: 0, s: -13, l: 15)).ToString(), IsHovered || IsActive)
+            .AddStyle("border-color", ContextTheme[ThemeDictionary.PrimaryKey], (IsHovered || IsActive) && IsActive)
+            .AddStyle("border-color", "transparent", (IsHovered || IsActive) && !IsActive)
+            .Build();
 
-  [CascadingParameter]
-  public ThemeStore ContextTheme { get; set; }
+    private string ComputedSubMenuColor =>
+        StyleBuilder.Empty()
+            .AddStyle("background-color", "white", ContextTheme.IsInverted)
+            .AddStyle("background-color", ContextTheme[ThemeDictionary.SecondaryKey], !ContextTheme.IsInverted)
+            .Build();
 
-  [Parameter]
-  public RenderFragment ChildContent { get; set; }
+    private string IconStyle =>
+        StyleBuilder.Empty()
+            .AddStyle("color", "white", !IsHovered && !IsActive)
+            .AddStyle("color", ContextTheme[ThemeDictionary.PrimaryKey], IsHovered || IsActive)
+            .Build();
 
-  private bool IsActive { get; set; }
-  private bool IsHovered { get; set; }
-  private bool IsExpanded { get; set; }
-  private string Color => ThemeStore.SecondaryKey;
-  private string ComputedClass
-  {
-    get
-    { 
-      string result = "app-sidebar-link-group";
-      if(LayoutInfo == null)
-      {
-        return result;
-      }
+    private void UpdateHoverState(bool isHovered) => IsHovered = isHovered;
 
-      if(LayoutInfo.IsMinimized)
-      {
-        result += " app-sidebar-link-group--minimized";
-      }
-      if(IsActive)
-      {
-        result += " app-sidebar-link-group--isActive";
-      }
-      return result.Trim();
-    }
-  }
+    private void EnableHoverState() => UpdateHoverState(true);
 
-  private string ComputedSubmenuColor
-  {
-    get
+    private void DisableHoverState() => UpdateHoverState(false);
+
+    protected override async Task OnParametersSetAsync()
     {
-      var subMenuStyle = new StyleType { Color = "white" };
-      if(!ContextTheme.IsInverted)
-      {
-        subMenuStyle.Color = ContextTheme.TryGetValue(Color, out var color) ? color : Color;
-      }
-
-      return subMenuStyle.ToString();
+        SubMenuItems = await Loader();
     }
-  }
-
-  private string ComputedLinkStyles
-  {
-    get
-    {
-      var style = new StyleType();
-
-      var primaryColor = ContextTheme[ThemeStore.PrimaryKey];
-      if (IsHovered || IsActive)
-      {
-        style.Color = primaryColor;
-        style.BackgroundColor = ContextTheme[ThemeStore.SecondaryKey].ColorShiftHsl(new HslType(h: 0, s: -13, l: 15)).ToString();
-        style.BorderColor = IsActive ? primaryColor : "transparent";
-      }
-
-      return style.ToString();
-    }
-  }
-  
-  private string ComputedIconStyles
-  {
-    get
-    {
-      var iconColor = "white";
-
-      if (IsHovered || IsActive)
-      {
-        iconColor = ContextTheme[ThemeStore.PrimaryKey];
-      }
-      return iconColor;
-    }
-  }
-
-  private void ToggleMenuItem() => IsExpanded = !IsExpanded;
-
-  private void UpdateHoverState(bool isHovered) => IsHovered = isHovered;
-
-  private void EnableHoverState() => UpdateHoverState(true);
-
-  private void DisableHoverState() => UpdateHoverState(false);
-
-  private void UpdateActiveState()
-  {
-    string currentUrlWithoutBase = NavigationManager.Uri.Substring(NavigationManager.BaseUri.Length - 1);
-    bool isActive = Children.Any(x => x.Meta.Url == currentUrlWithoutBase);
-    IsActive = LayoutInfo.IsMinimized ? isActive : false;
-    IsExpanded = isActive;
-  }
 }

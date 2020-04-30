@@ -1,339 +1,191 @@
-<div class="va-dropdown @ExtraClass" @attributes="@AdditionalAttributes">
-  <div class="va-dropdown__anchor"
-       @onmouseover="@OnMouseOver"
-       @onmouseout="@OnMouseOut"
-       @onclick="@OnAnchorClick">
-    @Anchor
-  </div>
-@if(IsContentVisible)
-{
-  <div class="va-dropdown__content" x-placement="bottom"
-       style="position: fixed; will-change: transform; top: 0px; left: 0px; transform: translate3d(1207.87px, 60.2667px, 0px);"
-       @onmouseout="OnMouseOut" >
-    <!-- @onmouseover="@(() => _isContentHoverable && OnMouseOver)" -->
-  @if(_keepAnchorWidth)
+@inject IJSRuntime JSRuntime
+@inject ILogger<VaDropdown> Logger
+@implements IDisposable
+
+<div class="@ComputedClass" @attributes="@AdditionalAttributes">
+    <div class="va-dropdown__anchor"
+        @onmouseover="@OnMouseOver"
+        @onmouseout="@OnMouseOut"
+        @onclick="@OnAnchorClick"
+        @ref="AnchorRef">
+      @Anchor
+    </div>
+  @if (IsContentVisible)
   {
-    <div class="va-dropdown__anchor-width-container" style="anchorWidthContainerStyles" >
+    <div class="va-dropdown__content"
+        @onmouseout="OnMouseOut"
+        @onmouseover="OnContentMouseOver"
+        @ref="ContentRef">
+      @if(IsKeepAnchorWidth)
+      {
+        <div class="va-dropdown__anchor-width-container" style="@AnchorWidthContainerStyle"
+            @ref="AnchorWidthRef">
+            @Content
+        </div>
+      }
+      else
+      {
         @Content
+      }
     </div>
   }
-  else
-  {
-    @Content
-  }
-  </div>
-}
 </div>
 
 @code{
 
-  private bool _keepAnchorWidth = false;
-  //private bool _isContentHoverable = true;
-  //private bool _isClicked = false;
-  //private bool _isMouseHovered = false;
-  //private string _anchorWidth = string.Empty;
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
+    [Parameter] public string Class { get; set; }
+    [Parameter] public string Color { get; set; }
+    [Parameter] public string Icon { get; set; }
+    [Parameter] public string Offset { get; set; }
+    [Parameter] public bool IsCloseOnClickOutside { get; set; } = true;
+    [Parameter] public bool IsCloseOnAnchorClick { get; set; } = true;
+    [Parameter] public bool IsPreventOverflow { get; set; } = true;
+    [Parameter] public bool IsKeepAnchorWidth { get; set; }
+    [Parameter] public bool IsFixed { get; set; }
+    [Parameter] public bool IsBoundaryBody { get; set; }
+    [Parameter] public bool IsDisabled { get; set; }
+    [Parameter] public bool IsContentHoverable { get; set; } = true;
+    [Parameter] public bool Value { get; set; }
+    [Parameter] public TriggerType Trigger { get; set; } = TriggerType.Click;
+    [Parameter] public int HoverOutTimeout { get; set; } = 30;
+    [Parameter] public int HoverOverTimeout { get; set; } = 200;
+    [Parameter] public PositionType Position { get; set; } = PositionType.Bottom;
+    [Parameter] public RenderFragment Anchor { get; set; }
+    [Parameter] public RenderFragment Content { get; set; }
 
-  [Parameter(CaptureUnmatchedValues = true)]
-  public IDictionary<string, object> AdditionalAttributes { get; set; }
-
-  [Parameter]
-  public string ExtraClass { get; set; }
-
-  [Parameter]
-  public RenderFragment Anchor { get; set; }
-
-  [Parameter]
-  public RenderFragment Content { get; set; }
-
-  [Parameter]
-  public bool IsContentVisible { get; set; }
-
-  private void OnMouseOver()
-  {
-
-  }
-
-  private void OnMouseOut()
-  {
-
-  }
-
-  private void OnAnchorClick()
-  {
-    IsContentVisible = !IsContentVisible;
-  }
-}
-
-<!--
-<script>
-import Popper from 'popper.js'
-import { DebounceLoader } from 'asva-executors'
-
-export default {
-  name: 'va-dropdown',
-  data () {
-    return {
-      popperInstance: null,
-      isClicked: false,
-      anchorWidth: undefined,
-
-      isMouseHovered: false,
-      hoverOverDebounceLoader: new DebounceLoader(
-        async () => {
-          this.isMouseHovered = true
-        },
-        this.hoverOverTimeout,
-      ),
-      hoverOutDebounceLoader: new DebounceLoader(
-        async () => {
-          this.isMouseHovered = false
-        },
-        this.hoverOutTimeout,
-      ),
+    private ElementReference AnchorWidthRef { get; set; }
+    private ElementReference AnchorRef { get; set; }
+    private ElementReference ContentRef { get; set; }
+    private string AnchorWidth { get; set; }
+    private bool IsClicked { get; set; }
+    private bool IsMouseHovered { get; set; }
+    private bool IsContentVisible
+    {
+        get
+        {
+            switch (Trigger)
+            {
+                case TriggerType.Hover:
+                {
+                    return IsMouseHovered;
+                }
+                case TriggerType.Click:
+                {
+                    return IsClicked;
+                }
+                case TriggerType.None:
+                {
+                    return Value;
+                }
+                default:
+                {
+                    throw new NotSupportedException($"{IsContentVisible}: Unknown trigger");
+                }
+            }
+        }
     }
-  },
-  created () {
-    this.registerClickOutsideListener()
-  },
-  beforeDestroy () {
-    this.unregisterClickOutsideListener()
-    this.removePopper()
-  },
-  mounted () {
-    this.handlePopperInstance()
-  },
-  watch: {
-    showContent: {
-      immediate: true,
-      handler (showContent) {
-        this.handlePopperInstance()
-      },
-    },
-  },
-  props: {
-    debugId: String,
-    position: String,
-    boundaryBody: Boolean,
-    value: Boolean,
-    offset: [String, Number],
-    disabled: Boolean,
-    fixed: Boolean,
-    keepAnchorWidth: Boolean, // Means dropdown width should be the same as anchor's width.
-    preventOverflow: {// If set to false - dropdown won't dodge outside container.
-      type: Boolean,
-      default: true,
-    },
-    closeOnClickOutside: {
-      type: Boolean,
-      default: true,
-    },
-    closeOnAnchorClick: {
-      type: Boolean,
-      default: true,
-    },
-    isContentHoverable: {
-      type: Boolean,
-      default: true,
-    },
-    trigger: {
-      default: 'click',
-      validator: trigger => ['click', 'hover', 'none'].includes(trigger),
-    },
-    hoverOverTimeout: {
-      type: Number,
-      default: 30,
-    },
-    hoverOutTimeout: {
-      type: Number,
-      default: 200,
-    },
-  },
-  methods: {
-    handlePopperInstance () {
-      if (this.popperInstance) {
-        this.removePopper()
-      }
 
-      if (!this.showContent) {
-        return
-      }
+    private string ComputedClass =>
+        CssBuilder.Default("va-dropdown")
+            .AddClass(Class, !string.IsNullOrWhiteSpace(Class))
+            .Build();
 
-      this.updateAnchorWidth()
+    private string AnchorWidthContainerStyle =>
+        StyleBuilder.Default("width", AnchorWidth.ToPixelValue())
+            .AddStyle("max-width", AnchorWidth.ToPixelValue())
+            .Build();
 
-      // I'm not entirely sure why $nextTick is needed here.
-      this.$nextTick(() => {
-        this.initPopper()
-      })
-    },
-    onAnchorClick () {
-      this.$emit('anchorClick')
-      if (this.disabled) {
-        return
-      }
-      if (this.isClicked && !this.closeOnAnchorClick) {
-        return
-      }
-      this.isClicked = !this.isClicked
-    },
-    // Kinda complex logic here.
-    // We want to achieve 2 things:
-    // * Fast mouse-over shouldn't trigger dropdown.
-    // * Dropdown shouldn't close when you move mouse from anchor to content (even with offset).
-    onMouseOver () {
-      if (this.disabled) {
-        return
-      }
-      if (!this.isMouseHovered) {
-        this.hoverOverDebounceLoader.run()
-      }
-
-      this.hoverOutDebounceLoader.reset()
-    },
-    onMouseOut () {
-      if (!this.isContentHoverable) {
-        this.isMouseHovered = false
-      }
-      this.hoverOutDebounceLoader.run()
-      this.hoverOverDebounceLoader.reset()
-    },
-    registerClickOutsideListener () {
-      document.addEventListener('click', event => this.handleDocumentClick(event), false)
-    },
-    unregisterClickOutsideListener () {
-      document.removeEventListener('click', event => this.handleDocumentClick(event), false)
-    },
-    handleDocumentClick (event) {
-      let el = event.target
-      const clickedElements = [] // Array because dropdowns can be nested.
-      // TODO Make DOM walk-over global, so that each dropdown doesn't have to do it.
-      while (el) {
-        clickedElements.push(el)
-        el = el.parentNode
-      }
-      const isCurrentDropdownClicked = clickedElements.includes(this.$refs.anchor) || clickedElements.includes(this.$refs.content)
-      if (isCurrentDropdownClicked) {
-        return
-      }
-      this.onClickOutside()
-    },
-    onClickOutside () {
-      this.$emit('clickOutside')
-      if (!this.closeOnClickOutside) {
-        return
-      }
-      this.hide()
-    },
-    updateAnchorWidth () {
-      if (this.keepAnchorWidth) {
-        let anchorWidth = this.$refs.anchor.offsetWidth
-        if (this.$refs.anchorWidthContainer && this.$refs.anchorWidthContainer.scrollHeight > this.$refs.anchorWidthContainer.clientHeight) {
-          anchorWidth = this.$refs.anchor.offsetWidth - this.scrollWidth
+    private void OnMouseOver()
+    {
+        if (IsDisabled)
+        {
+            return;
         }
-        this.anchorWidth = anchorWidth
-      }
-      if (this.popperInstance) {
-        this.popperInstance.scheduleUpdate()
-      }
-    },
-    // @public
-    hide () {
-      if (this.trigger === 'click') {
-        this.isClicked = false
-      }
-    },
-    initPopper () {
-      const options = {
-        placement: this.position || 'bottom',
-        modifiers: {
-          preventOverflow: {
-            enabled: this.preventOverflow,
-          },
-        },
-        positionFixed: this.fixed,
-        arrow: {
-          enabled: false,
-        },
-        onCreate: () => {
-          this.$emit('input', true)
-        },
-      }
-
-      if (!this.preventOverflow) {
-        options.modifiers.hide = { enabled: false }
-      }
-
-      if (this.boundaryBody) {
-        options.modifiers.preventOverflow.boundariesElement = window
-      }
-
-      if (this.offset) {
-        options.modifiers.offset = {
-          enabled: true,
-          offset: this.offset,
+        if (!IsMouseHovered)
+        {
+            IsMouseHovered = true;
         }
-        options.modifiers.keepTogether = { enabled: false }
-        options.modifiers.arrow = { enabled: false }
-      }
+    }
 
-      this.popperInstance = new Popper(
-        this.$refs.anchor,
-        this.$refs.content,
-        options,
-      )
+    private void OnContentMouseOver()
+    {
+        if (IsContentHoverable)
+        {
+            OnMouseOver();
+        }
+    }
 
-      // temporary solution
-      this.updatePopper()
-    },
-    removePopper () {
-      this.$emit('input', false)
+    private void OnMouseOut() => IsMouseHovered = false;
 
-      if (!this.popperInstance) {
-        return
-      }
-      this.popperInstance.destroy()
-      this.popperInstance = null
-    },
-    updatePopper () {
-      // used by select
-      if (!this.popperInstance) {
-        return
-      }
-      this.updateAnchorWidth()
-    },
-  },
-  computed: {
-    anchorWidthContainerStyles () {
-      return {
-        width: this.anchorWidth + 'px',
-        maxWidth: this.anchorWidth + 'px',
-      }
-    },
-    showContent () {
-      switch (this.trigger) {
-        case 'hover':
-          return this.isMouseHovered
-        case 'click':
-          return this.isClicked
-        case 'none':
-          return this.value
-        default:
-          throw new Error('Unknown trigger for showContent()')
-      }
-    },
-    scrollWidth () {
-      const div = document.createElement('div')
+    private void OnAnchorClick()
+    {
+        if (IsDisabled)
+        {
+            return;
+        }
+        if (IsClicked && !IsCloseOnAnchorClick)
+        {
+            return;
+        }
+        IsClicked = !IsClicked;
+        Value = IsClicked;
+    }
 
-      div.style.overflowY = 'scroll'
-      div.style.width = '50px'
-      div.style.height = '50px'
-      div.style.visibility = 'hidden'
+    private async Task UpdateAnchorWidthAsync() =>
+        AnchorWidth = await JSRuntime.HandlePopperInstanceAsync(
+                                AnchorRef,
+                                ContentRef,
+                                Position,
+                                Offset,
+                                IsContentVisible,
+                                IsPreventOverflow,
+                                IsFixed,
+                                IsBoundaryBody,
+                                IsKeepAnchorWidth,
+                                AnchorWidthRef);
 
-      document.body.appendChild(div)
-      const scrollWidth = div.offsetWidth - div.clientWidth
-      document.body.removeChild(div)
-      return scrollWidth
-    },
-  },
+    [JSInvokable]
+    public void OnClickOutside()
+    {
+        if (IsCloseOnClickOutside)
+        {
+            Hide();
+        }
+    }
+
+    public void Hide()
+    {
+        if (Trigger == TriggerType.Click)
+        {
+            IsClicked = false;
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.RegisterClickOutsideAsync(AnchorRef, ContentRef, DotNetObjectReference.Create(this));
+        }
+        try
+        {
+            await UpdateAnchorWidthAsync();
+        }
+        catch (NullReferenceException ex)
+        {
+            Logger.LogError($"Error: {ex}");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError($"Error: {ex}");
+        }  
+    }
+
+    public void Dispose()
+    {
+        JSRuntime.UnregisterClickOutsideAsync(AnchorRef, ContentRef, DotNetObjectReference.Create(this));
+        JSRuntime.RemovePopper();
+    }
 }
-</script>
--->

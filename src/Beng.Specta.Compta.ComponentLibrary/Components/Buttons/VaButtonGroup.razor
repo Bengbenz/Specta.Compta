@@ -4,36 +4,17 @@
 
 @code{
 
-    [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public string Color { get; set; } = ThemeDictionary.PrimaryKey; // GetParentColor
+    [Parameter] public string Class { get; set; }
+    [Parameter] public bool IsSmall { get; set; }
+    [Parameter] public bool IsLarge { get; set; }
 
-    [Parameter]
-    public string Color { get; set; } = ThemeStore.PrimaryKey; // GetParentColor
-
-    [Parameter]
-    public bool IsSmall { get; set; }
-
-    [Parameter]
-    public bool IsLarge { get; set; }
-
-    private string ComputedClass
-    {
-        get
-        {
-            var groupButtonClass = "va-button-group";
-            if(IsLarge)
-            {
-                groupButtonClass += " va-button-group--large";
-            }
-            if(IsSmall)
-            {
-                groupButtonClass += " va-button-group--small";
-            }
-            if(!IsLarge && !IsSmall)
-            {
-                groupButtonClass += " va-button-group--normal";
-            }
-            return groupButtonClass;
-        }
-    }
+    private string ComputedClass =>
+        CssBuilder.Default("va-button-group")
+            .AddClass(Class, !string.IsNullOrWhiteSpace(Class))
+            .AddClass("va-button-group--large", IsLarge)
+            .AddClass("va-button-group--small", IsSmall)
+            .AddClass("va-button-group--normal", !IsLarge && !IsSmall)
+            .Build();
 }

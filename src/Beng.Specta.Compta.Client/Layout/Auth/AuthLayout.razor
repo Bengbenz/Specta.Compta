@@ -1,0 +1,50 @@
+@inherits LayoutComponentBase
+@inject AppSettings ContextConfig
+
+<CascadingValue Value="ContextConfig.SelectedTheme">
+    <div class="auth-layout row align-content--center">
+        <div class="flex xs12 pa-3 flex-center">
+            <NavLink class="py-5 flex-center" href="/">
+                <VaIconApp />
+            </NavLink>
+        </div>
+
+        <div class="flex xs12 pa-3">
+            <div class="d-flex justify--center">
+                <VaCard class="auth-layout__card">
+                    <BodyContent>
+                        <SfTab OverflowMode="OverflowMode.Popup"> <!-- // center -->
+                            <TabItems>
+                                <TabItem>
+                                    <ChildContent>
+                                        <TabHeader Text="Se connecter"></TabHeader>
+                                    </ChildContent>
+                                    <ContentTemplate>
+                                        <VaSeparator/>
+                                        <div class="pa-3">
+                                            <Login />
+                                        </div>
+                                    </ContentTemplate>
+                                </TabItem>
+                                <TabItem>
+                                    <ChildContent>
+                                        <TabHeader Text="Créer un compte"></TabHeader>
+                                    </ChildContent>
+                                    <ContentTemplate>
+                                        <VaSeparator/>
+                                        <div class="pa-3">
+                                        </div>     
+                                    </ContentTemplate>
+                                </TabItem>
+                            </TabItems>
+                        </SfTab>
+                    </BodyContent>
+                </VaCard>
+            </div>
+        </div>
+    </div>
+</CascadingValue>
+
+@code{
+
+}

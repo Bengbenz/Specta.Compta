@@ -1,117 +1,86 @@
 
 @inject HttpClient HttpClient
 @inject TenantService TenantService
+@inject SidebarState SidebarState
 @inject ILogger<AppNavbar> Logger
 
 <nav class="app-navbar app-layout__navbar" style="@NavbarStyle">
     <div class="app-navbar__content row">
-      <div class="app-navbar__menu-container">
-        <VaIconMenu ExtraClass="app-navbar__menu" IsShown="!LayoutInfo.IsMinimized"
-          OnClick="@OnMinimized"
-          Color="@ComputedColor" />
+        <div class="app-navbar__menu-container">
+            <VaIconMenu class="app-navbar__menu" IsVisible="@(!SidebarState.IsMinimized)"
+                OnClick="@ToggleMinimized"
+                Color="@ComputedColor" />
 
-        <VaIconMenuCollapsed ExtraClass="app-navbar__menu" IsShown="LayoutInfo.IsMinimized"
-          OnClick="@OnMinimized"
-          Color="@ComputedColor"/>
+            <VaIconMenuCollapsed class="app-navbar__menu" IsVisible="@(SidebarState.IsMinimized)"
+                OnClick="@ToggleMinimized"
+                Color="@ComputedColor"/>
 
-        <a class="app-navbar__logo mr-3" href="/">
-          <VaIconApp /> <!-- Specta.Compta -->
-        </a>
-      </div>
-      <div class="app-navbar__center lg5 md4">
-      @if(TenantInfo != null)
-      { 
-        <VaButton  ExtraClass="app-navbar__button"
-                   Icon="fa fa-github"
-                   Color="#000000"
-                   To="https://github.com/Bengbenz/Specta.Compta"
-                   Target="_blank"
-                   Is="a">
-            <text>@TenantInfo.Name</text>
-        </VaButton>
-      }
-      </div>
-      <AppNavbarActions ExtraClass="app-navbar__actions md5 lg4" UserName="@UserName" />
-    </div>
+            <a class="app-navbar__logo mr-3" href="/">
+                <VaIconApp />
+            </a>
+        </div>
+        <div class="app-navbar__center lg5 md4">
+        @if(TenantInfo != null)
+        { 
+            <VaButton  class="app-navbar__button"
+                      Icon="fa fa-github"
+                      Color="#000000"
+                      To="https://github.com/Bengbenz/Specta.Compta"
+                      Target="_blank"
+                      Is="a">
+                <text>@TenantInfo.Name</text>
+            </VaButton>
+        }
+        </div>
+            <AppNavbarActions class="app-navbar__actions md5 lg4" />
+        </div>
     <div class="app-navbar__shape" style="@ShapeStyle" ></div>
 </nav>
 
 @code{
 
-  [Parameter]
-  public string UserName { get; set; } = "LebCa";
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
 
-  [CascadingParameter]
-  public LayoutInfoVm LayoutInfo { get; set; }
+    private TenantInfoDTO TenantInfo { get; set; }
 
-  [CascadingParameter]
-  public ThemeStore ContextTheme { get; set; }
+    private string ComputedColor => (ContextTheme.IsInverted) ? ContextTheme[ThemeDictionary.GrayKey] : "white";
 
-  [Parameter]
-  public EventCallback OnMinimized { get; set; }
+    private string NavbarStyle =>
+        StyleBuilder.Empty()
+            .AddStyle("background-color", "white", !ContextTheme.IsGradient)
+            .AddStyle("background-color", ContextTheme[ThemeDictionary.SecondaryKey]
+                .ColorShiftHsl(new HslType(h: 0, s: -13, l: 15)).ToString(), ContextTheme.IsGradient)
+            .AddStyle("box-shadow", "0 2px 3px 0 rgba(52, 56, 85, 0.25)", ContextTheme.ShadowSize == SizeType.Small)
+            .Build();
 
-  private TenantInfoDTO TenantInfo { get; set; }
+    private string ShapeStyle =>
+        StyleBuilder.Empty()
+            .AddStyle("border-top-color", "transparent", !ContextTheme.IsGradient)
+            .AddStyle("border-top-color", ContextTheme[ThemeDictionary.SecondaryKey]
+                .ColorShiftHsl(new HslType(h: -1, s: -11, l: 10)).ToString(), ContextTheme.IsGradient)
+            .Build();
 
-  private string ComputedColor => (ContextTheme.IsInverted) ? ContextTheme[ThemeStore.GrayKey] : "white";
+    private void ToggleMinimized() => SidebarState.ToggleMinimized();
 
-  private string NavbarStyle
-  {
-    get
+    protected override async Task OnInitializedAsync()
     {
-      var style = new StyleType { BackgroundColor =  "white" };
-      if (ContextTheme.IsGradient)
-      {
-        style.BackgroundColor = ContextTheme[ThemeStore.SecondaryKey]
-                                  .ColorShiftHsl(new HslType(h: 0, s: -13, l: 15))
-                                  .ToString();
-      }
-      if (ContextTheme.Shadow == ShadowType.Small)
-      {
-        style.BoxShadow = "0 2px 3px 0 rgba(52, 56, 85, 0.25)";
-      }
-      return style.ToString();
+        await GetTenantInfoAsync();
+        await base.OnInitializedAsync();
     }
-  }
 
-  private string ShapeStyle
-  {
-    get
+    protected async Task GetTenantInfoAsync()
     {
-      var style = new StyleType { BorderTopColor = "transparent" };
-      if(ContextTheme == null)
-      {
-        return style.ToString();
-      }
-
-      if(ContextTheme.IsGradient)
-      {
-        style.BorderTopColor = ContextTheme[ThemeStore.SecondaryKey]
-                                .ColorShiftHsl(new HslType(h: -1, s: -11, l: 10))
-                                .ToString();
-      }
-      return style.ToString();
+        string tenantId = TenantService.GetTenantIdentifier();
+        string apiRequest = "/tenant"; //$"/{tenantId}/tenantname";
+        try
+        {
+            TenantInfo = await HttpClient.GetJsonAsync<TenantInfoDTO>(apiRequest);
+            
+            Logger.LogDebug($"{GetType().Name} initializing... Requested={apiRequest}, Response={TenantInfo?.Name}");
+        }
+        catch(Exception ex)
+        {
+            Logger.LogError($"{GetType().Name} Can't get Tenant Info from Requested={apiRequest}./n {ex}");
+        }
     }
-  }
-
-  protected override async Task OnInitializedAsync()
-  {
-    await GetTenantInfoAsync();
-    await base.OnInitializedAsync();
-  }
-
-  protected async Task GetTenantInfoAsync()
-  {
-      string tenantId = TenantService.GetTenantIdentifier();
-      string apiRequest = "/tenant"; //$"/{tenantId}/tenantname";
-      try
-      {
-          TenantInfo = await HttpClient.GetJsonAsync<TenantInfoDTO>(apiRequest);
-          
-          Logger.LogDebug($"{GetType().Name} initializing... Requested={apiRequest}, Response={TenantInfo?.Name}");
-      }
-      catch(Exception ex)
-      {
-          Logger.LogError($"{GetType().Name} Can't get Tenant Info from Requested={apiRequest}./n {ex}");
-      }
-  }
 }

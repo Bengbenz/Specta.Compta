@@ -5,23 +5,22 @@
     viewBox="0 0 304 31">
   <defs>
       <linearGradient id="ORIGINAL" x1="0%" y1="50%" y2="50%">
-        <stop offset="0%" stop-color="#4AE387"/>
-        <stop offset="100%" stop-color="#C8EA13"/>
+          <stop offset="0%" stop-color="#4AE387"/>
+          <stop offset="100%" stop-color="#C8EA13"/>
       </linearGradient>
       <linearGradient id="CORPORATE" x1="0%" y1="50%" y2="50%">
-        <stop offset="0%" stop-color="#74BBFF"/>
-        <stop offset="100%" stop-color="#6E85E8"/>
+          <stop offset="0%" stop-color="#74BBFF"/>
+          <stop offset="100%" stop-color="#6E85E8"/>
       </linearGradient>
   </defs>
-  <text
-     style="font-style:normal;font-variant:normal;
+  <text style="font-style:normal;font-variant:normal;
             font-weight:bold;font-stretch:normal;
             font-size:44.5209px;line-height:1.25;text-align:center;
-            font-family:Krungthep;-inkscape-font-specification:'Krungthep Normal';
+            font-family:@FontFamily;-inkscape-font-specification:'@FontFamily Normal';
             font-variant-ligatures:normal;font-variant-caps:normal;
             font-variant-numeric:normal;font-variant-east-asian:normal;
             fill:url(#@ThemeGradientId);fill-opacity:1;stroke:none"
-     xml:space="preserve">
+            xml:space="preserve">
      <tspan y="30.811676"
             x="-2.8389108"
             style="fill:url(#@ThemeGradientId);fill-opacity:1">F  I  N ' P  R  O  D</tspan>
@@ -30,10 +29,9 @@
 
 @code{
 
-  [CascadingParameter]
-  public ThemeStore ContextTheme { get; set; }
+  [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
 
   private string ThemeGradientId => ContextTheme.IsInverted ? "CORPORATE" : "ORIGINAL";
-
   private string TextColor => ContextTheme.IsInverted ? "#6E85E8" : "#E4FF32";
+  private string FontFamily => "Krungthep"; //Copperplate
 }

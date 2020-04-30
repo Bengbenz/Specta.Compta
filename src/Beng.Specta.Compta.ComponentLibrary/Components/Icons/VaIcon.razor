@@ -1,0 +1,40 @@
+@if (IsVisible)
+{
+    <i class="@ComputedClass" style="@IconStyle" @attributes="AdditionalAttributes">
+        @ChildContent
+    </i>
+}
+
+@code{
+
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [Parameter] public string Class { get; set; }
+    [Parameter] public bool IsVisible { get; set; } = true;
+    [Parameter] public string Name { get; set; } = string.Empty;
+    [Parameter] public bool IsSmall { get; set; }
+    [Parameter] public bool IsLarge { get; set; }
+    [Parameter] public bool IsFixedWidth { get; set; }
+    [Parameter] public int Rotation { get; set; }
+    [Parameter] public string Size { get; set; } = string.Empty;
+    [Parameter] public string Style { get; set; } = string.Empty;
+    [Parameter] public string Color { get; set; } = string.Empty;
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    private string IconStyle =>
+        StyleBuilder.Empty()
+            .AddStyle("transform", $"rotate({Rotation}deg)", Rotation != 0)
+            .AddStyle("font-size", () => Size?.ToPixelValue(), !string.IsNullOrWhiteSpace(Size))
+            .AddStyle("color", () => ContextTheme.TryGetValue(Color, out var color) ? color : Color, !string.IsNullOrWhiteSpace(Color))
+            .AddStyleFromAttributes(AdditionalAttributes)
+            .Build() + Style;
+
+    private string ComputedClass =>
+        CssBuilder.Default("va-icon")
+            .AddClass(Class, !string.IsNullOrWhiteSpace(Class))
+            .AddClass(Name, !string.IsNullOrWhiteSpace(Name))
+            .AddClass("va-icon--large", IsLarge)
+            .AddClass("va-button--small", IsSmall)
+            .AddClass("va-button--fixed", IsFixedWidth)
+            .Build();
+}

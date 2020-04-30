@@ -1,19 +1,21 @@
 @using Beng.Specta.Compta.Client.Layout.Navbar.Dropdowns
-@inject ILogger<AppNavbarActions> Logger
 
-<div class="app-navbar-actions @ExtraClass" >
-    <SettingsDropdown ExtraClass="app-navbar-actions__item" />
-    <NotificationDropdown ExtraClass="app-navbar-actions__item"/>
-    <ProfileDropdown ExtraClass="app-navbar-actions__item app-navbar-actions__item--profile">
-        <span>@UserName</span>
-    </ProfileDropdown>
+<div class="@ComputedClass" >
+    <SettingsDropdown class="app-navbar-actions__item" />
+    <NotificationDropdown class="app-navbar-actions__item"/>
+    <LanguageDropdown class="app-navbar-actions__item"/>
+    <ProfileDropdown class="app-navbar-actions__item app-navbar-actions__item--profile"
+        Label="@UserName" />
 </div>
 
 @code{
 
-    [Parameter]
-    public string UserName { get; set; }
+    [Parameter] public string Class { get; set; }
 
-    [Parameter]
-    public string ExtraClass { get; set; }
+    private string UserName { get; set; } = "LebCa";
+
+    private string ComputedClass =>
+        CssBuilder.Default("app-navbar-actions")
+            .AddClass(Class, !string.IsNullOrWhiteSpace(Class))
+            .Build();
 }

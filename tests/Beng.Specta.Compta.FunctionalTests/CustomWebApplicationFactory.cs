@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Linq;
 
-using Beng.Specta.Compta.Infrastructure.Data;
-using Beng.Specta.Compta.Server;
-using Beng.Specta.Compta.SharedKernel.Interfaces;
-using Beng.Specta.Compta.UnitTests;
-
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+
+using Beng.Specta.Compta.Infrastructure.Data;
+using Beng.Specta.Compta.Server;
+using Beng.Specta.Compta.SharedKernel.Interfaces;
+using Beng.Specta.Compta.UnitTests;
 
 namespace Beng.Specta.Compta.FunctionalTests
 {
@@ -37,7 +37,7 @@ namespace Beng.Specta.Compta.FunctionalTests
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            builder.ConfigureServices(services =>
+            builder?.ConfigureServices(services =>
             {
                 ReplaceDbContextService<AppDbContext>(services, "Beng.Specta.Compta.FonctionalTest");
                 ReplaceDbContextService<TenantStoreDbContext>(services, "Beng.Specta.TenantStore.FonctionalTest");

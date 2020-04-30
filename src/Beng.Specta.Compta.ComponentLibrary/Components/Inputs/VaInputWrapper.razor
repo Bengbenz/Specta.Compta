@@ -1,0 +1,66 @@
+<div class="@ComputedClass" @attributes="AdditionalAttributes">
+    <div class="va-input-wrapper__control">
+        <div class="va-input-wrapper__slot">
+          @if (Prepend != null)
+          {
+            <div class="va-input-wrapper__prepend-inner">
+                @Prepend
+            </div>
+          }
+            <div class="va-input-wrapper__content">
+                @Content
+                <div class="va-input-wrapper__details py-0 px-2">
+                    <VaMessageList Color="@MessagesColor"
+                        Value="@ComputedMessages"
+                        Limit="@(IsError ? ErrorCount : 99)"
+                  />
+                </div>
+            </div>
+          @if (Append != null)
+          {
+            <div class="va-input-wrapper__append-inner">
+                @Append
+            </div>
+          }
+        </div>
+    </div>
+</div>
+
+@code{
+
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
+    [Parameter] public RenderFragment Prepend { get; set; }
+    [Parameter] public RenderFragment Content { get; set; }
+    [Parameter] public RenderFragment Append { get; set; }
+    [Parameter] public string Class { get; set; }
+    [Parameter] public bool IsDisabled { get; set; }
+    [Parameter] public bool IsError { get; set; }
+    [Parameter] public bool IsSuccess { get; set; }
+    [Parameter] public int ErrorCount { get; set; }
+    [Parameter] public IEnumerable<string> Messages { get; set; }
+    [Parameter] public IEnumerable<string> ErrorMessages { get; set; }
+
+    private IEnumerable<string> ComputedMessages => IsError ? ErrorMessages : Messages;
+    
+    private string ComputedClass =>
+        new CssBuilder("va-input-wrapper")
+            .AddClass(Class)
+            .Build();
+
+    private string MessagesColor
+    {   
+        get
+        {
+            var color = string.Empty;
+            if (IsError)
+            {
+                color = ThemeDictionary.DangerKey;
+            }
+            else if (IsSuccess)
+            {
+                color = ThemeDictionary.PrimaryKey;
+            }
+            return color;
+        }
+    }
+}

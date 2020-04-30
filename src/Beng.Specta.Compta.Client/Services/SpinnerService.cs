@@ -7,14 +7,8 @@ namespace Beng.Specta.Compta.Client.Services
 		public event Action OnShow;
 		public event Action OnHide;
 
-		public void Show()
-		{
-			OnShow?.Invoke();
-		}
+		public void Show() => OnShow?.Invoke();
 
-		public void Hide()
-		{
-			OnHide?.Invoke();
-		}
+		public void Hide() => OnHide?.Invoke();
     }
 }

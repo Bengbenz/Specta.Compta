@@ -1,111 +1,68 @@
-@inject ILogger<AppSidebar> Logger
-@inject TenantService TenantService
+@inject SidebarState SidebarState
 
 <aside class="@ComputedClass" style="@ComputedStyle">
-  <ul class="app-sidebar__menu">
-    @foreach(var item in _menuItems){
-      @if(item.Children.Any())
+    <ul class="app-sidebar__menu">
+      @foreach (var item in SidebarState.MenuItems)
       {
-        <AppSidebarGroupLink @key="item"
-          Icon="@item.Meta.IconClass"
-          Title="@item.DisplayName"
-          Children="@item.Children">
-          @foreach(var subMenuItem in item.Children)
-          {
-            <AppSidebarLink @key="subMenuItem"
-              Title="@subMenuItem.DisplayName"
-              Url="@subMenuItem.Meta.Url" />
-          }
-        </AppSidebarGroupLink>
+        @if (item.Children.Any())
+        {
+            <AppSidebarGroupLink @key="item"
+                Icon="@item.Meta.IconClass"
+                Title="@item.DisplayName"
+                IsExpanded="@item.IsExpanded"
+                IsMinimized="@SidebarState.IsMinimized"
+                Loader="@(() => Task.Run(() => item.Children))"
+                OnExpand="@(() => ToggleExpandMenu(item))" >
+                <SubMenuItemTemplate Context="subMenuItem">
+                    <AppSidebarLink @key="subMenuItem"
+                        Title="@subMenuItem.DisplayName"
+                        Url="@subMenuItem.Meta.Url.OriginalString"
+                        IsActive="@subMenuItem.IsActive"
+                        @onclick="@(() => UpdateActiveState(subMenuItem, item))"/>
+                </SubMenuItemTemplate>
+            </AppSidebarGroupLink>
+        }
+        else
+        {
+            <AppSidebarItemLink TItem="@item" Tooltip="@item.DisplayName" IsMinimized="@SidebarState.IsMinimized">
+                <MenuItemTemplate Context="menuItem">
+                    <AppSidebarLink @key="item" Icon="@item.Meta.IconClass"
+                        Title="@menuItem.DisplayName"
+                        Url="@menuItem.Meta.Url.OriginalString"
+                        IsActive="@menuItem.IsActive"
+                        IsMinimized="@SidebarState.IsMinimized"
+                        @onclick="@(() => UpdateActiveState(menuItem))" />
+                </MenuItemTemplate>
+            </AppSidebarItemLink>
+        }
       }
-      else
-      {
-        <AppSidebarLink @key="item"
-                        Icon="@item.Meta.IconClass"
-                        Title="@item.DisplayName"
-                        Url="@item.Meta.Url" />
-      }
-    }
-  </ul>
+    </ul>
 </aside>
 
 @code{
 
-  [CascadingParameter]
-  public LayoutInfoVm LayoutInfo { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [Parameter] public string Color { get; set; } = ThemeDictionary.SecondaryKey;
+    
+    private string ComputedStyle =>
+        StyleBuilder.Default("background-color", "white")
+            .AddStyle("background-color", ContextTheme.ComputeColor(Color), !ContextTheme.IsInverted)
+            .Build();
 
-  [CascadingParameter]
-  public ThemeStore ContextTheme { get; set; }
+    private string ComputedClass =>
+        CssBuilder.Default("app-sidebar app-layout__sidebar")
+            .AddClass("app-sidebar--minimized", SidebarState.IsMinimized)
+            .Build();
 
-  [Parameter]
-  public string Color { get; set; } = ThemeStore.SecondaryKey;
+    private void UpdateActiveState(ModuleInfoVm menuItem = null, ModuleInfoVm groupItem = null) =>
+        SidebarState.SetActiveItem(menuItem, groupItem);
 
-  private TenantInfoDTO _tenantInfo => TenantService.TenantInfo;
+    private void ToggleExpandMenu(ModuleInfoVm groupItem ) =>
+        SidebarState.ToggleExpandedGroup(groupItem);
 
-  private string ComputedStyle
-  {
-    get
+    protected override async Task OnInitializedAsync()
     {
-      var style = new StyleType { BackgroundColor = "white" };
-      if(ContextTheme == null)
-      {
-        return style.ToString();
-      }
-
-      style.BackgroundColor = !ContextTheme.IsInverted ? ContextTheme.ComputeColor(Color) : "white";
-      return style.ToString();
+        UpdateActiveState();
+        await base.OnInitializedAsync();
     }
-  }
-
-  private string ComputedClass
-  {
-    get
-    {
-      var style = "app-sidebar app-layout__sidebar";
-      if(LayoutInfo == null)
-      {
-        return style;
-      }
-
-      return LayoutInfo.IsMinimized ? $"{style} app-sidebar--minimized" : style;
-    }
-  }
-
-  private IList<ModuleInfoVm> _menuItems => new List<ModuleInfoVm>
-  {
-    new ModuleInfoVm("1", "Dashboard", new MetaInfoVm($"/", "vuestic-iconset vuestic-iconset-dashboard")),
-    new ModuleInfoVm("2", "Projets", new MetaInfoVm($"/projects", "vuestic-iconset vuestic-iconset-statistics")),
-    new ModuleInfoVm("4", "Budget", new MetaInfoVm($"/budget", "vuestic-iconset vuestic-iconset-forms")),
-    new ModuleInfoVm("5", "Finances", new MetaInfoVm($"/funding", "vuestic-iconset vuestic-iconset-tables"))
-    {
-      Children = new List<ModuleInfoVm>
-      {
-        new ModuleInfoVm("6", "Plan de Financement", new MetaInfoVm($"/funding-plan")),
-        new ModuleInfoVm("7", "Contrats", new MetaInfoVm($"/funding-contracts"))
-      }
-    },
-    new ModuleInfoVm("8", "Comptabilité", new MetaInfoVm($"/accounting", "vuestic-iconset vuestic-iconset-files"))
-    {
-      Children = new List<ModuleInfoVm>
-      {
-        new ModuleInfoVm("9", "Intégration", new MetaInfoVm($"/accounting-integration")),
-        new ModuleInfoVm("10", "Plan Analytique", new MetaInfoVm($"/accounting-analytic-plan"))
-      }
-    },
-    new ModuleInfoVm("12", "Trésorerie", new MetaInfoVm($"/treasury", "vuestic-iconset vuestic-iconset-ui-elements")),
-    new ModuleInfoVm("13", "Administration", new MetaInfoVm($"/settings", "vuestic-iconset vuestic-iconset-settings"))
-    {
-      Children = new List<ModuleInfoVm>
-      {
-        new ModuleInfoVm("14", "Utilisateurs", new MetaInfoVm($"/settings-users")),
-        new ModuleInfoVm("15", "Rôles", new MetaInfoVm($"/settings-roles")),
-        new ModuleInfoVm("16", "Permissions", new MetaInfoVm($"/settings-permissions"))
-      }
-    }
-  };
-
-  protected override async Task OnInitializedAsync()
-  {
-      await base.OnInitializedAsync();
-  }
 }
