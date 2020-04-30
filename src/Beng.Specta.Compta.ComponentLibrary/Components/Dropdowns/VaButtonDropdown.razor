@@ -5,7 +5,7 @@
   {
     <VaDropdown IsDisabled="@IsDisabled"
         Position="@Position"
-        @bind-value="@IsOpen" >
+        OnExpand="@OnExpand" >
         <Anchor>
             <VaButton IsSmall="@IsSmall"
                       IsLarge="@IsLarge"
@@ -38,7 +38,7 @@
         </VaButton>
         <VaDropdown IsDisabled="@(IsDisabled || IsDisableDropdown)"
             Position="@Position"
-            @bind-value="@IsOpen">
+            @OnExpand="OnExpand" >
             <Anchor>
                 <VaButton IsSmall="@IsSmall"
                     IsLarge="@IsLarge"
@@ -78,7 +78,7 @@
     [Parameter] public PositionType Position { get; set; } = PositionType.Bottom;
     [Parameter] public RenderFragment ChildContent { get; set; }
 
-    private bool IsOpen { get; set; }
+    private bool IsExpanded { get; set; }
 
     private string ComputedClass =>
         CssBuilder.Default("va-button-dropdown")
@@ -88,5 +88,11 @@
             .AddClass("va-button-dropdown--large", IsLarge)
             .Build();
 
-    private string ComputedIcon => IsOpen && !string.IsNullOrWhiteSpace(IconOpened) ? IconOpened : Icon;
+    private string ComputedIcon => IsExpanded && !string.IsNullOrWhiteSpace(IconOpened) ? IconOpened : Icon;
+
+    private void OnExpand()
+    {
+        IsExpanded = !IsExpanded;
+        StateHasChanged();
+    }
 }

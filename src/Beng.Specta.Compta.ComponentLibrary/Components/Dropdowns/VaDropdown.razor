@@ -4,9 +4,9 @@
 
 <div class="@ComputedClass" @attributes="@AdditionalAttributes">
     <div class="va-dropdown__anchor"
-        @onmouseover="@OnMouseOver"
-        @onmouseout="@OnMouseOut"
-        @onclick="@OnAnchorClick"
+        @onmouseover="OnMouseOver"
+        @onmouseout="OnMouseOut"
+        @onclick="OnAnchorClick"
         @ref="AnchorRef">
       @Anchor
     </div>
@@ -37,7 +37,7 @@
     [Parameter] public string Class { get; set; }
     [Parameter] public string Color { get; set; }
     [Parameter] public string Icon { get; set; }
-    [Parameter] public string Offset { get; set; }
+    [Parameter] public string Offset { get; set; } = "0, 8"; // default distance of popper with the reference element
     [Parameter] public bool IsCloseOnClickOutside { get; set; } = true;
     [Parameter] public bool IsCloseOnAnchorClick { get; set; } = true;
     [Parameter] public bool IsPreventOverflow { get; set; } = true;
@@ -47,12 +47,13 @@
     [Parameter] public bool IsDisabled { get; set; }
     [Parameter] public bool IsContentHoverable { get; set; } = true;
     [Parameter] public bool Value { get; set; }
-    [Parameter] public TriggerType Trigger { get; set; } = TriggerType.Click;
     [Parameter] public int HoverOutTimeout { get; set; } = 30;
     [Parameter] public int HoverOverTimeout { get; set; } = 200;
+    [Parameter] public TriggerType Trigger { get; set; } = TriggerType.Click;
     [Parameter] public PositionType Position { get; set; } = PositionType.Bottom;
     [Parameter] public RenderFragment Anchor { get; set; }
     [Parameter] public RenderFragment Content { get; set; }
+    [Parameter] public EventCallback OnExpand { get; set; }
 
     private ElementReference AnchorWidthRef { get; set; }
     private ElementReference AnchorRef { get; set; }
@@ -130,20 +131,21 @@
         }
         IsClicked = !IsClicked;
         Value = IsClicked;
+        OnExpand.InvokeAsync(IsClicked);
     }
 
     private async Task UpdateAnchorWidthAsync() =>
         AnchorWidth = await JSRuntime.HandlePopperInstanceAsync(
                                 AnchorRef,
                                 ContentRef,
+                                AnchorWidthRef,
                                 Position,
-                                Offset,
+                                Offset, 
                                 IsContentVisible,
                                 IsPreventOverflow,
                                 IsFixed,
                                 IsBoundaryBody,
-                                IsKeepAnchorWidth,
-                                AnchorWidthRef);
+                                IsKeepAnchorWidth);
 
     [JSInvokable]
     public void OnClickOutside()
@@ -156,10 +158,11 @@
 
     public void Hide()
     {
-        if (Trigger == TriggerType.Click)
+        if (Trigger == TriggerType.Click && IsClicked)
         {
             IsClicked = false;
             StateHasChanged();
+            OnExpand.InvokeAsync(null);
         }
     }
 
@@ -169,18 +172,8 @@
         {
             await JSRuntime.RegisterClickOutsideAsync(AnchorRef, ContentRef, DotNetObjectReference.Create(this));
         }
-        try
-        {
-            await UpdateAnchorWidthAsync();
-        }
-        catch (NullReferenceException ex)
-        {
-            Logger.LogError($"Error: {ex}");
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError($"Error: {ex}");
-        }  
+            
+        await UpdateAnchorWidthAsync();
     }
 
     public void Dispose()

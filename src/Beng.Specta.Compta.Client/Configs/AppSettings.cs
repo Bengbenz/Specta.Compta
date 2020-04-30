@@ -4,7 +4,7 @@ namespace Beng.Specta.Compta.Client.Configs
 {
     public class AppSettings
     {
-        public bool IsInvertedColor { get; set; }
+        public bool IsInvertedColor { get; set; } = true;
 
         public ThemeDictionary SelectedTheme =>
             IsInvertedColor ? ThemeDictionary.CORPORATE : ThemeDictionary.DEFAULT;

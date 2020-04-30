@@ -20,15 +20,11 @@
     [Parameter] public bool IsVisible { get; set; }
     [Parameter] public int AnimationDuration { get; set; } = 1200;
 
-    private string ComputedStyle
-    {
-        get
-        {
-            var color = !ContextTheme.IsInverted ? "linear-gradient(to right, #0e4ac4, #002c85)" : "white";
-            var style = new StyleType { BackgroundImage = color };
-            return style.ToString();
-        }
-    }
+    private string ComputedStyle =>
+        StyleBuilder.Empty()
+            .AddStyle("background-color", "white", ContextTheme.IsInverted)
+            .AddStyle("background-color", "linear-gradient(to right, #0e4ac4, #002c85)", !ContextTheme.IsInverted)
+            .Build();
 
     private int Size = 264;
     private string Color => ContextTheme[ThemeDictionary.PrimaryKey];

@@ -8,8 +8,8 @@
     <div>
         <div @onclick="OnExpand">
             <AppSidebarLink Icon="@Icon"
-                  IconRight="@IconRight"
-                  Title="@Title"/>
+                IconRight="@IconRight"
+                Title="@Title" />
         </div>
         <transition-expand>
         @if (IsExpanded)
@@ -25,23 +25,24 @@
     </div>
   }
   else
-  {
-      <VaDropdown position="@PositionType.Right" IsFixed="true" IsPreventOverflow="false">
-          <Anchor>
-                <AppSidebarLink Icon="@Icon"
-                    IconRight="material-icons"
-                    IconRightContent="more_horiz"
-                    IsActive="@IsActive"
-                    IsMinimized="true"/>
-          </Anchor>
-          <Content>
-              <ul class="app-sidebar-link-group__submenu" style="@ComputedSubMenuColor" >
-                @foreach(var subMenuItem in SubMenuItems)
-                {
-                  @SubMenuItemTemplate(subMenuItem)
-                }
-              </ul>
-          </Content>
+  { 
+
+    <VaDropdown position="@PositionType.Right" IsFixed="true" IsPreventOverflow="false">
+        <Anchor>
+            <AppSidebarLink Icon="@Icon"
+                IconRight="material-icons"
+                IconRightContent="more_horiz"
+                IsActive="@IsActive"
+                IsMinimized="true"/>
+        </Anchor>
+        <Content>
+            <ul class="app-sidebar-link-group__submenu" style="@ComputedSubMenuColor" >
+            @foreach(var subMenuItem in SubMenuItems)
+            {
+                @SubMenuItemTemplate(subMenuItem)
+            }
+            </ul>
+        </Content>
     </VaDropdown>
   }
 </li>
