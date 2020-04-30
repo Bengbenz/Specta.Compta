@@ -11,7 +11,7 @@
                 OnClick="@ToggleMinimized"
                 Color="@ComputedColor" />
 
-            <VaIconMenuCollapsed class="app-navbar__menu" IsVisible="@(SidebarState.IsMinimized)"
+            <VaIconMenuCollapsed class="app-navbar__menu" IsVisible="@SidebarState.IsMinimized"
                 OnClick="@ToggleMinimized"
                 Color="@ComputedColor"/>
 
@@ -25,7 +25,7 @@
             <VaButton  class="app-navbar__button"
                       Icon="fa fa-github"
                       Color="#000000"
-                      To="https://github.com/Bengbenz/Specta.Compta"
+                      To="/"
                       Target="_blank"
                       Is="a">
                 <text>@TenantInfo.Name</text>

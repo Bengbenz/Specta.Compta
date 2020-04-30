@@ -6,8 +6,8 @@
 
 <CascadingValue Value="ContextConfig.SelectedTheme">
     <LoadingSpinner />
-    <PageLoader IsVisible="@IsPageLoaderVisible" />
-    @if(!IsPageLoaderVisible)
+    <PageLoader IsVisible="@(!IsMainContentVisible)" />
+    @if(IsMainContentVisible)
     {
     <div class="app-page-layout app-layout">
         <AppNavbar />
@@ -26,7 +26,7 @@
  @code{
 
     private static readonly int AnimationDuration = 2000;
-    private bool IsPageLoaderVisible { get; set; } = true;
+    private bool IsMainContentVisible { get; set; }
     private TenantInfoDTO TenantInfo { get; set; }
 
     private void ToggleInverted()
@@ -38,7 +38,7 @@
     private async Task HidePageLoader()
     {
         await Task.Delay(AnimationDuration);
-        IsPageLoaderVisible = false;
+        IsMainContentVisible = true;
     }
 
     [JSInvokable]
@@ -65,7 +65,7 @@
             await JSRuntime.RegisterWindowResizeAsync(
                 SidebarState.MobileWidth,
                 DotNetObjectReference.Create(this));
-        }  
+        }
     }
 
     public void Dispose()
