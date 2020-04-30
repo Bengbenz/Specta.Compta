@@ -1,6 +1,6 @@
 <VaDropdown class="@ComputedClass"
     IsBoundaryBody="true" offset="0, 16"
-    @bind-value="IsExpanded"
+    OnExpand="@OnExpand"
     @attributes="@AdditionalAttributes">
     <Anchor>
         <span class="profile-dropdown__anchor" style="@ComputedAnchorStyle">
@@ -27,7 +27,7 @@
     [Parameter] public string Class { get; set; }
     [Parameter] public string Label { get; set; }
 
-    private bool IsExpanded { get; set; }
+    private bool IsExpanded { get; set; } = false;
 
     private string AnchorIconClass =>  IsExpanded ? "fa fa-angle-up" : "fa fa-angle-down";
 
@@ -45,4 +45,10 @@
         new OptionType { Label = "Profile", Value = "/profile" },
         new OptionType { Label = "Logout", Value = "/login" },
     };
+
+    private void OnExpand()
+    {
+        IsExpanded = !IsExpanded;
+        StateHasChanged();
+    }
 }

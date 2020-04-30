@@ -35,11 +35,8 @@
     [Parameter] public string IconRightContent { get; set; }
     [Parameter] public bool IsActive { get; set; }
     [Parameter] public bool IsMinimized { get; set; }
-    [Parameter] public bool IsActiveByDefault { get; set; }
-    [Parameter] public EventCallback OnActive { get; set; }
 
     private bool IsHovered { get; set; }
-    
 
     private string ComputedClass =>
         CssBuilder.Default("app-sidebar-link")
@@ -71,10 +68,4 @@
     private void EnableHoverState() => UpdateHoverState(true);
 
     private void DisableHoverState() => UpdateHoverState(false);
-
-    protected override async Task OnInitializedAsync()
-    {
-        await OnActive.InvokeAsync(null);
-        await base.OnInitializedAsync();
-    }
 }
