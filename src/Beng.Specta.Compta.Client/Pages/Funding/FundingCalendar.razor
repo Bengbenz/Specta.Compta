@@ -4,16 +4,16 @@
 @inject ILogger<FundingCalendar> Logger
 @inject HttpClient HttpClient
 
-<VaCard ExtraClass="mb-2">
+<VaCard class="mb-2">
     <Header>
-        <VaIcon Name="vuestic-iconset vuestic-iconset-tables" Color="@ThemeStore.InfoKey" />
-        <h5 class="ml-2 mt-0 mb-0" style="color:@(ContextTheme[ThemeStore.InfoKey])">Calendrier de Financement</h5>
+        <VaIcon Name="vuestic-iconset vuestic-iconset-tables" Color="@ThemeDictionary.InfoKey" />
+        <h5 class="ml-2 mt-0 mb-0" style="color:@(ContextTheme[ThemeDictionary.InfoKey])">Calendrier de Financement</h5>
     </Header>
     <Actions>
         <VaButton icon="fa fa-refresh" @onclick="GetFundingItems" />
     </Actions>
     <BodyContent>
-        <VaNotification BadgeText="Error" Color="@ThemeStore.DangerKey" IsVisible="@(ErrorDetails != null)" ExtraClass="mb-4">@ErrorDetails</VaNotification>
+        <VaNotification BadgeText="Error" Color="@ThemeDictionary.DangerKey" IsVisible="@(ErrorDetails != null)" class="mb-4">@ErrorDetails</VaNotification>
         @if (FundingItems == null)
         {
             <h1>Loading...</h1>
@@ -35,7 +35,7 @@
                             <TabHeader Text="Calendrier"></TabHeader>
                         </ChildContent>
                         <ContentTemplate>
-                            Bonjour Caleb
+                            Welcome
                         </ContentTemplate>
                     </TabItem>
                 </TabItems>
@@ -46,11 +46,18 @@
 
 @code{
 
-    [CascadingParameter]
-    public ThemeStore ContextTheme { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
 
     private string ErrorDetails;
     private IList<ContractStep> FundingItems { get; set; }
+
+    bool IsOpen4 { get; set; }
+
+    void onclick4(MouseEventArgs e)
+    {
+        IsOpen4 = !IsOpen4;
+        StateHasChanged();
+    }
 
     protected override async Task OnInitializedAsync()
     {

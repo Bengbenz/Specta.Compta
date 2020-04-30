@@ -3569,6 +3569,27 @@ body {
   /*overflow: hidden;*/
   z-index: 100; }
 
+.va-button-dropdown .va-dropdown__anchor {
+  display: inline-block;
+  margin: 0.375rem 0.5rem; }
+.va-button-dropdown .va-button {
+  margin: 0; }
+.va-button-dropdown--split .va-dropdown .va-dropdown__anchor {
+  margin: 0; }
+.va-button-dropdown--split .va-dropdown .va-button {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  font-size: 1.5rem; }
+.va-button-dropdown--split.va-button-dropdown--small .va-dropdown .va-button {
+  font-size: 1.6rem; }
+.va-button-dropdown--split.va-button-dropdown--large .va-dropdown .va-button {
+  font-size: 1.7rem; }
+.va-button-dropdown__content {
+  background: #f5f8f9;
+  box-shadow: 0 2px 3px 0 rgba(98, 106, 119, 0.25);
+  padding: 0.375rem 0.5rem 0.375rem 0.5rem;
+  border-radius: 0.5rem; }
+
 .va-icon {
   display: inline-block;
   letter-spacing: normal; }
@@ -3950,5 +3971,212 @@ body {
     .va-tabs .va-tabs__slider-wrapper .va-tabs__slider {
       width: 100%;
       height: 0.125rem; }
+
+.row-equal .flex .va-card {
+  height: 100%; }
+
+.dashboard .va-card {
+  margin-bottom: 0 !important; }
+
+.chart {
+  height: 400px; }
+
+.row-separated .flex + .flex {
+  border-left: 1px solid #e3eaeb; }
+@media (max-width: 575.98px) {
+  .row-separated p:not(.display-2) {
+    font-size: 0.875rem; } }
+
+@media (min-width: 768px) {
+  .dashboard .va-card__header--over {
+    padding-top: 0 !important; } }
+@media (min-width: 768px) {
+  .dashboard .va-card__image {
+    padding-bottom: 0 !important; } }
+
+.auth-layout {
+  min-height: 100vh;
+  background-image: linear-gradient(to right, #0e4ac4, #002c85); }
+  .auth-layout__card {
+    width: 100%;
+    max-width: 600px; }
+  @media (max-width: 575.98px) {
+    .auth-layout__options {
+      flex-direction: column; } }
+
+.va-input__container {
+  display: flex;
+  position: relative;
+  width: 100%;
+  min-height: 2.375rem;
+  border-style: solid;
+  border-width: 0 0 thin 0;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem; }
+  .va-input__container__content-wrapper {
+    display: flex;
+    position: relative;
+    align-items: flex-end;
+    width: 100%;
+    /*min-width: 100%;*/ }
+  .va-input__container__icon-wrapper {
+    display: flex;
+    align-items: center; }
+    .va-input__container__icon-wrapper--start {
+      margin-left: 0.5rem; }
+    .va-input__container__icon-wrapper--end {
+      margin-right: 0.5rem; }
+  .va-input__container__close-icon {
+    cursor: pointer;
+    margin-left: 0.25rem; }
+  .va-input__container__label {
+    position: absolute;
+    bottom: 0.875rem;
+    left: 0.5rem;
+    margin-bottom: 0.5rem;
+    max-width: calc(100% - 0.25rem);
+    color: #4ae387;
+    font-size: 0.625rem;
+    letter-spacing: 0.0375rem;
+    line-height: 1.2;
+    font-weight: bold;
+    text-transform: uppercase;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transform-origin: top left; }
+  .va-input__container.va-input__container--textarea .va-input__container__label {
+    bottom: auto;
+    top: 0.125rem; }
+  .va-input__container__input {
+    width: 100%;
+    height: 1.5rem;
+    margin-bottom: 0.125rem;
+    padding: 0.25rem 0.5rem;
+    color: #34495e;
+    background-color: transparent;
+    border-style: none;
+    outline: none;
+    font-size: 1rem;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.5;
+    letter-spacing: normal; }
+    .va-input__container__input::placeholder {
+      color: #babfc2; }
+    .va-input__container__input:placeholder-shown {
+      padding-bottom: 0.875rem; }
+  .va-input__container.va-input__container--textarea .va-input__container__input {
+    resize: vertical;
+    height: inherit; }
+
+.va-input-wrapper {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: flex-end;
+  font-size: 1rem;
+  text-align: left;
+  margin-bottom: 1rem; }
+  .va-input-wrapper__control, .va-input-wrapper__content {
+    width: 100%; }
+  .va-input-wrapper__content {
+    display: flex;
+    flex-direction: column; }
+  .va-input-wrapper__prepend-inner, .va-input-wrapper__append-inner {
+    display: inline-flex;
+    align-items: center; }
+  .va-input-wrapper__prepend-inner {
+    margin-right: 0.5rem; }
+  .va-input-wrapper__append-inner {
+    margin-left: 0.5rem; }
+  .va-input-wrapper__slot {
+    display: flex;
+    position: relative; }
+  .va-input-wrapper__details {
+    padding: 0 0.5rem;
+    width: 100%; }
+  .va-input-wrapper__messages__wrapper {
+    font-size: 0.875rem; }
+  .va-input-wrapper .va-select {
+    margin-bottom: 0; }
+
+.va-message-list__message {
+  vertical-align: middle;
+  font-size: 0.8rem; }
+
+va-checkbox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; }
+  va-checkbox__input-container {
+    align-items: center;
+    display: flex;
+    cursor: pointer; }
+    .va-checkbox--disabled va-checkbox__input-container {
+      cursor: default;
+      opacity: 0.4; }
+
+    .va-checkbox--readonly va-checkbox__input-container {
+      cursor: initial; }
+
+    .va-checkbox--disabled va-checkbox__input-container {
+      cursor: default; }
+  va-checkbox va-checkbox__square {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 2rem;
+    height: 2rem;
+    position: relative;
+    flex: 0 0 2rem; }
+    .va-checkbox--on-keyboard-focusva-checkbox va-checkbox__square {
+      background-color: #eeeeee;
+      transition: all, 0.6s, ease-in;
+      border-radius: 5rem; }
+  va-checkbox va-checkbox__input {
+    height: 1.375rem;
+    width: 1.375rem;
+    cursor: inherit;
+    color: #ffffff;
+    background-color: #ffffff;
+    border: solid 0.125rem #acb5be;
+    border-radius: 0.25rem; }
+    va-checkbox va-checkbox__input:focus {
+      outline: none; }
+    .va-checkbox--selectedva-checkbox va-checkbox__input {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 1.4rem;
+      width: 1.4rem;
+      color: #ffffff;
+      background-color: #4ae387;
+      border: 0; }
+
+    .va-checkbox--errorva-checkbox va-checkbox__input {
+      border-color: #e34a4a; }
+  va-checkbox va-checkbox__label-text {
+    display: inline-block;
+    position: relative;
+    margin-left: 0.25rem; }
+    .va-checkbox--errorva-checkbox va-checkbox__label-text {
+      color: #e34a4a; }
+  va-checkbox__error-message {
+    vertical-align: middle;
+    color: #e34a4a;
+    font-size: 0.8rem; }
+  va-checkbox__icon-selected {
+    pointer-events: none;
+    position: absolute;
+    color: #ffffff; }
+  va-checkbox__error-message-container {
+    flex: 0 0 100%;
+    margin-left: 0.3rem; }
+  va-checkbox__label-container {
+    margin-left: 2rem; }
+  va-checkbox__content {
+    flex-direction: row; }
 
 /*# sourceMappingURL=custom.css.map */

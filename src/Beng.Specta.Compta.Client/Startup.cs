@@ -3,14 +3,15 @@ using System.Net.Http;
 using System.Reflection;
 
 using Microsoft.AspNetCore.Components;
-
 using Microsoft.AspNetCore.Components.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 using Beng.Specta.Compta.Client.Configs;
+using Beng.Specta.Compta.Client.Layout.Sidebar;
 using Beng.Specta.Compta.Client.Services;
-using Beng.Specta.Compta.Client.ViewModels;
+
 using Syncfusion.Blazor;
+
 
 namespace Beng.Specta.Compta.Client
 {
@@ -20,8 +21,7 @@ namespace Beng.Specta.Compta.Client
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            // services.AddSingleton<WeatherForecastService>();
-            services.AddScoped<LayoutInfoVm>();
+            services.AddScoped<SidebarState>();
             services.AddScoped<AppSettings>();
             services.AddScoped<SpinnerService>();
             services.AddScoped<TenantService>();
@@ -40,8 +40,8 @@ namespace Beng.Specta.Compta.Client
                     BaseAddress = new Uri(uriHelper.BaseUri)
                 };
             });
-
-            //Register Syncfusion license 
+            
+            // Register Syncfusion license 
             // versionn 17: MjI5MDM0QDMxMzcyZTM0MmUzME9EeXhJcGFzV1FmbzhWcXI4eWE3UGV4RDRiNTB4R0l5b2QvZE4ybmM1Tmc9
             Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MjI5MTE3QDMxMzgyZTMxMmUzMGNOb3ZpemFZUE9udjJiQXZwWWt4QWdBVWJOTlduYmFiRVVXMGxvUVNFV289");
             services.AddSyncfusionBlazor(); 

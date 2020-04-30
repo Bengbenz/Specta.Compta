@@ -1,6 +1,8 @@
 using System;
 
-namespace Beng.Specta.Compta.ComponentLibrary.Shared
+using Dawn;
+
+namespace Beng.Specta.Compta.ComponentLibrary.Common
 {
     public class HslType
     {
@@ -16,6 +18,7 @@ namespace Beng.Specta.Compta.ComponentLibrary.Shared
         }
         public HslType(HslType offset) : this(offset.Hue, offset.Saturation, offset.Lightness)
         {
+            Guard.Argument(offset, nameof(offset)).NotNull();
         }
 
         public void Round()

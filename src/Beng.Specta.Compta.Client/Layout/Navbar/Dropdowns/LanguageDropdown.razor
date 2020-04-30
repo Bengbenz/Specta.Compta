@@ -1,72 +1,61 @@
-@inject ILogger<LanguageDropdown> Logger
-
-<VaDropdown ExtraClass="@ComputedClass" offset="0, 16px" fixed >
-  <Anchor>
-    <VaIcon Name="@AnchorIconClass"/> 
-  </Anchor>
-  <Content>
-    <div class="language-dropdown__content pl-4 pr-4 pt-2 pb-2">
-    @foreach(var option in Options)
-    {
-      <div @key="option.Value" class="@OptionClass(option.Value)"
-            @onclick="@(() => SetLanguage(option.Value))">
-        <VaIcon Name="@ContentIconClass(option.Value)"/>
-        <span class="dropdown-item__text">
-            @option.Label
-        </span>
+<VaDropdown class="@ComputedClass" offset="0, 16" IsFixed="true" >
+    <Anchor>
+        <VaIcon Name="@AnchorIconClass"/> 
+    </Anchor>
+    <Content>
+        <div class="language-dropdown__content pl-4 pr-4 pt-2 pb-2">
+      @foreach(var option in Options)
+      {
+        <div @key="option.Value" class="@OptionClass(option.Value)"
+              @onclick="@(() => SetLanguage(option.Value))">
+            <VaIcon Name="@ContentIconClass(option.Value)"/>
+            <span class="dropdown-item__text">
+                @option.Label
+            </span>
+        </div>
+      }
       </div>
-    }
-    </div>
-  </Content>
+    </Content>
 </VaDropdown>
 
 
 @code{
    
-  [Parameter(CaptureUnmatchedValues = true)]
-  public IDictionary<string, object> AdditionalAttributes { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
+    [Parameter] public string Class { get; set; }
+    
+    private string CurrentLanguage { get; set; } = "fr";
 
-  [Parameter]
-  public string ExtraClass { get; set; }
-  
-  private string ComputedClass => $"language-dropdown {ExtraClass}";
+    private string FlagIconClass(string code) => $"flag-icon-{code}";
 
-  private string AnchorIconClass => $"flag-icon flag-icon-large {FlagIconClass(CurrentLanguage)}";
+    private string ComputedClass =>
+        CssBuilder.Default("language-dropdown")
+                .AddClass(Class, !string.IsNullOrWhiteSpace(Class))
+                .Build();
 
-  private string CurrentLanguage { get; set; } = "fr";
+    private string AnchorIconClass =>
+        CssBuilder.Default("flag-icon flag-icon-large")
+            .AddClass(FlagIconClass(CurrentLanguage))
+            .Build();
 
-  private IReadOnlyList<OptionType> Options => new List<OptionType>
-  {
-    new OptionType { Label = "English", Value = "gb" },
-    new OptionType { Label = "Spanish", Value = "es" },
-    new OptionType { Label = "Brazilian", Value = "br" },
-    new OptionType { Label = "Chinese", Value = "cn" },
-    new OptionType { Label = "French", Value = "fr" },
-  };
+    private string ContentIconClass(string code) =>
+        CssBuilder.Default("flag-icon flag-icon-small")
+            .AddClass(FlagIconClass(code))
+            .Build();
 
-  private string FlagIconClass(string code) => $"flag-icon-{code}";
+    private string OptionClass(string code) =>
+        CssBuilder.Default("language-dropdown__item row align--center pt-1 pb-1 mt-2 mb-2")
+            .AddClass("active", code == CurrentLanguage)
+            .Build();
 
-  private string ContentIconClass(string code) => $"flag-icon flag-icon-small {FlagIconClass(code)}";
+    private void SetLanguage (string locale) => CurrentLanguage = locale; // Vue.i18n.set(locale)
 
-  private string OptionClass(string code)
-  {
-    var optionClass = "language-dropdown__item row align--center pt-1 pb-1 mt-2 mb-2";
-    if(code == CurrentLanguage)
+    private IReadOnlyList<OptionType> Options { get; } = new List<OptionType>
     {
-      optionClass += " active";
-    }
-    return optionClass;
-  }
-
-  private void SetLanguage (string locale)
-  {
-    // Vue.i18n.set(locale)
-    CurrentLanguage = locale;
-  }
-
-  protected override async Task OnInitializedAsync()
-  {
-    Logger.LogDebug($"{GetType().Name}: Options [{string.Join(",", Options.Select(x => x.Value))}]");
-    await OnInitializedAsync();
-  }
+        new OptionType { Label = "English", Value = "gb" },
+        new OptionType { Label = "Spanish", Value = "es" },
+        new OptionType { Label = "Brazilian", Value = "br" },
+        new OptionType { Label = "Chinese", Value = "cn" },
+        new OptionType { Label = "French", Value = "fr" },
+    };
 }

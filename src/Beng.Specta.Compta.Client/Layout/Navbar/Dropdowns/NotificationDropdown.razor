@@ -1,107 +1,86 @@
 @using System.Collections.Generic
 
-<VaDropdown ExtraClass="@ComputedClass" offset="0, 16px" boundary-body @attributes="@AdditionalAttributes">
-  <Anchor>
-    <VaIconNotification ExtraClass="@IconNotificationClass" Color="@IconColor" />
-  </Anchor>
-  <Content>
-    <div class="notification-dropdown__content pl-3 pr-3 pt-2 pb-2">
-      @foreach (var option in Notifications)
-      {
-        <div @key="option.Id" class="notification-dropdown__item row pt-1 pb-1 mt-2 mb-2 @ComputeUnReadItemClass(option)"
-             @onclick="(() => option.MarkAsRead())" >
-        @if(!string.IsNullOrWhiteSpace(option.Details.Avatar))
-        {
-          <img class="mr-2 notification-dropdown__item__avatar" src="@option.Details.Avatar"/>
-        }
-          <span class="ellipsis" style="max-width: 85%;">
-          @if(!string.IsNullOrWhiteSpace(option.Details.Name))
+<VaDropdown class="@ComputedClass"
+    offset="0, 16"
+    IsBoundaryBody="true"
+    @attributes="@AdditionalAttributes">
+    <Anchor>
+        <VaIconNotification class="@IconNotificationClass" Color="@IconColor" />
+    </Anchor>
+    <Content>
+        <div class="notification-dropdown__content pl-3 pr-3 pt-2 pb-2">
+          @foreach (var option in Notifications)
           {
-            <span class="text--bold">@option.Details.Name</span> @option.Name
+            <div @key="option.Id" class="notification-dropdown__item row pt-1 pb-1 mt-2 mb-2 @ComputeUnReadItemClass(option)"
+                @onclick="(() => option.MarkAsRead())" >
+            @if(!string.IsNullOrWhiteSpace(option.Details.Avatar))
+            {
+                <img class="mr-2 notification-dropdown__item__avatar" src="@option.Details.Avatar"/>
+            }
+                <span class="ellipsis" style="max-width: 85%;">
+                @if(!string.IsNullOrWhiteSpace(option.Details.Name))
+                {
+                    <span class="text--bold">@option.Details.Name</span> @option.Name
+                }
+                </span>
+            </div>
           }
-          </span>
+            <div class="row justify--space-between">
+                <VaButton class="ma-0 mb-2 mt-1 mr-2" IsSmall="true">All notifications</VaButton>
+                <VaButton class="ma-0 mb-2 mt-1" IsSmall="true" IsOutline="true"
+                          IsDisabled="@AreAllRead" @onclick="@MarkAllAsRead">Mark as read</VaButton>
+            </div>
         </div>
-      }
-      <div class="row justify--space-between">
-        <VaButton ExtraClass="ma-0 mb-2 mt-1 mr-2" IsSmall="true">All notifications</VaButton>
-        <VaButton ExtraClass="ma-0 mb-2 mt-1" IsSmall="true" IsOutline="true"
-                  IsDisabled="@AreAllRead" @onclick="@MarkAllAsRead">Mark as read</VaButton>
-      </div>
-    </div>
-  </Content>
+    </Content>
 </VaDropdown>
 
 @code{
 
-  [Parameter(CaptureUnmatchedValues = true)]
-  public IDictionary<string, object> AdditionalAttributes { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
+    [Parameter] public string Class { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
 
-  [Parameter]
-  public string ExtraClass { get; set; }
+    private string ComputedClass =>
+        CssBuilder.Default("notification-dropdown")
+                .AddClass(Class, !string.IsNullOrWhiteSpace(Class))
+                .Build();
 
-  [CascadingParameter]
-  public ThemeStore ContextTheme { get; set; }
+    private string IconNotificationClass =>
+        CssBuilder.Default("notification-dropdown__icon")
+                .AddClass("notification-dropdown__icon--unread", !AreAllRead)
+                .Build();
+    
+    private string ComputeUnReadItemClass(Notification notif) =>
+        CssBuilder.Empty()
+                .AddClass("notification-dropdown__item--unread", notif.IsUnRead)
+                .Build();
 
-  private string ComputedClass => $"notification-dropdown {ExtraClass ?? string.Empty}";
+    private string IconColor => (ContextTheme.IsInverted) ? $"{ContextTheme[ThemeDictionary.GrayKey]}" : "white";
+    
+    private bool AreAllRead => Notifications.All(x => !x.IsUnRead);
 
-  private string IconColor => ComputeIconColor();
+    private void MarkAllAsRead() => Notifications.ForEach(x => x.MarkAsRead());
 
-  private string IconNotificationClass => ComputeIconNotificationClass();
-
-  private bool AreAllRead => Notifications.All(x => !x.IsUnRead);
-  private void MarkAllAsRead()
-  {
-    Notifications.ForEach(x => x.MarkAsRead());
-  }
-
-  private string ComputeUnReadItemClass(Notification notif) => (notif.IsUnRead) ? "notification-dropdown__item--unread" : string.Empty;
-
-private string ComputeIconColor()
-  {
-    var iconColor = "white";
-    if(ContextTheme == null)
+    private List<Notification> Notifications => new List<Notification>
     {
-      return iconColor;
+        new Notification { Id = 1, Name = "sent a new Message", Details = new DetailsData { Name="Tiaani S", Avatar="https://picsum.photos/123" } },
+        new Notification { Id = 2, Name = "uploaded Zip", Details = new DetailsData { Name="Sénadé A", Avatar="https://picsum.photos/100" }  },
+        new Notification { Id = 3, Name = "started a new Doc", Details = new DetailsData { Name="Léa B", Avatar="https://picsum.photos/24" }  }
+    };
+
+    private class Notification
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public DetailsData Details { get; set; }
+        public bool IsUnRead { get; set; } = true;
+
+        public void MarkAsRead() => IsUnRead = false;
     }
 
-    if(ContextTheme.IsInverted)
+    private class DetailsData
     {
-      iconColor = $"{ContextTheme[ThemeStore.GrayKey]}";
+        public string Name { get; set; }
+        public string Avatar { get; set; }
     }
-    return iconColor;
-  }
-
-  private string ComputeIconNotificationClass()
-  {
-    var iconNotifClass = $"notification-dropdown__icon";
-    return !AreAllRead ? $"{iconNotifClass} notification-dropdown__icon--unread" : iconNotifClass;
-  } 
-
-  protected override async Task OnParametersSetAsync()
-  {
-    await base.OnParametersSetAsync();
-  }
-
-  private List<Notification> Notifications => new List<Notification>
-  {
-      new Notification { Id = 1, Name = "sent a new Message", Details = new DetailsData { Name="Tiaani S", Avatar="https://picsum.photos/123" } },
-      new Notification { Id = 2, Name = "uploaded Zip", Details = new DetailsData { Name="Sénadé A", Avatar="https://picsum.photos/100" }  },
-      new Notification { Id = 3, Name = "started a new Doc", Details = new DetailsData { Name="Léa B", Avatar="https://picsum.photos/24" }  }
-  };
-
-  private class Notification
-  {
-      public int Id { get; set; }
-      public string Name { get; set; }
-      public DetailsData Details { get; set; }
-      public bool IsUnRead { get; set; } = true;
-
-      public void MarkAsRead() => IsUnRead = false;
-  }
-
-  private class DetailsData
-  {
-    public string Name { get; set; }
-    public string Avatar { get; set; }
-  }
 }

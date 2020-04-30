@@ -14,6 +14,10 @@ namespace Beng.Specta.Compta.Client.ViewModels
         public string Id { get; set; }
         public string DisplayName { get; set; }
         public MetaInfoVm Meta { get; set; }
+        public bool IsExpanded { get; set; }
+        public bool IsActive { get; set; }
         public IReadOnlyCollection<ModuleInfoVm> Children { get; set; } = new List<ModuleInfoVm>();
+
+        public override string ToString() => $"MenuItem-{Id}";
     }
 }

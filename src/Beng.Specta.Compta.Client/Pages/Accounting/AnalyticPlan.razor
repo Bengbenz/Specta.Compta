@@ -4,9 +4,9 @@
 @inject HttpClient HttpClient
 
 <GenericPage Title="Plan analytique"
-             Loader="@LoadItems"
-             Icon="vuestic-iconset vuestic-iconset-files"
-             NewText="Ajouter une entrée">
+    Loader="@LoadItems"
+    Icon="vuestic-iconset vuestic-iconset-files"
+    NewText="Ajouter une entrée">
     <Loading>
         <h1>Loading...</h1>
     </Loading>
@@ -33,6 +33,6 @@
     {
         //await Task.Delay(3000);
         
-        return new List<ProjectDTO>();//GetProjects();
+        return await Task.Run(() => new List<ProjectDTO>());//GetProjects();
     }
 }

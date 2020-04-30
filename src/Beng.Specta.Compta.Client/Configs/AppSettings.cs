@@ -1,5 +1,4 @@
-using System;
-using Beng.Specta.Compta.ComponentLibrary.Configs.Theme;
+using Beng.Specta.Compta.ComponentLibrary.Common;
 
 namespace Beng.Specta.Compta.Client.Configs
 {
@@ -7,15 +6,9 @@ namespace Beng.Specta.Compta.Client.Configs
     {
         public bool IsInvertedColor { get; set; }
 
-        public ThemeStore ThemeStore
-        {
-            get => IsInvertedColor ? ThemeStore.CORPORATE : ThemeStore.DEFAULT;
-            set => ThemeStore = value;
-        }
+        public ThemeDictionary SelectedTheme =>
+            IsInvertedColor ? ThemeDictionary.CORPORATE : ThemeDictionary.DEFAULT;
 
-        public void ToggleInverted()
-        {
-            IsInvertedColor = !IsInvertedColor;
-        }
+        public void ToggleInverted() => IsInvertedColor = !IsInvertedColor;
     }
 }

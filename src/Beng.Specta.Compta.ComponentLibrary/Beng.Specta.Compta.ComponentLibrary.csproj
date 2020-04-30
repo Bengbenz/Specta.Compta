@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BlazorComponentUtilities" />
+    <PackageReference Include="Blazor.Extensions.Logging" />
+    <PackageReference Include="Dawn.Guard" />
     <PackageReference Include="Microsoft.AspNetCore.Components" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" />
     <PackageReference Include="Syncfusion.Blazor" />

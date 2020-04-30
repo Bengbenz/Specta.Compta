@@ -6,47 +6,42 @@
 
 @code{
 
-  [Parameter]
-  public int AnimationDuration { get; set; } = 1500;
+    [Parameter] public int AnimationDuration { get; set; } = 1500;
+    [Parameter] public int Size { get; set; } = 60;
+    [Parameter] public string Color { get; set; } = "#fff";
 
-  [Parameter]
-  public int Size { get; set; } = 60;
+    private int _containerPadding = 3;
+    private double OuterRingSize => Size - _containerPadding * 2;
 
-  [Parameter]
-  public string Color { get; set; } = "#fff";
+    private string SpinnerStyle
+    {
+      get
+      {
+        var style = new StyleType
+        { 
+          Height = $"{Size}",
+          Width = $"{Size}",
+          Padding = $"{_containerPadding}",
+        };
+        return style.ToString();
+      }
+    }
 
-  private int _containerPadding = 3;
-  private double OuterRingSize => Size - _containerPadding * 2;
+    private string Ring1Style => ComputeBaseRingStyle().ToString();
 
-  private string SpinnerStyle
-  {
-    get
+    private string Ring2Style => ComputeBaseRingStyle(0.65).ToString();
+
+    private string Ring3Style => ComputeBaseRingStyle(0.1).ToString();
+
+    private StyleType ComputeBaseRingStyle(double coeff = 1)
     {
       var style = new StyleType
       { 
-        Height = $"{Size}",
-        Width = $"{Size}",
-        Padding = $"{_containerPadding}",
+        Height = $"{OuterRingSize * coeff}",
+        Width = $"{OuterRingSize * coeff}",
+        BorderColor = $"{Color}",
+        AnimationDuration = AnimationDuration
       };
-      return style.ToString();
+      return style;
     }
-  }
-
-  private string Ring1Style => ComputeBaseRingStyle().ToString();
-
-  private string Ring2Style => ComputeBaseRingStyle(0.65).ToString();
-
-  private string Ring3Style => ComputeBaseRingStyle(0.1).ToString();
-
-  private StyleType ComputeBaseRingStyle(double coeff = 1)
-  {
-    var style = new StyleType
-    { 
-      Height = $"{OuterRingSize * coeff}",
-      Width = $"{OuterRingSize * coeff}",
-      BorderColor = $"{Color}",
-      AnimationDuration = AnimationDuration
-    };
-    return style;
-  }
 }

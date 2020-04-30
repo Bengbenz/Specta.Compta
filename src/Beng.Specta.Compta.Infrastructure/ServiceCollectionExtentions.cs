@@ -18,12 +18,6 @@ namespace Beng.Specta.Compta.Infrastructure
 
         public static IServiceCollection AddDbContext(this IServiceCollection services)
 		{
-			//var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-			//_configuration = new ConfigurationBuilder()
-			//                                 .SetBasePath(Path.Combine(Directory.GetCurrentDirectory()))
-			//                                 .AddJsonFile("appsettings.json", optional: false)
-			//                                 .AddJsonFile($"appsettings.{envName}.json", optional: true)
-			//                                 .Build();
 			// Build the intermediate service provider
     		var serviceProvider = services.BuildServiceProvider();
 			_configuration = serviceProvider.GetRequiredService<IConfiguration>();

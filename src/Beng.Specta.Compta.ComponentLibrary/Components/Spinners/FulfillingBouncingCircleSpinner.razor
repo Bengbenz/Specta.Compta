@@ -5,52 +5,49 @@
 
 @code{
 
-  [Parameter]
-  public int AnimationDuration { get; set; } = 4000;
+    [Parameter] public int AnimationDuration { get; set; } = 4000;
 
-  [Parameter]
-  public int Size { get; set; } = 60;
+    [Parameter] public int Size { get; set; } = 60;
 
-  [Parameter]
-  public string Color { get; set; } = "#fff";
+    [Parameter] public string Color { get; set; } = "#fff";
 
-  private string SpinnerStyle => ComputeSpinnerStyle().ToString();
+    private string SpinnerStyle => ComputeSpinnerStyle().ToString();
 
-  private string OrbitStyle
-  {
-    get
+    private string OrbitStyle
     {
-      var style = new StyleType(ComputeSpinnerStyle())
-      { 
-        BorderColor = $"{Color}",
-        BorderWidth = $"{Size * 0.03}"
-      };
-      return style.ToString();
+      get
+      {
+        var style = new StyleType(ComputeSpinnerStyle())
+        { 
+          BorderColor = $"{Color}",
+          BorderWidth = $"{Size * 0.03}"
+        };
+        return style.ToString();
+      }
     }
-  }
 
-  private string CircleStyle
-  {
-    get
+    private string CircleStyle
     {
-      var style = new StyleType(ComputeSpinnerStyle())
-      { 
-        BorderColor = $"{Color}",
-        Color = $"{Color}",
-        BorderWidth = $"{Size * 0.1}"
-      };
-      return style.ToString();
+      get
+      {
+        var style = new StyleType(ComputeSpinnerStyle())
+        { 
+          BorderColor = $"{Color}",
+          Color = $"{Color}",
+          BorderWidth = $"{Size * 0.1}"
+        };
+        return style.ToString();
+      }
     }
-  }
 
-  private StyleType ComputeSpinnerStyle()
-  {
-    var style = new StyleType
-    { 
-      Height = $"{Size}",
-      Width = $"{Size}",
-      AnimationDuration = AnimationDuration
-    };
-    return style;
-  }
+    private StyleType ComputeSpinnerStyle()
+    {
+        var style = new StyleType
+        { 
+          Height = $"{Size}",
+          Width = $"{Size}",
+          AnimationDuration = AnimationDuration
+        };
+        return style;
+    }
 }

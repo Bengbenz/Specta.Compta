@@ -26,10 +26,17 @@
 
 @code{
 
-    [CascadingParameter]
-    public ThemeStore ContextTheme { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [Parameter] public bool IsOpen4 { get; set; }
+    [Parameter] public bool IsOpen5 { get; set; }
 
     private string _info;
+
+    void Onclick4(MouseEventArgs e)
+    {
+        IsOpen4 = !IsOpen4;
+        StateHasChanged();
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -44,10 +51,7 @@
     {
         //await Task.Delay(3000);
         
-        return new List<ProjectDTO>();
-        //{
-        //    new ProjectDTO()
-        //};
+        return await Task.Run(() => new List<ProjectDTO>());//GetProjects();
     }
 
     private void NavigateToProject()

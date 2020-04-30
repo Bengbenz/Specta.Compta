@@ -1,0 +1,92 @@
+@typeparam TItem
+
+<VaCard class="@ComputedClass"
+        Title="@Title"
+        Image="@ImageForEmpty"
+        IsOverlay="true"
+        IsTitleOnImage="@(!string.IsNullOrWhiteSpace(ImageForEmpty))">
+    <Header>
+        @if (Items?.Count == 0)
+        {
+            <VaButton Icon="ion ion-ios-add-circle-outline" @onclick="@AddAction" IsLarge="true">
+                @NewText
+            </VaButton>
+        }
+        else
+        {
+            <VaIcon Name="@Icon" Color="@ThemeDictionary.InfoKey" />
+            <h5 class="ml-2 mt-0 mb-0" style="color:@(ContextTheme[ThemeDictionary.InfoKey])">@Title</h5>
+        }
+    </Header>
+    <Actions>
+        <VaButton IsVisible="@(Items != null && Items.Count > 0)" Icon="fa fa-refresh" @onclick="@Loader" />
+    </Actions>
+    <BodyContent>
+        <VaNotification BadgeText="Error"
+            Color="@ThemeDictionary.DangerKey"
+            IsVisible="@(ErrorDetails != null)"
+            class="mb-4">
+            @ErrorDetails
+        </VaNotification>
+    @if (Items == null)
+    {
+        @Loading
+    }
+    else if (Items.Count > 0)
+    {
+        foreach(var item in Items)
+        {
+            @Item(item)
+        }
+    }
+    else
+    {
+        <div class="flex-center py-2">
+            @Empty
+        </div>
+    }
+   </BodyContent>
+</VaCard>
+
+@code {
+
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [Parameter] public string Title { get; set; }
+    [Parameter] public string Icon { get; set; }
+    [Parameter] public string Class { get; set; }    
+    [Parameter] public string NewText { get; set; }
+    [Parameter] public string ErrorDetails  { get; set; }
+    [Parameter] public RenderFragment Loading { get; set; }
+    [Parameter] public RenderFragment Empty { get; set; }
+    [Parameter] public RenderFragment<TItem> Item { get; set; }
+    [Parameter] public Func<Task<IList<TItem>>> Loader { get; set; }
+    [Parameter] public EventCallback AddAction { get; set; }
+
+    private IList<TItem> Items { get; set; }
+
+    private string[] BackgroundImages { get; } =
+    {
+        "pexels-photo.jpg",
+        "pexels-photo-39811.jpeg",
+        "pexels-photo-235615.jpeg",
+        "pexels-photo-247431.jpeg",
+        "pexels-photo-247478.jpeg",
+        "pexels-photo-257840.jpeg",
+        "pexels-photo-459059.jpeg",
+        "fall-autumn-red-season.jpg",
+        "woodland-road-falling-leaf-natural-38537.jpeg"
+    };
+
+    private string ImageForEmpty => (Items?.Count == 0) ? $"imgs/{BackgroundImages[new Random().Next(BackgroundImages.Length)]}" : string.Empty;
+
+    private string ComputedClass =>
+        CssBuilder.Empty()
+            .AddClass(Class, !string.IsNullOrWhiteSpace(Class))
+            .AddClass("mb-2", string.IsNullOrWhiteSpace(Class))
+            .Build();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Items = await Loader();
+    }
+}

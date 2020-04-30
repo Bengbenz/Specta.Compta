@@ -5,16 +5,16 @@
 @inject ILogger<FundingPlan> Logger
 @inject HttpClient HttpClient
 
-<VaCard ExtraClass="mb-2">
+<VaCard class="mb-2">
     <Header>
-        <VaIcon Name="vuestic-iconset vuestic-iconset-tables" Color="@ThemeStore.InfoKey" />
-        <h5 class="ml-2 mt-0 mb-0" style="color:@(ContextTheme[ThemeStore.InfoKey])">Plan de Financement</h5>
+        <VaIcon Name="vuestic-iconset vuestic-iconset-tables" Color="@ThemeDictionary.InfoKey" />
+        <h5 class="ml-2 mt-0 mb-0" style="color:@(ContextTheme[ThemeDictionary.InfoKey])">Plan de Financement</h5>
     </Header>
     <Actions>
         <VaButton icon="fa fa-refresh" @onclick="GetFundingItems" />
     </Actions>
     <BodyContent>
-        <VaNotification BadgeText="Error" Color="@ThemeStore.DangerKey" IsVisible="@(ErrorDetails != null)" ExtraClass="mb-4">@ErrorDetails</VaNotification>
+        <VaNotification BadgeText="Error" Color="@ThemeDictionary.DangerKey" IsVisible="@(ErrorDetails != null)" class="mb-4">@ErrorDetails</VaNotification>
         @if (FundingItems == null)
         {
             <h1>Loading...</h1>
@@ -112,8 +112,7 @@
 
 @code{
 
-    [CascadingParameter]
-    public ThemeStore ContextTheme { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
 
     private string ErrorDetails;
     private IList<ContractStep> FundingItems { get; set; }
