@@ -1,78 +1,45 @@
-<VaDropdown ExtraClass="@ComputedClass" offset="0, 16px" @attributes="@AdditionalAttributes">
-  <Anchor>
-    <VaIcon Name="vuestic-iconset vuestic-iconset-settings"
-            ExtraClass="settings-dropdown__icon"
-            Size="1.4rem;"
-            ExtraStyle="display: flex;"
-            Color="@IconColor" />
-  </Anchor>
-  <Content>
-    <div class="settings-dropdown__content pl-4 pr-4 pt-2 pb-2">
-      <div class="settings-dropdown__content-label mt-2 mb-3"
-           style="@ContentStyle">
-        Settings
-      </div>
-      <VaButtonToggle IsOutline="true" IsSmall="true"
-                      Options="@ModelOptions"
-                      ExtraClass="settings-dropdown__control mb-2"
-                      Value="@ContextTheme.Name" />
-      </div>
-  </Content>
+<VaDropdown class="@ComputedClass" offset="0, 16" @attributes="@AdditionalAttributes">
+    <Anchor>
+        <VaIcon Name="vuestic-iconset vuestic-iconset-settings"
+                class="settings-dropdown__icon"
+                Size="1.4rem;"
+                style="display: flex;"
+                Color="@IconColor" />
+    </Anchor>
+    <Content>
+        <div class="settings-dropdown__content pl-4 pr-4 pt-2 pb-2">
+            <div class="settings-dropdown__content-label mt-2 mb-3"
+                 style="@ContentStyle">
+              Settings
+            </div>
+            <VaButtonToggle IsOutline="true" IsSmall="true"
+                Options="@ModelOptions"
+                class="settings-dropdown__control mb-2"
+                Value="@ContextTheme.Name" />
+        </div>
+    </Content>
 </VaDropdown>
 
 @code{
 
-  [Parameter(CaptureUnmatchedValues = true)]
-  public IDictionary<string, object> AdditionalAttributes { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [Parameter] public string Class { get; set; }
 
-  [Parameter]
-  public string ExtraClass { get; set; }
-
-  [CascadingParameter]
-  public ThemeStore ContextTheme { get; set; }
-
-  [CascadingParameter]
-  public LayoutInfoVm LayoutInfo { get; set; }
-
-
-  private IReadOnlyList<OptionType> ModelOptions => new List<OptionType>
-  {
-    new OptionType { Label = ThemeStore.DEFAULT.Name, Value = ThemeStore.DEFAULT.Name, OnSelectedItemHandler = ContextTheme.OnToggle  },
-    new OptionType { Label = ThemeStore.CORPORATE.Name, Value = ThemeStore.CORPORATE.Name, OnSelectedItemHandler = ContextTheme.OnToggle },
-  };
-
-  private string ComputedClass => $"settings-dropdown {ExtraClass ?? string.Empty}";
-  private string IconColor => ComputeIconColor();
-  private string ContentStyle => ComputeContentStyle();
-
-  private string ComputeIconColor()
-  {
-    var iconColor = "white";
-    if(ContextTheme == null)
+    private IReadOnlyList<OptionType> ModelOptions => new List<OptionType>
     {
-      return iconColor;
-    }
+        new OptionType { Label = ThemeDictionary.DEFAULT.Name, Value = ThemeDictionary.DEFAULT.Name, OnSelectedItemHandler = ContextTheme.OnToggle  },
+        new OptionType { Label = ThemeDictionary.CORPORATE.Name, Value = ThemeDictionary.CORPORATE.Name, OnSelectedItemHandler = ContextTheme.OnToggle },
+    };
 
-    if(ContextTheme.IsInverted)
-    {
-      iconColor = ContextTheme[ThemeStore.GrayKey];
-    }
-    return iconColor;
-  }
+    private string IconColor => (ContextTheme.IsInverted) ? ContextTheme[ThemeDictionary.GrayKey] : "white";
 
-  private string ComputeContentStyle()
-  {
-    var style = new StyleType();
-    if(ContextTheme == null)
-    {
-      return style.ToString();
-    }
-    style.Color = ContextTheme[ThemeStore.PrimaryKey];
-    return style.ToString();
-  }
+    private string ComputedClass =>
+        CssBuilder.Default("settings-dropdown")
+            .AddClass(Class, !string.IsNullOrWhiteSpace(Class))
+            .Build();
 
-  protected override async Task OnParametersSetAsync()
-  {
-    await base.OnParametersSetAsync();
-  }
+    private string ContentStyle => 
+        StyleBuilder.Default("color", ContextTheme[ThemeDictionary.PrimaryKey])
+            .Build();
 }

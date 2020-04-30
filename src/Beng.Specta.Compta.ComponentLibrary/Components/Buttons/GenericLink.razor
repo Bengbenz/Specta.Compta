@@ -1,10 +1,10 @@
-@if (Link == LinkType.A)
+@if (Type == ButtonType.Link)
 {
     <a href="@To" target="@Target" @attributes="AdditionalAttributes">
         @ChildContent
     </a>
 }
-else if (Link == LinkType.NavLink)
+else if (Type == ButtonType.NavLink)
 {
     <NavLink href="@To" target="@Target" @attributes="AdditionalAttributes">
         @ChildContent
@@ -19,48 +19,9 @@ else
 
 @code{
 
-    [Parameter(CaptureUnmatchedValues = true)]
-    public IDictionary<string, object> AdditionalAttributes { get; set; }
-
-    [Parameter]
-    public string Is { get; set; }
-
-    [Parameter]
-    public string Target { get; set; }
-
-    [Parameter]
-    public string To { get; set; }
-
-    [Parameter]
-    public RenderFragment ChildContent { get; set; }
-
-    private LinkType Link { get; set; } = LinkType.Button;
-
-    protected override async Task OnParametersSetAsync()
-    {
-        Link = GetLinkType(Is);
-        await base.OnParametersSetAsync();
-    }
-
-    private LinkType GetLinkType(string type)
-    {   
-        var link = LinkType.Button;
-        if(type.Equals("a"))
-        {
-            link = LinkType.A;
-        }
-        else if(type.Equals("navlink"))
-        {
-            link = LinkType.NavLink;
-        }
-        
-        return link;
-    }
-
-    private enum LinkType
-    {
-        A,
-        Button,
-        NavLink
-    }
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
+    [Parameter] public ButtonType Type { get; set; } = ButtonType.Button;
+    [Parameter] public string Target { get; set; }
+    [Parameter] public string To { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
 }

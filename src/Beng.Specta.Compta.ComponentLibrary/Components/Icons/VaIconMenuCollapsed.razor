@@ -1,6 +1,6 @@
-@if(IsShown)
+@if (IsVisible)
 {
-    <svg class="va-icon-menu-collapsed @ExtraClass" 
+    <svg class="@ComputedClass" 
         xmlns="http://www.w3.org/2000/svg"
         width="24"
         height="24"
@@ -17,15 +17,13 @@
 
 @code{
     
-    [Parameter]
-    public string ExtraClass { get; set; }
+    [Parameter] public string Class { get; set; }
+    [Parameter] public string Color { get; set; }
+    [Parameter] public bool IsVisible { get; set; } = true;
+    [Parameter] public EventCallback OnClick { get; set; }
 
-    [Parameter]
-    public string Color { get; set; }
-
-    [Parameter]
-    public bool IsShown { get; set; }
-
-    [Parameter]
-    public EventCallback OnClick { get; set; }
+    private string ComputedClass =>
+        CssBuilder.Default("va-icon-menu-collapsed")
+            .AddClass(Class, !string.IsNullOrWhiteSpace(Class))
+            .Build();
 }

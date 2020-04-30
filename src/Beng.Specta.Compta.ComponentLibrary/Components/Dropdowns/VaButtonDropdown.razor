@@ -1,0 +1,92 @@
+@using Beng.Specta.Compta.ComponentLibrary.Components.Buttons
+
+<div class="@ComputedClass">
+  @if (!IsSplit)
+  {
+    <VaDropdown IsDisabled="@IsDisabled"
+        Position="@Position"
+        @bind-value="@IsOpen" >
+        <Anchor>
+            <VaButton IsSmall="@IsSmall"
+                      IsLarge="@IsLarge"
+                      IsFlat="@IsFlat"
+                      IsOutline="@IsOutline"
+                      IsDisabled="@IsDisabled"
+                      Color="@Color"
+                      IconRight="@ComputedIcon">
+                @Label
+            </VaButton>
+      </Anchor>
+      <Content>
+          <div class="va-button-dropdown__content">
+              @ChildContent
+          </div>
+      </Content>
+    </VaDropdown>
+  }
+  else
+  {
+    <VaButtonGroup>
+        <VaButton IsSmall="@IsSmall"
+                  IsLarge="@IsLarge"
+                  IsFlat="@IsFlat"
+                  IsOutline="@IsOutline"
+                  IsDisabled="@(IsDisabled || IsDisableButton)"
+                  Color="@Color"
+                  To="@SplitTo" >
+            @Label
+        </VaButton>
+        <VaDropdown IsDisabled="@(IsDisabled || IsDisableDropdown)"
+            Position="@Position"
+            @bind-value="@IsOpen">
+            <Anchor>
+                <VaButton IsSmall="@IsSmall"
+                    IsLarge="@IsLarge"
+                    IsFlat="@IsFlat"
+                    IsOutline="@IsOutline"
+                    IsDisabled="@(IsDisabled || IsDisableDropdown)"
+                    Color="@Color"
+                    Icon="@ComputedIcon" />
+            </Anchor>
+            <Content>
+                <div class="va-button-dropdown__content">
+                    @ChildContent
+                </div>
+            </Content>
+        </VaDropdown>
+    </VaButtonGroup>
+  }
+</div>
+
+@code{
+
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
+    [Parameter] public string Class { get; set; }
+    [Parameter] public string Color { get; set; }
+    [Parameter] public string Icon { get; set; } = "fa fa-angle-down";
+    [Parameter] public string IconOpened { get; set; } = "fa fa-angle-up";
+    [Parameter] public string Label { get; set; }
+    [Parameter] public string SplitTo { get; set; }
+    [Parameter] public bool IsFlat { get; set; }
+    [Parameter] public bool IsOutline { get; set; }
+    [Parameter] public bool IsSmall { get; set; }
+    [Parameter] public bool IsLarge { get; set; }
+    [Parameter] public bool IsSplit { get; set; }
+    [Parameter] public bool IsDisabled { get; set; }
+    [Parameter] public bool IsDisableButton { get; set; }
+    [Parameter] public bool IsDisableDropdown { get; set; }
+    [Parameter] public PositionType Position { get; set; } = PositionType.Bottom;
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    private bool IsOpen { get; set; }
+
+    private string ComputedClass =>
+        CssBuilder.Default("va-button-dropdown")
+            .AddClass(Class, !string.IsNullOrWhiteSpace(Class))
+            .AddClass("va-button-dropdown--split", IsSplit)
+            .AddClass("va-button-dropdown--small", IsSmall)
+            .AddClass("va-button-dropdown--large", IsLarge)
+            .Build();
+
+    private string ComputedIcon => IsOpen && !string.IsNullOrWhiteSpace(IconOpened) ? IconOpened : Icon;
+}

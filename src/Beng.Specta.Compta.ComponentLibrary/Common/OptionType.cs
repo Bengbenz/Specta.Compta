@@ -1,6 +1,6 @@
 using System;
 
-namespace Beng.Specta.Compta.ComponentLibrary.Shared
+namespace Beng.Specta.Compta.ComponentLibrary.Common
 {
     public class OptionType
     {

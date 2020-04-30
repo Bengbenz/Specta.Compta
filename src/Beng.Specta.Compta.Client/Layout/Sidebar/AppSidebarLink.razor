@@ -1,167 +1,80 @@
-@inject ILogger<AppSidebarLink> Logger
-@inject NavigationManager NavigationManager
+<li class="@ComputedClass" @attributes="AdditionalAttributes">
+    <NavLink class="app-sidebar-link__item" style="@ComputedLinkStyle" href="@Url" target="@Target"
+             @onmouseover="EnableHoverState" @onmouseout="DisableHoverState" >
 
-<li class="@ComputedLinkClass">
-    <NavLink class="app-sidebar-link__item" style="@ComputedLinkStyles" href="@Url" target="@Target"
-             @onmouseover="EnableHoverState" @onmouseout="DisableHoverState" @onclick="UpdateActiveState">
-      @if(!string.IsNullOrWhiteSpace(Icon))
-      {
-        <VaIcon ExtraClass="app-sidebar-link__item-icon" Name="@Icon" style="@ComputedIconStyles" />
-      }
+        <VaIcon IsVisible="@(!string.IsNullOrWhiteSpace(Icon))"
+                Name="@Icon"
+                class="app-sidebar-link__item-icon"
+                style="@IconStyle" />
 
-      @if(!string.IsNullOrWhiteSpace(Title))
-      {
-        <div class="app-sidebar-link__item-title">
-          @Title
-        </div>
-      }
+        @if(!string.IsNullOrWhiteSpace(Title))
+        {
+          <div class="app-sidebar-link__item-title">
+              @Title
+          </div>
+        }
 
-      @if(!string.IsNullOrWhiteSpace(IconRight))
-      {
-        <VaIcon ExtraClass="app-sidebar-link__item-icon-right" Name="@IconRight" style="@ComputedIconStyles" >
-              @IconRightContent
+        <VaIcon IsVisible="@(!string.IsNullOrWhiteSpace(IconRight))"
+                Name="@IconRight"
+                class="app-sidebar-link__item-icon-right"
+                style="@IconStyle" >
+            @IconRightContent
         </VaIcon>
-      }
     </NavLink>
 </li>
 
 @code{
 
-  [Parameter]
-  public string Title { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [Parameter] public string Title { get; set; }
+    [Parameter] public string Url { get; set; }
+    [Parameter] public string Target { get; set; } = "_self";
+    [Parameter] public string Icon { get; set; }
+    [Parameter] public string IconRight { get; set; }
+    [Parameter] public string IconRightContent { get; set; }
+    [Parameter] public bool IsActive { get; set; }
+    [Parameter] public bool IsMinimized { get; set; }
+    [Parameter] public bool IsActiveByDefault { get; set; }
+    [Parameter] public EventCallback OnActive { get; set; }
 
-  [Parameter]
-  public string Url { get; set; }
+    private bool IsHovered { get; set; }
+    
 
-  [Parameter]
-  public string Target { get; set; } = "_self";
+    private string ComputedClass =>
+        CssBuilder.Default("app-sidebar-link")
+            .AddClass("app-sidebar-link--minimized", IsMinimized)
+            .Build();
 
-  [Parameter]
-  public string Icon { get; set; }
+    private string IconStyle =>
+        StyleBuilder.Default("color", "white")
+            .AddStyle("color", ContextTheme[ThemeDictionary.GrayKey], ContextTheme.IsInverted && (!IsHovered && !IsActive))
+            .AddStyle("color", ContextTheme[ThemeDictionary.PrimaryKey], !ContextTheme.IsInverted  && (IsHovered || IsActive))
+            .Build();
 
-  [Parameter]
-  public string IconRight { get; set; }
+    private string ComputedLinkStyle =>
+        StyleBuilder.Empty()
+            .AddStyle("color", "white", ContextTheme.IsInverted && (IsHovered || IsActive))
+            .AddStyle("color", ContextTheme[ThemeDictionary.GrayKey], ContextTheme.IsInverted && (!IsHovered && !IsActive))
+            .AddStyle("color", ContextTheme[ThemeDictionary.PrimaryKey], !ContextTheme.IsInverted)
+            .AddStyle("background-color", ContextTheme[ThemeDictionary.SecondaryKey]
+                .ColorShiftHsl(new HslType(h: 0, s: -13, l: 15)).ToString(), (IsHovered || IsActive) && ContextTheme.IsGradient)
+            .AddStyle("background-color", ContextTheme[ThemeDictionary.PrimaryKey], (IsHovered || IsActive) && !ContextTheme.IsGradient)
+            .AddStyle("border-color", ContextTheme[ThemeDictionary.PrimaryKey], (IsHovered || IsActive) && ContextTheme.IsGradient && IsActive)
+            .AddStyle("border-color", "transparent", (IsHovered || IsActive) && ContextTheme.IsGradient && !IsActive)
+            .AddStyle("border-color", ContextTheme[ThemeDictionary.PrimaryKey]
+                .ColorShiftHsl(new HslType(h: 0, s: 13, l: -15)).ToString(), (IsHovered || IsActive) && !ContextTheme.IsGradient)
+            .Build();
 
-  [Parameter]
-  public string IconRightContent { get; set; }
+    private void UpdateHoverState(bool isHovered) => IsHovered = isHovered;
 
-  [Parameter]
-  public bool IsActiveByDefault { get; set; }
+    private void EnableHoverState() => UpdateHoverState(true);
 
-  [CascadingParameter]
-  public LayoutInfoVm LayoutInfo { get; set; }
+    private void DisableHoverState() => UpdateHoverState(false);
 
-  [CascadingParameter]
-  public ThemeStore ContextTheme { get; set; }
-
-  private bool IsHovered { get; set; }
-  private bool IsActive { get; set; }
-
-  private string ComputedLinkClass
-  {
-    get
+    protected override async Task OnInitializedAsync()
     {
-      var linkClass = "app-sidebar-link";
-      if (LayoutInfo == null)
-      {
-        return linkClass;
-      }
-
-      return LayoutInfo.IsMinimized ? $"{linkClass} app-sidebar-link--minimized" : linkClass;
+        await OnActive.InvokeAsync(null);
+        await base.OnInitializedAsync();
     }
-  }
-
-  private string ComputedIconStyles
-  {
-    get
-    {
-      var colorStyle = new StyleType { Color = "white" };
-      if (ContextTheme == null)
-      {
-        return colorStyle.ToString();
-      }
-
-      if (ContextTheme.IsInverted)
-      {
-        if (!IsHovered && !IsActive)
-        {
-          colorStyle.Color = ContextTheme[ThemeStore.GrayKey];
-        }
-      }
-      else
-      {
-        if (IsHovered || IsActive)
-        {
-          colorStyle.Color = ContextTheme[ThemeStore.PrimaryKey];
-        }
-      }
-      return colorStyle.ToString();
-    }
-  }
-
-  private string ComputedLinkStyles
-  {
-    get
-    {
-      var style = new StyleType();
-      if (ContextTheme == null)
-      {
-        return style.ToString();
-      }
-
-      var primaryColor = ContextTheme[ThemeStore.PrimaryKey];
-      if (ContextTheme.IsInverted)
-      {
-        if (IsHovered || IsActive)
-        {
-          style.Color = "white";
-        }
-        else
-        {
-          style.Color = ContextTheme[ThemeStore.GrayKey];
-        }
-      }
-      else
-      {
-        style.Color = primaryColor;
-      }
-
-      if (IsHovered || IsActive)
-      {
-        style.BackgroundColor = ContextTheme.IsGradient ? 
-        ContextTheme[ThemeStore.SecondaryKey].ColorShiftHsl(new HslType(h: 0, s: -13, l: 15)).ToString() :
-        primaryColor;
-
-        if (ContextTheme.IsGradient)
-        {
-          style.BorderColor = IsActive ? primaryColor : "transparent";
-        }
-        else
-        {
-          style.BorderColor = primaryColor.ColorShiftHsl(new HslType(h: 0, s: 13, l: -15)).ToString();
-        }
-      }
-
-      return style.ToString();
-    }
-  }
-
-  private void UpdateHoverState(bool isHovered) => IsHovered = isHovered;
-
-  private void EnableHoverState() => UpdateHoverState(true);
-
-  private void DisableHoverState() => UpdateHoverState(false);
-
-  private void UpdateActiveState()
-  {
-    string currentUrlWithoutBase = NavigationManager.Uri.Substring(NavigationManager.BaseUri.Length - 1);
-    IsActive = currentUrlWithoutBase == Url || IsActiveByDefault;
-  }
-
-  protected override async Task OnInitializedAsync()
-  {
-      UpdateActiveState();
-      await base.OnInitializedAsync();
-
-  }
 }

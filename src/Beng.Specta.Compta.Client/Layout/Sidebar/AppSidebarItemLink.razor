@@ -1,0 +1,22 @@
+@typeparam TMenuItem
+
+@if(!IsMinimized)
+{
+    @MenuItemTemplate(TItem)
+}
+else
+{
+    <SfTooltip Content=@Tooltip
+                Position="Position.RightCenter"
+                OpensOn="Hover">
+        @MenuItemTemplate(TItem)
+    </SfTooltip>
+}
+
+@code{
+
+    [Parameter] public TMenuItem TItem { get; set; }
+    [Parameter] public RenderFragment<TMenuItem> MenuItemTemplate { get; set; }
+    [Parameter] public string Tooltip { get; set; }
+    [Parameter] public bool IsMinimized { get; set; }
+}

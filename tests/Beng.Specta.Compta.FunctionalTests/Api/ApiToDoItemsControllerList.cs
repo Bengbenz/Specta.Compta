@@ -17,19 +17,19 @@ namespace Beng.Specta.Compta.FunctionalTests.Api
 
         public ApiToDoItemsControllerList(CustomWebApplicationFactory<Startup> factory)
         {
-            _client = factory.CreateClient();
+            _client = factory?.CreateClient();
         }
 
         [Fact(Skip = "To fix later")]
         public async Task ReturnsThreeItems()
         {
-            HttpResponseMessage response = await _client.GetAsync("api/todoitems");
+            var response = await _client.GetAsync(new Uri("api/todoitems", UriKind.Relative)).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
-            string stringResponse = await response.Content.ReadAsStringAsync();
+            string stringResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             var result = JsonConvert.DeserializeObject<IEnumerable<ToDoItem>>(stringResponse).ToList();
 
-            Assert.Equal(3, result.Count());
+            Assert.Equal(3, result.Count);
         }
     }
 }

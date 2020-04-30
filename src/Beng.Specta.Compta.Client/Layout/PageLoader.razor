@@ -1,10 +1,10 @@
-@if(IsVisible)
+@if (IsVisible)
 {
 <div class="auth-layout row align-content--center" style="@ComputedStyle">
     <div class="flex xs12 pa-3 flex-center">
-      <NavLink class="py-5 d-flex justify--center" href="/">
-        <VaIconApp />
-      </NavLink>
+        <NavLink class="py-5 d-flex justify--center" href="/">
+            <VaIconApp />
+        </NavLink>
     </div>
     <div class="flex xs12 pa-3">
         <div class="d-flex justify--center">
@@ -16,14 +16,9 @@
 
 @code{
 
-    [CascadingParameter]
-    public ThemeStore ContextTheme { get; set; }
-
-    [Parameter]
-    public bool IsVisible { get; set; }
-
-    [Parameter]
-    public int AnimationDuration { get; set; } = 1200;
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public int AnimationDuration { get; set; } = 1200;
 
     private string ComputedStyle
     {
@@ -36,5 +31,5 @@
     }
 
     private int Size = 264;
-    private string Color => ContextTheme[ThemeStore.PrimaryKey];
+    private string Color => ContextTheme[ThemeDictionary.PrimaryKey];
 }

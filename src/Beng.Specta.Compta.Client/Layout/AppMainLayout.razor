@@ -1,43 +1,35 @@
+@implements IDisposable
 @inherits LayoutComponentBase
-@inject ILogger<AppMainLayout> Logger
-@inject LayoutInfoVm LayoutInfo
+@inject SidebarState SidebarState
 @inject AppSettings ContextConfig
+@inject IJSRuntime JSRuntime
 
-<CascadingValue Value="LayoutInfo">
-    <CascadingValue Value="ContextConfig.ThemeStore">
-        <LoadingSpinner />
-        <PageLoader IsVisible="@IsPageLoaderVisible" />
+<CascadingValue Value="ContextConfig.SelectedTheme">
+    <LoadingSpinner />
+    <PageLoader IsVisible="@IsPageLoaderVisible" />
     @if(!IsPageLoaderVisible)
     {
-        <div class="app-page-layout app-layout">
-            <AppNavbar OnMinimized="@ToggleMinimized"/>
-            <div class="app-layout__container">
-                <AppSidebar />
-                <div class="app-layout__main">
-                    <main class="app-layout__main-layout layout fluid gutter--md" role="main" >
+    <div class="app-page-layout app-layout">
+        <AppNavbar />
+        <div class="app-layout__container">
+            <AppSidebar />
+            <div class="app-layout__main">
+                <main class="app-layout__main-layout layout fluid gutter--md" role="main" >
                     @Body
-                    </main>
-                </div>
+                </main>
             </div>
         </div>
+    </div>
     }
-    </CascadingValue>
 </CascadingValue>
 
  @code{
 
+    private static readonly int AnimationDuration = 2000;
     private bool IsPageLoaderVisible { get; set; } = true;
-
-    private int AnimationDuration => 3000;
-
     private TenantInfoDTO TenantInfo { get; set; }
 
-    public void ToggleMinimized()
-    {
-        LayoutInfo.ToggleMinimized();
-    }
-
-    public void ToggleInverted()
+    private void ToggleInverted()
     {
         ContextConfig.ToggleInverted();
         StateHasChanged();
@@ -49,11 +41,42 @@
         IsPageLoaderVisible = false;
     }
 
+    [JSInvokable]
+    public void EnableMinimizedState() => SidebarState.UpdateMinimized(true);
+
+    [JSInvokable]
+    public void DisableMinimizedState() => SidebarState.UpdateMinimized(false);
+
     protected override async Task OnInitializedAsync()
     {
-        ThemeStore.DEFAULT.OnToggle += ToggleInverted;
-        ThemeStore.CORPORATE.OnToggle += ToggleInverted;
+        ThemeDictionary.DEFAULT.OnToggle += ToggleInverted;
+        ThemeDictionary.CORPORATE.OnToggle += ToggleInverted;
+
+        SidebarState.OnChange += StateHasChanged;
+
         await HidePageLoader();
         await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.RegisterWindowResizeAsync(
+                SidebarState.MobileWidth,
+                DotNetObjectReference.Create(this));
+        }  
+    }
+
+    public void Dispose()
+    {
+        ThemeDictionary.DEFAULT.OnToggle -= ToggleInverted;
+        ThemeDictionary.CORPORATE.OnToggle -= ToggleInverted;
+
+        SidebarState.OnChange -= StateHasChanged;
+
+        JSRuntime.UnregisterWindowResizeAsync(
+            SidebarState.MobileWidth,
+            DotNetObjectReference.Create(this));
     }
 }

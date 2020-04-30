@@ -1,11 +1,11 @@
-using Beng.Specta.Compta.ComponentLibrary.Configs.Theme;
+using Dawn;
 
-namespace Beng.Specta.Compta.ComponentLibrary.Shared
+namespace Beng.Specta.Compta.ComponentLibrary.Common
 {
     public static class ThemesExtensions
     {
         // Default color key
-        private static string ColorThemeDefault => ThemeStore.PrimaryKey;
+        private static string ColorThemeDefault => ThemeDictionary.PrimaryKey;
 
         // Default color value
         private static string ColorDefault => "#000000";
@@ -13,16 +13,21 @@ namespace Beng.Specta.Compta.ComponentLibrary.Shared
         // This allows a multitude of defaults.
         // theme color => color => theme default => hard default
         // customColor : Selected Color key or value
-        public static string ComputeColor(this ThemeStore themeStore, string customColor = "")
+        public static string ComputeColor(this ThemeDictionary themeStore, string customColor = "")
         {
-            if (themeStore.TryGetValue(customColor, out var color))
+            Guard.Argument(themeStore, nameof(themeStore)).NotNull();
+
+            if (!string.IsNullOrWhiteSpace(customColor)
+                && themeStore.TryGetValue(customColor, out var color))
             {
                 return color;
             }
+
             if (!string.IsNullOrWhiteSpace(customColor))
             {
                 return customColor;
             }
+        
             if (themeStore.TryGetValue(ColorThemeDefault, out var defaultThemeColor))
             {
                 return defaultThemeColor;

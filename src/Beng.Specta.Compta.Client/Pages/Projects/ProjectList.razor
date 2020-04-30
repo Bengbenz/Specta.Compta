@@ -1,22 +1,22 @@
 @page "/projects"
-@using Syncfusion.Blazor.DropDowns
 @using Beng.Specta.Compta.Core.DTOs
 @inject ILogger<ProjectList> Logger
 @inject HttpClient HttpClient
 
 <div class="@MainClass">
-    <VaCard IsVisible="@(!Projects.Any())" ExtraClass="flex xs12 md6 xl3">
+    <VaCard IsVisible="@(Projects.Any())" class="flex xs12 md6 xl3">
         <BodyContent>
-            <SfListBox Value=@SelectedValue DataSource="@Projects" TValue="string[]" TItem="ProjectDTO">
-                <ListBoxSelectionSettings ShowCheckbox="true"></ListBoxSelectionSettings>
+            <SfListBox DataSource="@Projects" TValue="string[]" TItem="ProjectDTO">
+                <ListBoxFieldSettings Text="Name" Value="Id" />
+                <ListBoxSelectionSettings ShowCheckbox="true" />
             </SfListBox>
         </BodyContent>
     </VaCard>
     <GenericPage Title="Projects"
-                    Loader="@LoadProjects"
+                    Loader="@LoadItems"
                     Icon="vuestic-iconset vuestic-iconset-statistics"
                     NewText="Initier un projet"
-                    ExtraClass="@DetailsClass">
+                    class="@DetailsClass">
         <Loading>
             <h1>Loading...</h1>
         </Loading>
@@ -42,11 +42,11 @@
 
     private string[] SelectedValue = new string[] { "Hennessey Venom" };
 
-    private async Task<IList<ProjectDTO>> LoadProjects()
+    protected async Task<IList<ProjectDTO>> LoadItems()
     {
         //await Task.Delay(3000);
-
-        return new List<ProjectDTO>();//GetProjects();
+        
+        return await Task.Run(() => new List<ProjectDTO>());//GetProjects();
     }
 
     private IList<ProjectDTO> Projects
@@ -78,8 +78,8 @@
         }
     }
 
-    private string MainClass => !Projects.Any() ? "row row-equal" : string.Empty;
+    private string MainClass => Projects.Any() ? "row row-equal" : null;
 
-    private string DetailsClass => !Projects.Any() ? "flex xs12 md6 xl9" : null;
+    private string DetailsClass => Projects.Any() ? "flex xs12 md6 xl9" : null;
 
 }

@@ -1,18 +1,18 @@
 @inject SpinnerService SpinnerService;
+@implements IDisposable
 
-@if(IsVisible)
+@if (IsVisible)
 {
 <div class="page-loader">
     <div class="loader">
-        <SemipolarSpinner Color="@ContextTheme[ThemeStore.PrimaryKey]" Size="100" AnimationDuration="1200" />
+        <SemipolarSpinner Color="@ContextTheme[ThemeDictionary.PrimaryKey]" Size="100" AnimationDuration="1200" />
     </div>
 </div>
 }
 
 @code{
 
-    [CascadingParameter]
-    public ThemeStore ContextTheme { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
 
     // For request to server, show spinner for waiting to render
     protected bool IsVisible { get; set; } 
@@ -29,4 +29,10 @@
         SpinnerService.OnHide += ToggleSpinnerVisibility;
         await base.OnInitializedAsync();
     }
+
+    public void Dispose()
+    {
+        SpinnerService.OnShow -= ToggleSpinnerVisibility;
+        SpinnerService.OnHide -= ToggleSpinnerVisibility;
+    } 
 }

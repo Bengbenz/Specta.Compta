@@ -1,0 +1,196 @@
+@inject IJSRuntime JSRuntime
+
+<VaInputWrapper class="@ComputedClass"
+    IsDisabled="@IsDisabled"
+    IsSuccess="@IsSuccess"
+    Messages="@Messages"
+    IsError="@IsError"
+    ErrorMessages="@ErrorMessages"
+    ErrorCount="@ErrorCount"
+    @attributes="AdditionalAttributes">
+    <div class="@ContainerClass" style="@ContainerStyle">
+        @if (IsSuccess || IsError || Prepend != null || (IsRemovable && HasContent))
+        {
+            <div class="va-input__container__icon-wrapper va-input__container__icon-wrapper--start">
+                <VaIcon IsVisible="@IsSuccess"
+                        class="va-input__container__icon"
+                        style="@IconStyle"
+                        name="check"/>
+                <VaIcon IsVisible="@IsError"
+                        class="va-input__container__icon"
+                        style="@IconStyle"
+                        name="warning"/>
+                <div style="@IconStyle">
+                    @Prepend
+                </div>
+            </div>
+        }
+      <div class="va-input__container__content-wrapper"
+           style="@WrapperInputStyle">
+        <label style="@LabelStyle" aria-hidden="true"
+               class="va-input__container__label" >
+            @Label
+        </label>
+        @if (IsTextarea)
+        {
+            <textarea class="va-input__container__input"
+                style="@TextAreaStyle"
+                aria-label="@Label"
+                placeholder="@PlaceHolder"
+                disabled="@IsDisabled"
+                readonly="@IsReadOnly"
+                @ref="TextArea"
+                @bind="@Value"
+                @onfocus="@(() => IsFocused = true)"
+                @onblur="@(() => IsFocused = false)"  />
+        }
+        else
+        {
+            <input class="va-input__container__input"
+                   style="@InputStyle"
+                   aria-label="@Label"
+                   type="@Type.ToString()"
+                   placeholder="@PlaceHolder"
+                   disabled="@IsDisabled"
+                   readonly="@IsReadOnly"
+                   @bind="@Value"
+                   @onfocus="@(() => IsFocused = true)"
+                   @onblur="@(() => IsFocused = false)" />
+        }
+        </div>
+    @if (IsSuccess || IsError || Append != null || (IsRemovable && HasContent))
+    {
+        <div class="va-input__container__icon-wrapper va-input__container__icon-wrapper--end">
+            <VaIcon IsVisible="@IsSuccess"
+                    class="va-input__container__icon"
+                    style="@IconStyle"
+                    name="check" />
+            <VaIcon IsVisible="@IsError"
+                    class="va-input__container__icon"
+                    style="@IconStyle"
+                    name="warning" />
+            <div style="@IconStyle">
+                @Append
+            </div>
+            <VaIcon IsVisible="@(IsRemovable && HasContent)"
+                    @onclick="ClearContent"
+                    class="va-input__container__close-icon"
+                    name="fa fa-times-circle"
+                    style="@IconStyle" />
+        </div>
+    }
+    </div>
+</VaInputWrapper>
+
+@code{
+
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [Parameter] public RenderFragment Prepend { get; set; }
+    [Parameter] public RenderFragment Content { get; set; }
+    [Parameter] public RenderFragment Append { get; set; }
+    [Parameter] public string Color { get; set; } = ThemeDictionary.PrimaryKey;
+    [Parameter] public string Class { get; set; }
+    [Parameter] public bool IsDisabled { get; set; }
+    [Parameter] public bool IsReadOnly { get; set; }
+    [Parameter] public bool IsRemovable { get; set; }
+    [Parameter] public bool IsAutoSize { get; set; } // textarea-specific
+    [Parameter] public bool IsError { get; set; }
+    [Parameter] public bool IsSuccess { get; set; }
+    [Parameter] public int ErrorCount { get; set; }
+    [Parameter] public int? MinRows { get; set; }
+    [Parameter] public int? MaxRows { get; set; }
+    [Parameter] public IEnumerable<string> Messages { get; set; }
+    [Parameter] public IEnumerable<string> ErrorMessages { get; set; }
+    [Parameter] public string Label { get; set; }
+    [Parameter] public string Value { get; set; } // Or Number
+    [Parameter] public string PlaceHolder { get; set; }
+    [Parameter] public InputType Type { get; set; } = InputType.Text;
+    
+    private ElementReference TextArea { get; set; }
+    private bool IsFocused { get; set; }
+    private bool HasContent => !string.IsNullOrWhiteSpace(Value);
+    private bool IsTextarea => Type == InputType.TextArea;
+    private string ComputedClass =>
+        CssBuilder.Default("va-input")
+            .AddClass(Class)
+            .Build();
+
+    private string IconStyle =>
+        StyleBuilder.Empty()
+            .AddStyle("color", ContextTheme[ThemeDictionary.GrayKey], !IsError && !IsSuccess)
+            .AddStyle("color", ContextTheme[ThemeDictionary.DangerKey], IsError)
+            .AddStyle("color", ContextTheme[ThemeDictionary.SuccessKey], IsSuccess)
+            .Build();
+    private string LabelStyle =>
+        StyleBuilder.Empty()
+            .AddStyle("color", ContextTheme[ThemeDictionary.PrimaryKey], !IsError && !IsSuccess)
+            .AddStyle("color", ContextTheme[ThemeDictionary.DangerKey], IsError)
+            .AddStyle("color", ContextTheme[ThemeDictionary.SuccessKey], IsSuccess)
+            .Build();
+
+    private string ContainerClass =>
+        CssBuilder.Default("va-input__container")
+            .AddClass("va-input__container--textarea", IsTextarea)
+            .Build();
+
+    private string ContainerStyle =>
+        StyleBuilder.Empty()
+            .AddStyle("background-color", "#f5f8f9", !IsError && !IsSuccess)
+            .AddStyle("background-color", ContextTheme[ThemeDictionary.DangerKey].GetHoverColor(), IsError)
+            .AddStyle("background-color", ContextTheme[ThemeDictionary.SuccessKey].GetHoverColor(), IsSuccess)
+            .AddStyle("border-color", ContextTheme[ThemeDictionary.DangerKey].GetHoverColor(), IsError)
+            .AddStyle("border-color", ContextTheme[ThemeDictionary.SuccessKey].GetHoverColor(), IsSuccess)
+            .AddStyle("border-color", ContextTheme[ThemeDictionary.DarkKey].GetHoverColor(), IsFocused)
+            .AddStyle("border-color", ContextTheme[ThemeDictionary.GrayKey], !IsError && !IsSuccess && !IsFocused)
+            .Build();
+
+    private string WrapperInputStyle =>
+        StyleBuilder.Empty()
+            .AddStyle("padding-top", "0", string.IsNullOrWhiteSpace(Label))
+            .Build();
+
+    private string InputStyle =>
+        StyleBuilder.Empty()
+            .AddStyle("padding-bottom", "0.875rem", string.IsNullOrWhiteSpace(Label))
+            .AddStyle("padding-bottom", "0.125rem", !string.IsNullOrWhiteSpace(Label))
+            .Build();
+
+    private string TextAreaStyle
+    {
+        get
+        {
+            var hasLabel = string.IsNullOrWhiteSpace(Label);
+            return StyleBuilder.Empty()
+                        .AddStyle("padding-bottom", "0.125rem", hasLabel)
+                        .AddStyle("margin-top", "0.125rem", hasLabel)
+                        .AddStyle("padding-top", "0", hasLabel)
+                        .AddStyle("min-height", "1.5rem", hasLabel)
+                        .AddStyle("min-height", "2.25rem", !hasLabel)
+                        .AddStyle("margin-bottom", "0.125rem", hasLabel)
+                        .Build();
+        }
+    }
+    
+    private void ClearContent()
+    {
+        Value = string.Empty;
+    }
+
+    private async Task AdjusteHeightAsync()
+    {
+        if (!IsAutoSize || !IsTextarea)
+        {
+            return;
+        }
+
+        int minRows = MinRows ?? 1;
+        int maxRows = MaxRows ?? int.MaxValue;
+        await JSRuntime.CalculateNodeHeightAsync(TextArea, false, minRows, maxRows);
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await AdjusteHeightAsync();
+    }
+}
