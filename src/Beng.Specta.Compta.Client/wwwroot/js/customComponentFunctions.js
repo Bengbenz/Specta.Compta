@@ -19,14 +19,14 @@ window.customComponentHandler = {
     },
     handlePopperInstance: function (anchor,
         content,
+        anchorWidthContainer,
         position,
         offset,
         isVisible,
         isPreventOverflow,
         isFixed,
         isBoundaryBody,
-        isKeepAnchorWidth,
-        anchorWidthContainer) {
+        isKeepAnchorWidth) {
 
         if (this.popperInstance) {
             removePopper();
@@ -38,13 +38,13 @@ window.customComponentHandler = {
 
         return initPopper(anchor,
             content,
+            anchorWidthContainer,
             position,
             offset,
             isPreventOverflow,
             isFixed,
             isBoundaryBody,
-            isKeepAnchorWidth,
-            anchorWidthContainer);
+            isKeepAnchorWidth);
     },
     removePopper: function () {
         if (!this.popperInstance)
@@ -135,7 +135,7 @@ window.customComponentHandler = {
         // The operation is basically reactive though implicitly.
         Object.assign(uiTextNode.style, textareaStyles)
         return textareaStyles
-    },
+    }
 }
 
 function handleDocumentClick (event, anchor, content, dotnetHelper) {
@@ -181,61 +181,40 @@ function updateSidebarState (mobileWidth, dotnetHelper) {
     {
         dotnetHelper.invokeMethodAsync("EnableMinimizedState");
     }
+    disableElement();
+}
+
+function disableElement ()
+{
+    var el = document.getElementById("blazor-license-warning");
+    if (el)
+    {
+        el.style = "display: none";
+        console.log("blazor disabled");
+    }
 }
 
 function initPopper (anchor,
     content,
+    anchorWidthContainer,
     position,
     offset,
     isPreventOverflow,
     isFixed,
     isboundaryBody,
-    isKeepAnchorWidth,
-    anchorWidthContainer) {
+    isKeepAnchorWidth) {
 
+    var offsetSplitted = offset.split(',');
+    var skidding = new Number(offsetSplitted[0] || 0);
+    var distance = new Number(offsetSplitted[1] || 0);
     const options = {
-        placement: position || 'bottom',
-        modifiers: {
-            preventOverflow: {
-                enabled: isPreventOverflow,
-            },
-        },
-        positionFixed: isFixed,
-        arrow: {
-            enabled: false,
-        },
-        onCreate: () => {
-            this.$emit('input', true)
-        },
-    }
-
-    if (isPreventOverflow) {
-        options.modifiers.hide = { enabled: false };
-    }
-
-    if (isboundaryBody) {
-        options.modifiers.preventOverflow.boundariesElement = window
-    }
-
-    if (offset) {
-        options.modifiers.offset = {
-            enabled: true,
-            offset: offset,
-        }
-        options.modifiers.keepTogether = { enabled: false }
-        options.modifiers.arrow = { enabled: false }
-    }
-
-    offset = [0, 16];
-    console.log("offset: "+ offset + " | position: "+ position + " | isPreventOverflow: "+ isPreventOverflow + " | isboundaryBody: "+ isboundaryBody);
-    const opt = {
         placement: position || 'bottom',
         strategy: isFixed ? 'fixed' : 'absolute',
         modifiers: [
             {
                 name: 'offset',
                 options: {
-                    offset: offset,
+                    offset: () => [skidding, distance],
                 },
             },
             {
@@ -251,7 +230,7 @@ function initPopper (anchor,
     this.popperInstance = Popper.createPopper(
         anchor,
         content,
-        opt);
+        options);
 
     // temporary solution
     return updateAnchorWidth(isKeepAnchorWidth, anchor, anchorWidthContainer);
@@ -345,3 +324,28 @@ function calculateNodeStyling (node, useCache = false) {
 
   return nodeInfo
 }
+
+// Select the node that will be observed for mutations
+var targetNode = document.getElementById('app');
+
+// Options for the observer (which mutations to observe)
+var config = { attributes: true, childList: true };
+
+// Callback function to execute when mutations are observed
+var callback = function(mutationsList) {
+    for(var mutation of mutationsList) {
+        if (mutation.type == 'childList') {
+            console.log('A child node has been added or removed.');
+            disableElement();
+        }
+        else if (mutation.type == 'attributes') {
+            console.log('The ' + mutation.attributeName + ' attribute was modified.');
+        }
+    }
+};
+
+// Create an observer instance linked to the callback function
+var observer = new MutationObserver(callback);
+
+// Start observing the target node for configured mutations
+observer.observe(targetNode, config);

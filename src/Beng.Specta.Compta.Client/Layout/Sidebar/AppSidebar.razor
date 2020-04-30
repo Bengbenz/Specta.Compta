@@ -11,6 +11,7 @@
                 Title="@item.DisplayName"
                 IsExpanded="@item.IsExpanded"
                 IsMinimized="@SidebarState.IsMinimized"
+                IsActive="@item.IsActive"
                 Loader="@(() => Task.Run(() => item.Children))"
                 OnExpand="@(() => ToggleExpandMenu(item))" >
                 <SubMenuItemTemplate Context="subMenuItem">

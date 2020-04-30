@@ -51,28 +51,28 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
         public static ValueTask<string> HandlePopperInstanceAsync(this IJSRuntime jsRuntime,
             ElementReference anchorRef,
             ElementReference contentRef,
+            ElementReference anchorWidthRef,
             PositionType position,
             string offset,
             bool isContentVisible,
             bool isPreventOverflow,
             bool isFixed,
             bool isBoundaryBody,
-            bool isKeepAnchorWidth,
-            ElementReference anchorWidthRef)
+            bool isKeepAnchorWidth)
         {
             var positionString = position.ToDescriptionString();
             
             return jsRuntime.InvokeAsync<string>("customComponentHandler.handlePopperInstance",
                 anchorRef,
                 contentRef,
+                anchorWidthRef,
                 positionString,
                 offset,
                 isContentVisible,
                 isPreventOverflow,
                 isFixed,
                 isBoundaryBody,
-                isKeepAnchorWidth,
-                anchorWidthRef);
+                isKeepAnchorWidth);
         }
     }
 }

@@ -69,11 +69,13 @@ namespace Beng.Specta.Compta.Client.Layout.Sidebar
             if (groupItem != null)
             {
                 groupItem.IsExpanded = true;
+                groupItem.IsActive = true;
                 otherGroups = otherGroups.Except(new List<ModuleInfoVm> { groupItem }).ToList();
             }
             foreach (var group in otherGroups)
             {
                 group.IsExpanded = false;
+                group.IsActive = false;
             }
 
             NotifyStateChanged();
@@ -100,7 +102,7 @@ namespace Beng.Specta.Compta.Client.Layout.Sidebar
             {
                 Children = new List<ModuleInfoVm>
                 {
-                    new ModuleInfoVm("4-1", "Plan de Financement", new MetaInfoVm("/funding-plan")),
+                    new ModuleInfoVm("4-1", "Echéanciers", new MetaInfoVm("/funding-plan")),
                     new ModuleInfoVm("4-2", "Contrats", new MetaInfoVm("/funding-contracts"))
                 }
             },
