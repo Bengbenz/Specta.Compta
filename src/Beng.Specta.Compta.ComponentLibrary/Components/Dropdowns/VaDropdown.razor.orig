@@ -1,0 +1,188 @@
+@inject IJSRuntime JSRuntime
+@inject ILogger<VaDropdown> Logger
+@implements IDisposable
+
+<div class="@ComputedClass" @attributes="@AdditionalAttributes">
+    <div class="va-dropdown__anchor"
+        @onmouseover="OnMouseOver"
+        @onmouseout="OnMouseOut"
+        @onclick="OnAnchorClick"
+        @ref="AnchorRef">
+      @Anchor
+    </div>
+  @if (IsContentVisible)
+  {
+    <div class="va-dropdown__content"
+        @onmouseout="OnMouseOut"
+        @onmouseover="OnContentMouseOver"
+        @ref="ContentRef">
+      @if(IsKeepAnchorWidth)
+      {
+        <div class="va-dropdown__anchor-width-container" style="@AnchorWidthContainerStyle"
+            @ref="AnchorWidthRef">
+            @Content
+        </div>
+      }
+      else
+      {
+        @Content
+      }
+    </div>
+  }
+</div>
+
+@code{
+
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
+    [Parameter] public string Class { get; set; }
+    [Parameter] public string Color { get; set; }
+    [Parameter] public string Icon { get; set; }
+    [Parameter] public string Offset { get; set; } = "0, 8"; // default distance of popper with the reference element
+    [Parameter] public bool IsCloseOnClickOutside { get; set; } = true;
+    [Parameter] public bool IsCloseOnAnchorClick { get; set; } = true;
+    [Parameter] public bool IsPreventOverflow { get; set; } = true;
+    [Parameter] public bool IsKeepAnchorWidth { get; set; }
+    [Parameter] public bool IsFixed { get; set; }
+    [Parameter] public bool IsBoundaryBody { get; set; }
+    [Parameter] public bool IsDisabled { get; set; }
+    [Parameter] public bool IsContentHoverable { get; set; } = true;
+    [Parameter] public bool Value { get; set; }
+    [Parameter] public int HoverOutTimeout { get; set; } = 30;
+    [Parameter] public int HoverOverTimeout { get; set; } = 200;
+    [Parameter] public TriggerType Trigger { get; set; } = TriggerType.Click;
+    [Parameter] public PositionType Position { get; set; } = PositionType.Bottom;
+    [Parameter] public RenderFragment Anchor { get; set; }
+    [Parameter] public RenderFragment Content { get; set; }
+    [Parameter] public EventCallback OnExpand { get; set; }
+
+    private ElementReference AnchorWidthRef { get; set; }
+    private ElementReference AnchorRef { get; set; }
+    private ElementReference ContentRef { get; set; }
+    private string AnchorWidth { get; set; }
+    private bool IsClicked { get; set; }
+    private bool IsMouseHovered { get; set; }
+    private bool IsContentVisible
+    {
+        get
+        {
+            switch (Trigger)
+            {
+                case TriggerType.Hover:
+                {
+                    return IsMouseHovered;
+                }
+                case TriggerType.Click:
+                {
+                    return IsClicked;
+                }
+                case TriggerType.None:
+                {
+                    return Value;
+                }
+                default:
+                {
+                    throw new NotSupportedException($"{IsContentVisible}: Unknown trigger");
+                }
+            }
+        }
+    }
+
+    private string ComputedClass =>
+        CssBuilder.Default("va-dropdown")
+            .AddClass(Class, !string.IsNullOrWhiteSpace(Class))
+            .Build();
+
+    private string AnchorWidthContainerStyle =>
+        StyleBuilder.Default("width", AnchorWidth.ToPixelValue())
+            .AddStyle("max-width", AnchorWidth.ToPixelValue())
+            .Build();
+
+    private void OnMouseOver()
+    {
+        if (IsDisabled)
+        {
+            return;
+        }
+        if (!IsMouseHovered)
+        {
+            IsMouseHovered = true;
+        }
+    }
+
+    private void OnContentMouseOver()
+    {
+        if (IsContentHoverable)
+        {
+            OnMouseOver();
+        }
+    }
+
+    private void OnMouseOut() => IsMouseHovered = false;
+
+    private void OnAnchorClick()
+    {
+        if (IsDisabled)
+        {
+            return;
+        }
+        if (IsClicked && !IsCloseOnAnchorClick)
+        {
+            return;
+        }
+        IsClicked = !IsClicked;
+        Value = IsClicked;
+<<<<<<< HEAD
+        OnExpand.InvokeAsync(null);
+=======
+        OnExpand.InvokeAsync(IsClicked);
+>>>>>>> TEC: Complete refactoring de fou
+    }
+
+    private async Task UpdateAnchorWidthAsync() =>
+        AnchorWidth = await JSRuntime.HandlePopperInstanceAsync(
+                                AnchorRef,
+                                ContentRef,
+                                AnchorWidthRef,
+                                Position,
+                                Offset, 
+                                IsContentVisible,
+                                IsPreventOverflow,
+                                IsFixed,
+                                IsBoundaryBody,
+                                IsKeepAnchorWidth);
+
+    [JSInvokable]
+    public void OnClickOutside()
+    {
+        if (IsCloseOnClickOutside)
+        {
+            Hide();
+        }
+    }
+
+    public void Hide()
+    {
+        if (Trigger == TriggerType.Click && IsClicked)
+        {
+            IsClicked = false;
+            StateHasChanged();
+            OnExpand.InvokeAsync(null);
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.RegisterClickOutsideAsync(AnchorRef, ContentRef, DotNetObjectReference.Create(this));
+        }
+            
+        await UpdateAnchorWidthAsync();
+    }
+
+    public void Dispose()
+    {
+        JSRuntime.UnregisterClickOutsideAsync(AnchorRef, ContentRef, DotNetObjectReference.Create(this));
+        JSRuntime.RemovePopper();
+    }
+}
