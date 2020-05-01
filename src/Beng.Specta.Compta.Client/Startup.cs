@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 using Beng.Specta.Compta.Client.Configs;
-using Beng.Specta.Compta.Client.Layout.Sidebar;
+using Beng.Specta.Compta.Client.Layout.State;
 using Beng.Specta.Compta.Client.Services;
 
 using Syncfusion.Blazor;
@@ -21,7 +21,7 @@ namespace Beng.Specta.Compta.Client
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<SidebarState>();
+            services.AddSingleton<LayoutState>();
             services.AddScoped<AppSettings>();
             services.AddScoped<SpinnerService>();
             services.AddScoped<TenantService>();

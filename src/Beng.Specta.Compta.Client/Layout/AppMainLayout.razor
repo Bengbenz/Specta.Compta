@@ -1,6 +1,6 @@
 @implements IDisposable
 @inherits LayoutComponentBase
-@inject SidebarState SidebarState
+@inject LayoutState LayoutState
 @inject AppSettings ContextConfig
 @inject IJSRuntime JSRuntime
 
@@ -42,17 +42,17 @@
     }
 
     [JSInvokable]
-    public void EnableMinimizedState() => SidebarState.UpdateMinimized(true);
+    public void EnableMinimizedState() => LayoutState.UpdateMinimized(true);
 
     [JSInvokable]
-    public void DisableMinimizedState() => SidebarState.UpdateMinimized(false);
+    public void DisableMinimizedState() => LayoutState.UpdateMinimized(false);
 
     protected override async Task OnInitializedAsync()
     {
         ThemeDictionary.DEFAULT.OnToggle += ToggleInverted;
         ThemeDictionary.CORPORATE.OnToggle += ToggleInverted;
 
-        SidebarState.OnChange += StateHasChanged;
+        LayoutState.OnChange += StateHasChanged;
 
         await HidePageLoader();
         await base.OnInitializedAsync();
@@ -63,7 +63,7 @@
         if (firstRender)
         {
             await JSRuntime.RegisterWindowResizeAsync(
-                SidebarState.MobileWidth,
+                LayoutState.MobileWidth,
                 DotNetObjectReference.Create(this));
         }
     }
@@ -73,10 +73,10 @@
         ThemeDictionary.DEFAULT.OnToggle -= ToggleInverted;
         ThemeDictionary.CORPORATE.OnToggle -= ToggleInverted;
 
-        SidebarState.OnChange -= StateHasChanged;
+        LayoutState.OnChange -= StateHasChanged;
 
         JSRuntime.UnregisterWindowResizeAsync(
-            SidebarState.MobileWidth,
+            LayoutState.MobileWidth,
             DotNetObjectReference.Create(this));
     }
 }

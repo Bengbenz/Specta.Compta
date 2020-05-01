@@ -1,8 +1,8 @@
-@inject SidebarState SidebarState
+@inject LayoutState LayoutState
 
 <aside class="@ComputedClass" style="@ComputedStyle">
     <ul class="app-sidebar__menu">
-      @foreach (var item in SidebarState.MenuItems)
+      @foreach (var item in LayoutState.MenuItems)
       {
         @if (item.Children.Any())
         {
@@ -10,7 +10,7 @@
                 Icon="@item.Meta.IconClass"
                 Title="@item.DisplayName"
                 IsExpanded="@item.IsExpanded"
-                IsMinimized="@SidebarState.IsMinimized"
+                IsMinimized="@LayoutState.IsMinimized"
                 IsActive="@item.IsActive"
                 Loader="@(() => Task.Run(() => item.Children))"
                 OnExpand="@(() => ToggleExpandMenu(item))" >
@@ -25,13 +25,13 @@
         }
         else
         {
-            <AppSidebarItemLink TItem="@item" Tooltip="@item.DisplayName" IsMinimized="@SidebarState.IsMinimized">
+            <AppSidebarItemLink TItem="@item" Tooltip="@item.DisplayName" IsMinimized="@LayoutState.IsMinimized">
                 <MenuItemTemplate Context="menuItem">
                     <AppSidebarLink @key="item" Icon="@item.Meta.IconClass"
                         Title="@menuItem.DisplayName"
                         Url="@menuItem.Meta.Url.OriginalString"
                         IsActive="@menuItem.IsActive"
-                        IsMinimized="@SidebarState.IsMinimized"
+                        IsMinimized="@LayoutState.IsMinimized"
                         @onclick="@(() => UpdateActiveState(menuItem))" />
                 </MenuItemTemplate>
             </AppSidebarItemLink>
@@ -52,14 +52,14 @@
 
     private string ComputedClass =>
         CssBuilder.Default("app-sidebar app-layout__sidebar")
-            .AddClass("app-sidebar--minimized", SidebarState.IsMinimized)
+            .AddClass("app-sidebar--minimized", LayoutState.IsMinimized)
             .Build();
 
     private void UpdateActiveState(ModuleInfoVm menuItem = null, ModuleInfoVm groupItem = null) =>
-        SidebarState.SetActiveItem(menuItem, groupItem);
+        LayoutState.SetActiveItem(menuItem, groupItem);
 
     private void ToggleExpandMenu(ModuleInfoVm groupItem ) =>
-        SidebarState.ToggleExpandedGroup(groupItem);
+        LayoutState.ToggleExpandedGroup(groupItem);
 
     protected override async Task OnInitializedAsync()
     {

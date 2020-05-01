@@ -1,17 +1,17 @@
 
 @inject HttpClient HttpClient
 @inject TenantService TenantService
-@inject SidebarState SidebarState
+@inject LayoutState LayoutState
 @inject ILogger<AppNavbar> Logger
 
 <nav class="app-navbar app-layout__navbar" style="@NavbarStyle">
     <div class="app-navbar__content row">
         <div class="app-navbar__menu-container">
-            <VaIconMenu class="app-navbar__menu" IsVisible="@(!SidebarState.IsMinimized)"
+            <VaIconMenu class="app-navbar__menu" IsVisible="@(!LayoutState.IsMinimized)"
                 OnClick="@ToggleMinimized"
                 Color="@ComputedColor" />
 
-            <VaIconMenuCollapsed class="app-navbar__menu" IsVisible="@SidebarState.IsMinimized"
+            <VaIconMenuCollapsed class="app-navbar__menu" IsVisible="@LayoutState.IsMinimized"
                 OnClick="@ToggleMinimized"
                 Color="@ComputedColor"/>
 
@@ -60,7 +60,7 @@
                 .ColorShiftHsl(new HslType(h: -1, s: -11, l: 10)).ToString(), ContextTheme.IsGradient)
             .Build();
 
-    private void ToggleMinimized() => SidebarState.ToggleMinimized();
+    private void ToggleMinimized() => LayoutState.ToggleMinimized();
 
     protected override async Task OnInitializedAsync()
     {

@@ -9,17 +9,17 @@ using Beng.Specta.Compta.Client.ViewModels;
 
 using Dawn;
 
-namespace Beng.Specta.Compta.Client.Layout.Sidebar
+namespace Beng.Specta.Compta.Client.Layout.State
 {
-    public class SidebarState
+    public class LayoutState
     {
         public static readonly int MobileWidth = 767;
-        private ILogger<SidebarState> Logger { get; }
+        private ILogger<LayoutState> Logger { get; }
         private NavigationManager NavigationManager { get; }
         public bool IsMinimized { get; private set; }
         public event Action OnChange;
 
-        public SidebarState(ILogger<SidebarState> logger, NavigationManager navigationManager)
+        public LayoutState(ILogger<LayoutState> logger, NavigationManager navigationManager)
         {
             Logger = logger;
             NavigationManager = navigationManager;
