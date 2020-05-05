@@ -75,7 +75,7 @@
             .AddStyle("color", "white", !IsHovered && !IsActive)
             .AddStyle("color", ContextTheme[ThemeDictionary.PrimaryKey], IsHovered || IsActive)
             .AddStyle("background-color", ContextTheme[ThemeDictionary.SecondaryKey]
-                .ColorShiftHsl(new HslType(h: 0, s: -13, l: 15)).ToString(), IsHovered || IsActive)
+                .ColorShiftHsl(new HslType { Hue = 0, Saturation = -13, Lightness = 15 }).ToString(), IsHovered || IsActive)
             .AddStyle("border-color", ContextTheme[ThemeDictionary.PrimaryKey], (IsHovered || IsActive) && IsActive)
             .AddStyle("border-color", "transparent", (IsHovered || IsActive) && !IsActive)
             .Build();

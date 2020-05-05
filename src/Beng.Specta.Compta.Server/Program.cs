@@ -1,42 +1,41 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-using Beng.Specta.Compta.Infrastructure.Data;
-
 namespace Beng.Specta.Compta.Server
 {
-    public class Program
+    public sealed class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             IHost host = CreateHostBuilder(args).Build();
 
             // Initialize the tenant database
-            InitAppDatabase(host);
+            await InitAppDatabase(host);
 
-            host.Run();
+            await host.RunAsync();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
                 });
 
-        private static void InitAppDatabase(IHost host)
+        private static async Task InitAppDatabase(IHost host)
         {
             using (var scope = host.Services.CreateScope())
             {
-                var serviceProvider = scope.ServiceProvider;
+                IServiceProvider serviceProvider = scope.ServiceProvider;
                 try
                 {
-                    SeedData.PopulateDefaultTenantInfo(serviceProvider);
-                    //SeedData.PopulateAppDatabase(serviceProvider);
+                    await serviceProvider.PopulateDefaultTenantInfo();
+                    await serviceProvider.PopulateAppDatabase();
                 }
                 catch (Exception ex)
                 {

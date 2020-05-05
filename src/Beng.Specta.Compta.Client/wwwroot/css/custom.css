@@ -4105,24 +4105,24 @@ body {
   vertical-align: middle;
   font-size: 0.8rem; }
 
-va-checkbox {
+.va-checkbox {
   display: flex;
   flex-direction: column;
   justify-content: center; }
-  va-checkbox__input-container {
+  .va-checkbox__input-container {
     align-items: center;
     display: flex;
     cursor: pointer; }
-    .va-checkbox--disabled va-checkbox__input-container {
+    .va-checkbox--disabled .va-checkbox__input-container {
       cursor: default;
       opacity: 0.4; }
 
-    .va-checkbox--readonly va-checkbox__input-container {
+    .va-checkbox--readonly .va-checkbox__input-container {
       cursor: initial; }
 
-    .va-checkbox--disabled va-checkbox__input-container {
+    .va-checkbox--disabled .va-checkbox__input-container {
       cursor: default; }
-  va-checkbox va-checkbox__square {
+  .va-checkbox .va-checkbox__square {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -4130,11 +4130,11 @@ va-checkbox {
     height: 2rem;
     position: relative;
     flex: 0 0 2rem; }
-    .va-checkbox--on-keyboard-focusva-checkbox va-checkbox__square {
+    .va-checkbox--on-keyboard-focus.va-checkbox .va-checkbox__square {
       background-color: #eeeeee;
       transition: all, 0.6s, ease-in;
       border-radius: 5rem; }
-  va-checkbox va-checkbox__input {
+  .va-checkbox .va-checkbox__input {
     height: 1.375rem;
     width: 1.375rem;
     cursor: inherit;
@@ -4142,9 +4142,9 @@ va-checkbox {
     background-color: #ffffff;
     border: solid 0.125rem #acb5be;
     border-radius: 0.25rem; }
-    va-checkbox va-checkbox__input:focus {
+    .va-checkbox .va-checkbox__input:focus {
       outline: none; }
-    .va-checkbox--selectedva-checkbox va-checkbox__input {
+    .va-checkbox--selected.va-checkbox .va-checkbox__input {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -4154,28 +4154,28 @@ va-checkbox {
       background-color: #4ae387;
       border: 0; }
 
-    .va-checkbox--errorva-checkbox va-checkbox__input {
+    .va-checkbox--error.va-checkbox .va-checkbox__input {
       border-color: #e34a4a; }
-  va-checkbox va-checkbox__label-text {
+  .va-checkbox .va-checkbox__label-text {
     display: inline-block;
     position: relative;
     margin-left: 0.25rem; }
-    .va-checkbox--errorva-checkbox va-checkbox__label-text {
+    .va-checkbox--error.va-checkbox .va-checkbox__label-text {
       color: #e34a4a; }
-  va-checkbox__error-message {
+  .va-checkbox__error-message {
     vertical-align: middle;
     color: #e34a4a;
     font-size: 0.8rem; }
-  va-checkbox__icon-selected {
+  .va-checkbox__icon-selected {
     pointer-events: none;
     position: absolute;
     color: #ffffff; }
-  va-checkbox__error-message-container {
+  .va-checkbox__error-message-container {
     flex: 0 0 100%;
     margin-left: 0.3rem; }
-  va-checkbox__label-container {
+  .va-checkbox__label-container {
     margin-left: 2rem; }
-  va-checkbox__content {
+  .va-checkbox__content {
     flex-direction: row; }
 
 /*# sourceMappingURL=custom.css.map */

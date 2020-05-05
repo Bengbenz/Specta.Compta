@@ -1,5 +1,4 @@
-﻿
-using Beng.Specta.Compta.Core.Entities;
+﻿using Beng.Specta.Compta.Core.Entities;
 
 namespace Beng.Specta.Compta.Infrastructure.Data.Config
 {

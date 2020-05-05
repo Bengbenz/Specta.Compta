@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Beng.Specta.Compta.Core.Entities;
 
 namespace Beng.Specta.Compta.Core.DTOs
@@ -7,6 +8,8 @@ namespace Beng.Specta.Compta.Core.DTOs
     {
         public static ProjectDTO ToDTO(this Project item)
         {
+            if (item == null) throw new ArgumentNullException(nameof(item));
+
             return new ProjectDTO
             {
                 Id = item.Id,

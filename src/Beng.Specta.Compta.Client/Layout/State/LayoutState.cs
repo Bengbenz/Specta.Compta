@@ -7,8 +7,6 @@ using Microsoft.Extensions.Logging;
 
 using Beng.Specta.Compta.Client.ViewModels;
 
-using Dawn;
-
 namespace Beng.Specta.Compta.Client.Layout.State
 {
     public class LayoutState
@@ -39,7 +37,7 @@ namespace Beng.Specta.Compta.Client.Layout.State
 
         public void ToggleExpandedGroup(ModuleInfoVm menuItem)
         {
-            Guard.Argument(menuItem, nameof(menuItem)).NotNull();
+            if (menuItem == null) throw new ArgumentNullException(nameof(menuItem));
 
             menuItem.IsExpanded = !menuItem.IsExpanded;
             NotifyStateChanged();

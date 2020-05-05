@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
+
+using Microsoft.EntityFrameworkCore;
+
 using Beng.Specta.Compta.Core.Entities;
 using Beng.Specta.Compta.UnitTests.Helpers;
-using Microsoft.EntityFrameworkCore;
+
 using Xunit;
 
 namespace Beng.Specta.Compta.IntegrationTests.Data
@@ -55,7 +59,7 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
         }
 
         [Fact]
-        public void DeletesAfterAddingIt()
+        public async Task DeletesAfterAddingIt()
         {
             // add an item
             var repository = GetRepository();
@@ -64,7 +68,7 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
             repository.Add(item);
 
             // delete the item
-            repository.Delete(item);
+            await repository.DeleteAsync(item);
 
             var items = repository.List<Project>();
             // verify it's no longer there

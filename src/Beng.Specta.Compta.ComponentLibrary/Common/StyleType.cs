@@ -1,7 +1,6 @@
+using System;
 using System.Globalization;
 using System.Text;
-
-using Dawn;
 
 namespace Beng.Specta.Compta.ComponentLibrary.Common
 {
@@ -36,7 +35,8 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
 
         public StyleType(StyleType style)
         {
-            Guard.Argument(style, nameof(style)).NotNull();
+            if (style == null) throw new ArgumentNullException(nameof(style));
+
 
             Background = style.Background;
             BackgroundImage = style.BackgroundImage;

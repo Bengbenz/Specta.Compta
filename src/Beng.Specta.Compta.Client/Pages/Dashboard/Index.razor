@@ -27,6 +27,7 @@
 @code{
 
     [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; }
     [Parameter] public bool IsOpen4 { get; set; }
     [Parameter] public bool IsOpen5 { get; set; }
 
@@ -43,8 +44,11 @@
         string tenantId = TenantService.GetTenantIdentifier();
         // Call api/info Api
         _info = await HttpClient.GetStringAsync($"{tenantId}/info");
+
+        var userIdentity = (await AuthenticationStateTask).User.Identity;
+        
+        Logger.LogDebug($"Index initialized. User logged: {userIdentity.Name}");
         await base.OnInitializedAsync();
-        Logger.LogDebug("Index initialized");
     }
 
     protected async Task<IList<ProjectDTO>> LoadItems()

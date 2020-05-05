@@ -1,4 +1,4 @@
-@inject SpinnerService SpinnerService;
+@inject SpinnerState SpinnerState;
 @implements IDisposable
 
 @if (IsVisible)
@@ -9,30 +9,25 @@
     </div>
 </div>
 }
+@ChildContent
 
 @code{
 
     [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
 
     // For request to server, show spinner for waiting to render
-    protected bool IsVisible { get; set; } 
-
-    public void ToggleSpinnerVisibility()
-    {
-        IsVisible = !IsVisible;
-        StateHasChanged();
-    }
+    private bool IsVisible => SpinnerState.IsVisible;
 
     protected override async Task OnInitializedAsync()
     {
-        SpinnerService.OnShow += ToggleSpinnerVisibility;
-        SpinnerService.OnHide += ToggleSpinnerVisibility;
+        SpinnerState.OnChange += StateHasChanged;
+
         await base.OnInitializedAsync();
     }
 
     public void Dispose()
     {
-        SpinnerService.OnShow -= ToggleSpinnerVisibility;
-        SpinnerService.OnHide -= ToggleSpinnerVisibility;
+        SpinnerState.OnChange -= StateHasChanged;
     } 
 }

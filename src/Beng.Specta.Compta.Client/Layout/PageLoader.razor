@@ -1,4 +1,4 @@
-@if (IsVisible)
+@if (!IsMainContentVisible)
 {
 <div class="auth-layout row align-content--center" style="@ComputedStyle">
     <div class="flex xs12 pa-3 flex-center">
@@ -13,19 +13,36 @@
     </div>
 </div>
 }
+else
+{
+    @ChildContent
+}
 
 @code{
 
     [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
-    [Parameter] public bool IsVisible { get; set; }
-    [Parameter] public int AnimationDuration { get; set; } = 1200;
+    [Parameter] public int AnimationDuration { get; set; } = 1500;
+    [Parameter] public int Size { get; set; } = 264;
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    private string Color => ContextTheme[ThemeDictionary.PrimaryKey];
+    private bool IsMainContentVisible { get; set; }
 
     private string ComputedStyle =>
         StyleBuilder.Empty()
-            .AddStyle("background-color", "white", ContextTheme.IsInverted)
+            .AddStyle("background-color", ContextTheme[ThemeDictionary.GrayKey].GetGradientBackground(), ContextTheme.IsInverted)
             .AddStyle("background-color", "linear-gradient(to right, #0e4ac4, #002c85)", !ContextTheme.IsInverted)
             .Build();
 
-    private int Size = 264;
-    private string Color => ContextTheme[ThemeDictionary.PrimaryKey];
+    private async Task HidePageLoader()
+    {
+        await Task.Delay(AnimationDuration);
+        IsMainContentVisible = true;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await HidePageLoader();
+        await base.OnParametersSetAsync();
+    }
 }

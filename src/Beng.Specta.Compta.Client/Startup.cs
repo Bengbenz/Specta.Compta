@@ -3,12 +3,16 @@ using System.Net.Http;
 using System.Reflection;
 
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-using Beng.Specta.Compta.Client.Configs;
 using Beng.Specta.Compta.Client.Layout.State;
 using Beng.Specta.Compta.Client.Services;
+
+using Beng.Specta.Compta.Client.Services.Auth;
+
+using Beng.Specta.Compta.Client.State;
 
 using Syncfusion.Blazor;
 
@@ -22,8 +26,8 @@ namespace Beng.Specta.Compta.Client
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<LayoutState>();
-            services.AddScoped<AppSettings>();
-            services.AddScoped<SpinnerService>();
+            services.AddSingleton<ThemeState>();
+            services.AddScoped<SpinnerState>();
             services.AddScoped<TenantService>();
             services.AddScoped<DisplaySpinnerAutomaticallyHttpMessageHandler>();
             services.AddScoped(s =>
@@ -47,8 +51,9 @@ namespace Beng.Specta.Compta.Client
             services.AddSyncfusionBlazor(); 
 
             // Add auth services
-            // services.AddAuthorizationCore();
-            // services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
+            services.AddOptions();
+            services.AddAuthorizationCore();
+            services.AddScoped<AuthenticationStateProvider, AppAuthenticationStateProvider>();
         }
 
         public void Configure(IComponentsApplicationBuilder app)

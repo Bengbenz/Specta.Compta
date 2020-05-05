@@ -10,10 +10,15 @@ namespace Beng.Specta.Compta.Core.ValueTypes.Ids
 
         public static implicit operator BaseLongPOId(long value)
         {
-            return new BaseLongPOId(value);
+            return ToBaseLongPOId(value);
         }
 
         public static implicit operator BaseLongPOId(int value)
+        {
+            return ToBaseLongPOId(value);
+        }
+
+        public static BaseLongPOId ToBaseLongPOId(long value)
         {
             return new BaseLongPOId(value);
         }

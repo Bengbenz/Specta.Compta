@@ -18,9 +18,9 @@ namespace Beng.Specta.Compta.FunctionalTests
         [Fact]
         public async Task ReturnsViewWithCorrectMessage()
         {
-            var response = await _client.GetAsync(new Uri("/", UriKind.Relative)).ConfigureAwait(false);
+            var response = await _client.GetAsync(new Uri("/", UriKind.Relative));
             response.EnsureSuccessStatusCode();
-            string stringResponse = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            string stringResponse = await response.Content.ReadAsStringAsync();
 
             Assert.Contains("FinProd", stringResponse, StringComparison.InvariantCulture);
         }

@@ -13,17 +13,8 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
         public static readonly string WarningKey = "warning";
         public static readonly string GrayKey = "gray";
         public static readonly string DarkKey = "dark";
-        
-        public bool IsInverted { get; set; }
-        public bool IsGradient { get; set; }
-        public bool IsShadow => SizeType.Undefined != ShadowSize;
-        public SizeType ShadowSize { get; set; }
 
-        public Action OnToggle { get; set; }
-
-        public string Name { get; set; }
-
-        public readonly static ThemeDictionary DEFAULT = new ThemeDictionary(
+        public static readonly ThemeDictionary DEFAULT = new ThemeDictionary(
                                                             name: "Original",
                                                             primary: "#40e583",
                                                             secondary: "#002c85",
@@ -37,7 +28,7 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
                                                             isGradient: true,
                                                             SizeType.Large);
 
-        public readonly static ThemeDictionary CORPORATE = new ThemeDictionary(
+        public static readonly ThemeDictionary CORPORATE = new ThemeDictionary(
                                                             name: "Corporate",
                                                             primary: "#6c7fee",
                                                             secondary: "#6e7ff1",
@@ -50,6 +41,14 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
                                                             isInverted: true,
                                                             isGradient: false,
                                                             SizeType.Small);
+        public static Action OnToggle { get; set; }
+
+        public bool IsInverted { get; set; }
+        public bool IsGradient { get; set; }
+        public SizeType ShadowSize { get; set; }
+        public string Name { get; set; }
+        public bool IsShadow => SizeType.Undefined != ShadowSize;
+
         public ThemeDictionary(
             string name,
             string primary,
@@ -78,5 +77,7 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
             IsGradient = isGradient;
             ShadowSize = shadow;
        }
+
+        public static void ToggleInverted() => OnToggle?.Invoke();
     }
 }

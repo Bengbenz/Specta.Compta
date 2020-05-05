@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -6,8 +7,6 @@ using Microsoft.Extensions.Logging;
 using Beng.Specta.Compta.Core.DTOs;
 using Beng.Specta.Compta.Core.Entities;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
-
-using Dawn;
 
 namespace Beng.Specta.Compta.Server.Api
 {
@@ -41,9 +40,10 @@ namespace Beng.Specta.Compta.Server.Api
 
         // POST: api/Projects
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Post([FromBody] ProjectDTO item)
         {
-            Guard.Argument(item, nameof(item)).NotNull();
+            if (item == null) throw new ArgumentNullException(nameof(item));
 
             var projectItem = new Project
             {

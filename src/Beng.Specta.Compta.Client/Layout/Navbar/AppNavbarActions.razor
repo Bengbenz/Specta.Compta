@@ -4,15 +4,12 @@
     <SettingsDropdown class="app-navbar-actions__item" />
     <NotificationDropdown class="app-navbar-actions__item"/>
     <LanguageDropdown class="app-navbar-actions__item"/>
-    <ProfileDropdown class="app-navbar-actions__item app-navbar-actions__item--profile"
-        Label="@UserName" />
+    <ProfileDropdown class="app-navbar-actions__item app-navbar-actions__item--profile" />
 </div>
 
 @code{
 
     [Parameter] public string Class { get; set; }
-
-    private string UserName { get; set; } = "LebCa";
 
     private string ComputedClass =>
         CssBuilder.Default("app-navbar-actions")

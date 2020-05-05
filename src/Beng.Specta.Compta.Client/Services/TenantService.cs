@@ -1,9 +1,12 @@
 using System.Linq;
-using Beng.Specta.Compta.Core.DTOs;
+
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 
-namespace Beng.Specta.Compta.Client.Services {
+using Beng.Specta.Compta.Core.DTOs;
+
+namespace Beng.Specta.Compta.Client.Services
+{
     public class TenantService
     {
         private NavigationManager NavigationManager { get; }

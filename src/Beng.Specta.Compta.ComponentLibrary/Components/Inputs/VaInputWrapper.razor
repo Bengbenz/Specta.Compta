@@ -7,15 +7,17 @@
                 @Prepend
             </div>
           }
+          @if (Content != null)
+          {
             <div class="va-input-wrapper__content">
                 @Content
                 <div class="va-input-wrapper__details py-0 px-2">
                     <VaMessageList Color="@MessagesColor"
                         Value="@ComputedMessages"
-                        Limit="@(IsError ? ErrorCount : 99)"
-                  />
+                        Limit="@(IsError ? ErrorCount : 99)" />
                 </div>
             </div>
+          }
           @if (Append != null)
           {
             <div class="va-input-wrapper__append-inner">
@@ -43,7 +45,7 @@
     private IEnumerable<string> ComputedMessages => IsError ? ErrorMessages : Messages;
     
     private string ComputedClass =>
-        new CssBuilder("va-input-wrapper")
+        CssBuilder.Default("va-input-wrapper")
             .AddClass(Class)
             .Build();
 

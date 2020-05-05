@@ -1,6 +1,5 @@
+using System;
 using System.Globalization;
-
-using Dawn;
 
 namespace Beng.Specta.Compta.ComponentLibrary.Common
 {
@@ -8,7 +7,7 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
     {
         public static string ToPixelValue(this string value)
         {
-            Guard.Argument(value, nameof(value)).NotNull();
+            if (value == null) throw new ArgumentNullException(nameof(value));
 
             return (double.TryParse(value, out var pixelValue)) ? $"{pixelValue.ToString("0.#", CultureInfo.InvariantCulture)}px" : value;
         }

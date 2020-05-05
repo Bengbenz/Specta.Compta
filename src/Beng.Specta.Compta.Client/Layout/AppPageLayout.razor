@@ -1,0 +1,21 @@
+<AutoLoadingSpinner>
+    <div class="app-page-layout app-layout">
+        <AppNavbar />
+        <div class="app-layout__container">
+            <AppSidebar />
+            <div class="app-layout__main">
+                <main class="app-layout__main-layout layout fluid gutter--md" role="main" >
+                    @ChildContent
+                </main>
+            </div>
+        </div>
+    </div>
+</AutoLoadingSpinner>
+
+ @code{
+
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    private TenantInfoDTO TenantInfo { get; set; }
+}

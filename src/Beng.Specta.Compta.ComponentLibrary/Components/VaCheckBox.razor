@@ -4,19 +4,23 @@
         @onmousedown="@(() => HasMouseDown = true)"
         @onmouseup="@(() => HasMouseDown = false)" >
         <div class="@ActiveClass">
-                <input id="@Id"
-                    class="va-checkbox__input"
-                    readonly
-                    @onfocus="OnFocus"
-                    @onblur="@(() => IsKeyboardFocused = false)"
-                    @onkeypress:stopPropagation="true"
-                    disabled="@IsDisabled"
-                    indeterminate="@IsIndeterminated"
-                    style="@InputStyle" />
-                <VaIcon Name="@ComputedIcon"/>
+            <input id="@Id"
+                class="va-checkbox__input"
+                @onfocus="@(() => IsKeyboardFocused = true)"
+                @onblur="@(() => IsKeyboardFocused = false)"
+                @onkeypress:stopPropagation="true"
+                disabled="@IsDisabled"
+                readonly="readonly"
+                indeterminate="@IsIndeterminated"
+                style="@InputStyle" />
+            <VaIcon Name="@ComputedIcon"/>
         </div>
         <div class="va-checkbox__label-text" style="@LabelStyle" >
-            @Label
+            @if (!string.IsNullOrWhiteSpace(Label))
+            {
+                @Label
+            }
+            @ChildContent
         </div>
     </div>
     <VaMessageList class="va-checkbox__error-message-container"
@@ -35,19 +39,21 @@
     [Parameter] public string Color { get; set; } = ThemeDictionary.PrimaryKey;
     [Parameter] public string CheckedIcon { get; set; } = "ion ion-md-checkmark";
     [Parameter] public string IndeterminateIcon { get; set; } = "ion ion-md-remove";
+    [Parameter] public bool Value { get; set; }
     [Parameter] public bool IsReadOnly { get; set; }
     [Parameter] public bool IsDisabled { get; set; }
     [Parameter] public bool IsIndeterminated { get; set; }
     [Parameter] public bool IsError { get; set; }
     [Parameter] public int ErrorCount { get; set; }
-    [Parameter] public IEnumerable<string> Messages { get; set; }
-    [Parameter] public IEnumerable<string> ErrorMessages { get; set; }
+    [Parameter] public IEnumerable<string> Messages { get; set; } = new List<string>();
+    [Parameter] public IEnumerable<string> ErrorMessages { get; set; } = new List<string>();
     [Parameter] public string Label { get; set; }
-    [Parameter] public bool Value { get; set; }
 
     private bool IsKeyboardFocused { get; set; }    
     private bool HasMouseDown { get; set; }
     private bool IsChecked => Value;
+    private string ValueString { get; set; }
+
     private bool ShowError
     {
         get
@@ -63,13 +69,13 @@
 
     private string ComputedClass =>
         CssBuilder.Default("va-checkbox")
+            .AddClass(Class, !string.IsNullOrWhiteSpace(Class))
             .AddClass("va-checkbox--selected", IsChecked)
             .AddClass("va-checkbox--readonly", IsReadOnly)
             .AddClass("va-checkbox--disabled", IsDisabled)
             .AddClass("va-checkbox--indeterminate", IsIndeterminated)
             .AddClass("va-checkbox--error", ShowError)
             .AddClass("va-checkbox--on-keyboard-focus", IsKeyboardFocused)
-            .AddClass(Class)
             .Build();
 
     private string ActiveClass =>
@@ -103,9 +109,5 @@
         }
 
         Value = !Value;
-    }
-
-    private void OnFocus()
-    {
     }
 }

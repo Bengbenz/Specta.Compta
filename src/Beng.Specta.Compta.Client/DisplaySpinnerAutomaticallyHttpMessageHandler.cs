@@ -2,24 +2,26 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Beng.Specta.Compta.Client.Services;
+using Beng.Specta.Compta.Client.State;
 
 namespace Beng.Specta.Compta.Client
 {
     public class DisplaySpinnerAutomaticallyHttpMessageHandler : DelegatingHandler
     {
-        private readonly SpinnerService _spinnerService;
+        private readonly SpinnerState _spinnerState;
 
-        public DisplaySpinnerAutomaticallyHttpMessageHandler(SpinnerService spinnerService)
+        public DisplaySpinnerAutomaticallyHttpMessageHandler(SpinnerState spinnerService)
         {
-            _spinnerService  = spinnerService;
+            _spinnerState  = spinnerService;
         }
 
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        protected override async Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken)
         {
-            _spinnerService.Show();
+            _spinnerState.ToggleSpinner(); // Show
             var response = await base.SendAsync(request, cancellationToken);
-            _spinnerService.Hide();
+            _spinnerState.ToggleSpinner(); // Hide
             return response;            
         }
     }

@@ -1,45 +1,31 @@
-@implements IDisposable
 @inherits LayoutComponentBase
-@inject LayoutState LayoutState
-@inject AppSettings ContextConfig
+@implements IDisposable
 @inject IJSRuntime JSRuntime
+@inject LayoutState LayoutState
+@inject ThemeState ThemeState
+@using Beng.Specta.Compta.Client.Pages.Auth
 
-<CascadingValue Value="ContextConfig.SelectedTheme">
-    <LoadingSpinner />
-    <PageLoader IsVisible="@(!IsMainContentVisible)" />
-    @if(IsMainContentVisible)
-    {
-    <div class="app-page-layout app-layout">
-        <AppNavbar />
-        <div class="app-layout__container">
-            <AppSidebar />
-            <div class="app-layout__main">
-                <main class="app-layout__main-layout layout fluid gutter--md" role="main" >
+<CascadingValue Value="ThemeState.SelectedTheme">
+    <PageLoader>
+        <AuthorizeView>
+            <Authorizing>
+                <AutoLoadingSpinner />
+            </Authorizing>
+            <NotAuthorized>
+                <AuthLayout />
+            </NotAuthorized>
+            <Authorized>
+                <AppPageLayout>
                     @Body
-                </main>
-            </div>
-        </div>
-    </div>
-    }
+                </AppPageLayout>
+            </Authorized>
+        </AuthorizeView>
+    </PageLoader>
 </CascadingValue>
 
- @code{
+@code{
 
-    private static readonly int AnimationDuration = 2000;
-    private bool IsMainContentVisible { get; set; }
-    private TenantInfoDTO TenantInfo { get; set; }
-
-    private void ToggleInverted()
-    {
-        ContextConfig.ToggleInverted();
-        StateHasChanged();
-    }
-
-    private async Task HidePageLoader()
-    {
-        await Task.Delay(AnimationDuration);
-        IsMainContentVisible = true;
-    }
+    private void ToggleInverted() => ThemeState.ToggleInverted();
 
     [JSInvokable]
     public void EnableMinimizedState() => LayoutState.UpdateMinimized(true);
@@ -49,12 +35,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        ThemeDictionary.DEFAULT.OnToggle += ToggleInverted;
-        ThemeDictionary.CORPORATE.OnToggle += ToggleInverted;
-
         LayoutState.OnChange += StateHasChanged;
 
-        await HidePageLoader();
+        ThemeState.OnChange += StateHasChanged;
+        ThemeDictionary.OnToggle = ToggleInverted;
+        
         await base.OnInitializedAsync();
     }
 
@@ -70,10 +55,8 @@
 
     public void Dispose()
     {
-        ThemeDictionary.DEFAULT.OnToggle -= ToggleInverted;
-        ThemeDictionary.CORPORATE.OnToggle -= ToggleInverted;
-
         LayoutState.OnChange -= StateHasChanged;
+        ThemeState.OnChange -= StateHasChanged;
 
         JSRuntime.UnregisterWindowResizeAsync(
             LayoutState.MobileWidth,

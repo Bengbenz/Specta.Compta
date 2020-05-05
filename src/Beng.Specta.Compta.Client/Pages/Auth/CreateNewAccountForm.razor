@@ -1,0 +1,49 @@
+<EditForm Model="_userInfo" OnValidSubmit="Login"> <!-- @submit.prevent="onsubmit" -->
+    <DataAnnotationsValidator />
+    <VaInput @bind-Value="_userInfo.Email"
+      Type="@InputType.Email"
+      Label="Email"
+      IsRemovable="true"
+      ValidationFor="@(() => _userInfo.Email)"/>
+
+    <VaInput @bind-Value="_userInfo.Password"
+      Type="@InputType.Password"
+      Label="Mot de passe"
+      IsRemovable="true"
+      ValidationFor="@(() => _userInfo.Password)" />
+
+    <div class="auth-layout__options d-flex align--center justify--space-between">
+        <VaCheckBox @bind-Value="_userInfo.AgreeWithTerms" class="mb-0" Label="En créeant votre compte, vous acceptez">
+            <NavLink class="ml-1 link" style="@LinkStyle" href="/recover-password">les conditions préalables  ?</NavLink>
+        </VaCheckBox>
+    </div>
+
+    <div class="d-flex justify--center mt-3">
+        <VaButton Type="@ButtonType.Submit" class="my-0">Se créer un compte</VaButton>
+    </div>
+</EditForm>
+
+@code
+{
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+
+    private UserInfo _userInfo { get; set; } = new UserInfo();
+
+    private string LinkStyle =>
+        StyleBuilder.Empty()
+            .AddStyle("color", ContextTheme[ThemeDictionary.PrimaryKey], ContextTheme.IsInverted)
+            .Build();
+
+    private class UserInfo
+    {
+        [Required] public string Email { get; set; } = string.Empty;
+        [Required] public string Password { get; set; } = string.Empty;
+        [Required] public bool KeepLoggedIn { get; set; }
+        [Required] public bool AgreeWithTerms { get; set; }
+    }
+
+    private void Login()
+    {
+        //Console.WriteLine("Welcome");
+    }
+}

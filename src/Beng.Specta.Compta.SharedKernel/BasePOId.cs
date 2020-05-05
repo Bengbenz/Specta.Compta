@@ -1,6 +1,6 @@
 ﻿namespace Beng.Specta.Compta.SharedKernel
 {
-    public class BasePOId<TId> : ValueObject
+    public abstract class BasePOId<TId> : ValueObject
     {
         public TId Value { get; private set; }
 

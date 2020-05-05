@@ -152,7 +152,7 @@ function handleDocumentClick (event, anchor, content, dotnetHelper) {
         return;
     }
 
-    dotnetHelper.invokeMethodAsync("OnClickOutside");
+    if (dotnetHelper) dotnetHelper.invokeMethodAsync("OnClickOutside");
 }
 
 function scrollWidth () {
@@ -175,11 +175,11 @@ function checkIsDesktop (mobileWidth) {
 
 function updateSidebarState (mobileWidth, dotnetHelper) {
     if (checkIsDesktop(mobileWidth)) {
-        dotnetHelper.invokeMethodAsync("DisableMinimizedState");
+        if (dotnetHelper) dotnetHelper.invokeMethodAsync("DisableMinimizedState");
     }
     else
     {
-        dotnetHelper.invokeMethodAsync("EnableMinimizedState");
+      if (dotnetHelper) dotnetHelper.invokeMethodAsync("EnableMinimizedState");
     }
     disableElement();
 }

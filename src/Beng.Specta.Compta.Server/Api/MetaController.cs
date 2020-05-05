@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Beng.Specta.Compta.Core.DTOs;
 
 using Finbuckle.MultiTenant;
-using System.Threading.Tasks;
 
 namespace Beng.Specta.Compta.Server.Api
 {

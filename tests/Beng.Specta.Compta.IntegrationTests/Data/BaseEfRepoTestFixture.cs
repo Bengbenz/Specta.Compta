@@ -1,13 +1,10 @@
-﻿using Beng.Specta.Compta.Infrastructure.Data;
-using Beng.Specta.Compta.SharedKernel.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+
+using Beng.Specta.Compta.Infrastructure.Data.DbContext;
+using Beng.Specta.Compta.Infrastructure.Data.Repositories;
 
 using Finbuckle.MultiTenant;
-
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-
-using Moq;
 
 namespace Beng.Specta.Compta.IntegrationTests.Data
 {

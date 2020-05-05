@@ -1,7 +1,9 @@
-﻿using Beng.Specta.Compta.SharedKernel;
-using Finbuckle.MultiTenant.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+using Beng.Specta.Compta.SharedKernel;
+
+using Finbuckle.MultiTenant.EntityFrameworkCore;
 
 namespace Beng.Specta.Compta.Infrastructure.Data.Config
 {

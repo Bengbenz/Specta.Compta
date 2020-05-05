@@ -1,0 +1,57 @@
+
+@page "/login"
+@inject ThemeState ThemeState
+@using Syncfusion.Blazor.Popups
+
+<div class="auth-layout row align-content--center" style="@ComputedStyle">
+    <div class="flex xs12 pa-3">
+        <div class="d-flex justify--center">
+            <VaCard class="auth-layout__card">
+                <BodyContent>
+                    <div class="flex pa-3 flex-center" >
+                        <NavLink class="py-5 flex-center" href="/">
+                            <VaIconApp />
+                        </NavLink>
+                    </div>
+                    <SfTab OverflowMode="OverflowMode.Popup"> <!-- // center -->
+                        <TabItems>
+                            <TabItem>
+                                <ChildContent>
+                                    <TabHeader Text="Se connecter"></TabHeader>
+                                </ChildContent>
+                                <ContentTemplate>
+                                    <VaSeparator/>
+                                    <div class="pa-3">
+                                        <LoginForm />
+                                    </div>
+                                </ContentTemplate>
+                            </TabItem>
+                            <TabItem>
+                                <ChildContent>
+                                    <TabHeader Text="Créer un compte"></TabHeader>
+                                </ChildContent>
+                                <ContentTemplate>
+                                    <VaSeparator/>
+                                    <div class="pa-3">
+                                        <CreateNewAccountForm />
+                                    </div>     
+                                </ContentTemplate>
+                            </TabItem>
+                        </TabItems>
+                    </SfTab>
+                </BodyContent>
+            </VaCard>
+        </div>
+    </div>
+</div>
+
+@code{
+
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+
+    private string ComputedStyle =>
+        StyleBuilder.Empty()
+            .AddStyle("background-image", $"url('{@ThemeState.AuthBackgroundImage}')", ContextTheme.IsInverted)
+            .AddStyle("background-color", "linear-gradient(to right, #0e4ac4, #002c85)", !ContextTheme.IsInverted)
+            .Build();
+}

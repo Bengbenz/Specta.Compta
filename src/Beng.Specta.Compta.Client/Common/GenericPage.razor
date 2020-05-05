@@ -1,3 +1,5 @@
+@inject ThemeState ThemeState
+
 @typeparam TItem
 
 <VaCard class="@ComputedClass"
@@ -64,20 +66,7 @@
 
     private IList<TItem> Items { get; set; }
 
-    private string[] BackgroundImages { get; } =
-    {
-        "pexels-photo.jpg",
-        "pexels-photo-39811.jpeg",
-        "pexels-photo-235615.jpeg",
-        "pexels-photo-247431.jpeg",
-        "pexels-photo-247478.jpeg",
-        "pexels-photo-257840.jpeg",
-        "pexels-photo-459059.jpeg",
-        "fall-autumn-red-season.jpg",
-        "woodland-road-falling-leaf-natural-38537.jpeg"
-    };
-
-    private string ImageForEmpty => (Items?.Count == 0) ? $"imgs/{BackgroundImages[new Random().Next(BackgroundImages.Length)]}" : string.Empty;
+    private string ImageForEmpty => (Items?.Count == 0) ? ThemeState.GetRandomBackgroundImage() : string.Empty;
 
     private string ComputedClass =>
         CssBuilder.Empty()

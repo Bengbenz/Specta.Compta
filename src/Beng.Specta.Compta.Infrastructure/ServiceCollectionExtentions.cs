@@ -1,14 +1,18 @@
 ﻿using System;
-using System.IO;
 using System.Reflection;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
-using Beng.Specta.Compta.Core.DTOs;
-using Beng.Specta.Compta.Infrastructure.Data;
-using Beng.Specta.Compta.SharedKernel.Interfaces;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+
+using Beng.Specta.Compta.Core.DTOs;
+using Beng.Specta.Compta.Core.Interfaces;
+using Beng.Specta.Compta.Infrastructure.Data.DbContext;
+using Beng.Specta.Compta.Infrastructure.Data.Repositories;
+using Beng.Specta.Compta.SharedKernel.Interfaces;
 
 namespace Beng.Specta.Compta.Infrastructure
 {
@@ -58,7 +62,6 @@ namespace Beng.Specta.Compta.Infrastructure
             // Register to use the database context and TTenantInfo types show above.
             return builder.WithEFCoreStore<TenantStoreDbContext>();
 		}
-
 		
 		private static FinbuckleMultiTenantBuilder WithAppStrategy(this FinbuckleMultiTenantBuilder builder)
 		{
@@ -96,6 +99,14 @@ namespace Beng.Specta.Compta.Infrastructure
 
 			setupAction?.Invoke(container);
 			return container.Build();
+		}
+
+		public static IServiceCollection AddRepository(this IServiceCollection services)
+		{
+            services.AddScoped<IRepository, EfRepository>()
+					.AddScoped<IAuthorizationRepository, AuthorizationRepository>();
+
+			return services;
 		}
 	}
 }

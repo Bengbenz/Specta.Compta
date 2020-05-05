@@ -1,10 +1,14 @@
 ﻿using System;
-using Beng.Specta.Compta.Core.Entities;
-using Beng.Specta.Compta.Infrastructure.Data;
-using Finbuckle.MultiTenant;
+using System.Threading.Tasks;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
+using Beng.Specta.Compta.Infrastructure.Data.DbContext;
+using Beng.Specta.Compta.Server.Security.Auth.Services;
+
+using Finbuckle.MultiTenant;
 
 namespace Beng.Specta.Compta.Server
 {
@@ -12,18 +16,21 @@ namespace Beng.Specta.Compta.Server
     {
         private static TenantInfo _defaultTenant;
 
-        public static void PopulateAppDatabase(IServiceProvider serviceProvider)
+        public static async Task PopulateAppDatabase(this IServiceProvider serviceProvider)
         {
             var dbContext = serviceProvider.GetRequiredService<AppDbContext>();
             dbContext.Database.EnsureCreated();
             // dbContext.Database.Migrate();
 
-            bool hasInitData = dbContext.ToDoItems.AnyAsync().GetAwaiter().GetResult();
+            await serviceProvider.CheckAddSuperAdminAsync(dbContext);
+
+            bool hasInitData = await dbContext.ToDoItems.AnyAsync();
             if (hasInitData)
             {
                 return;
             }
 
+            /*
             dbContext.ToDoItems.Add(new ToDoItem
             {
                 Title = "Get Sample Working",
@@ -41,16 +48,17 @@ namespace Beng.Specta.Compta.Server
             });
 
             dbContext.SaveChanges();
+            */
         }
 
-        public static void PopulateDefaultTenantInfo(IServiceProvider serviceProvider)
+        public static async Task PopulateDefaultTenantInfo(this IServiceProvider serviceProvider)
         {
             var dbContext = serviceProvider.GetRequiredService<TenantStoreDbContext>();
 
             dbContext.Database.EnsureCreated();
             // dbContext.Database.Migrate();
 
-            var hasInitData = dbContext.TenantInfo.AnyAsync().GetAwaiter().GetResult();
+            var hasInitData = await dbContext.TenantInfo.AnyAsync();
             if (hasInitData)
             {
                 return;
@@ -65,6 +73,8 @@ namespace Beng.Specta.Compta.Server
                                             null);
             dbContext.TenantInfo.Add(_defaultTenant);
             dbContext.SaveChanges();
-        } 
+
+            return;
+        }
     }
 }

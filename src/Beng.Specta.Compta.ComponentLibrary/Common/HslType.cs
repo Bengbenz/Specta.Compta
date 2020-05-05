@@ -1,7 +1,5 @@
 using System;
 
-using Dawn;
-
 namespace Beng.Specta.Compta.ComponentLibrary.Common
 {
     public class HslType
@@ -10,15 +8,17 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
         public double Saturation { get; set; }
         public double Lightness { get; set; }
 
-        public HslType(double h = 0, double s = 0, double l = 0)
+        public HslType()
         {
-            Hue = h;
-            Saturation = s;
-            Lightness = l;
         }
-        public HslType(HslType offset) : this(offset.Hue, offset.Saturation, offset.Lightness)
+
+        public HslType(HslType offset)
         {
-            Guard.Argument(offset, nameof(offset)).NotNull();
+            if (offset == null) throw new ArgumentNullException(nameof(offset));
+
+            Hue = offset.Hue;
+            Saturation = offset.Saturation;
+            Lightness = offset.Lightness;
         }
 
         public void Round()

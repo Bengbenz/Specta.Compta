@@ -1,11 +1,13 @@
-﻿using Autofac;
-using Beng.Specta.Compta.SharedKernel;
-using Beng.Specta.Compta.SharedKernel.Interfaces;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using Autofac;
+
+using Beng.Specta.Compta.SharedKernel;
+using Beng.Specta.Compta.SharedKernel.Interfaces;
 
 namespace Beng.Specta.Compta.Infrastructure.DomainEvents
 {
@@ -22,6 +24,8 @@ namespace Beng.Specta.Compta.Infrastructure.DomainEvents
 
         public async Task Dispatch(BaseDomainEvent domainEvent)
         {
+            if (domainEvent == null) throw new ArgumentNullException(nameof(domainEvent));
+
             var wrappedHandlers = GetWrappedHandlers(domainEvent);
 
             foreach (DomainEventHandler handler in wrappedHandlers)
@@ -32,6 +36,8 @@ namespace Beng.Specta.Compta.Infrastructure.DomainEvents
 
         public IEnumerable<DomainEventHandler> GetWrappedHandlers(BaseDomainEvent domainEvent)
         {
+            if (domainEvent == null) throw new ArgumentNullException(nameof(domainEvent));
+
             Type handlerType = typeof(IHandle<>).MakeGenericType(domainEvent.GetType());
             Type wrapperType = typeof(DomainEventHandler<>).MakeGenericType(domainEvent.GetType());
             IEnumerable handlers = (IEnumerable)_container.Resolve(typeof(IEnumerable<>).MakeGenericType(handlerType));
@@ -39,27 +45,6 @@ namespace Beng.Specta.Compta.Infrastructure.DomainEvents
                 .Select(handler => (DomainEventHandler)Activator.CreateInstance(wrapperType, handler));
 
             return wrappedHandlers;
-        }
-
-        public abstract class DomainEventHandler
-        {
-            public abstract Task Handle(BaseDomainEvent domainEvent);
-        }
-
-        public class DomainEventHandler<T> : DomainEventHandler
-            where T : BaseDomainEvent
-        {
-            private readonly IHandle<T> _handler;
-
-            public DomainEventHandler(IHandle<T> handler)
-            {
-                _handler = handler;
-            }
-
-            public override Task Handle(BaseDomainEvent domainEvent)
-            {
-                return _handler.Handle((T)domainEvent);
-            }
         }
     }
 }

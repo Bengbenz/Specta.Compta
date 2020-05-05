@@ -12,7 +12,7 @@ else if (Type == ButtonType.NavLink)
 }
 else
 {
-    <button @attributes="AdditionalAttributes">
+    <button type="@Type.ToDescriptionString()" @attributes="AdditionalAttributes">
         @ChildContent
     </button>
 }

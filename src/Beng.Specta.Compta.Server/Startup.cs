@@ -1,7 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net.Mime;
-
-using log4net;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +13,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 using Beng.Specta.Compta.Infrastructure;
+
+using log4net;
 
 namespace Beng.Specta.Compta.Server
 {
@@ -43,10 +44,11 @@ namespace Beng.Specta.Compta.Server
                 options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
                     new[] { MediaTypeNames.Application.Octet });
             });
-
-            // Add Beng.Specta.Compta app service from infrastructure
+            
             services.AddDbContext()
                     .AddMultiTenantInfra()
+                    .AddCustomAuthorization()
+                    .AddRepository()
                     .AddAppWebServices(typeof(Startup).Assembly);
         }
 
@@ -60,6 +62,7 @@ namespace Beng.Specta.Compta.Server
 			if (Env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseStatusCodePages();
                 app.UseBlazorDebugging();
             }
             else
@@ -86,8 +89,8 @@ namespace Beng.Specta.Compta.Server
             // Before UseAuthentication and UseMvc!
             app.UseMultiTenant();
 
-            // app.UseAuthentication();
-            // app.UseAuthorization();
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseClientSideBlazorFiles<Client.Startup>();
             app.UseEndpoints(endpoints =>
@@ -99,24 +102,28 @@ namespace Beng.Specta.Compta.Server
             });
 		}
 
-        public class ActivityIdHelper
+        private class ActivityIdHelper
         {
             private readonly string _activityId;
 
-            public ActivityIdHelper(HttpContext ctx)
+            public ActivityIdHelper(HttpContext context)
             {
-                _activityId = ctx.TraceIdentifier;
+                if (context == null) throw new ArgumentNullException(nameof(context));
+
+                _activityId = context.TraceIdentifier;
             }
 
             public override string ToString() => _activityId;
         }
 
-        public class WebRequestInfo
+        private class WebRequestInfo
         {
             private readonly string _message;
 
             public WebRequestInfo(HttpContext context)
             {
+                if (context == null) throw new ArgumentNullException(nameof(context));
+
                 var userAgent = context.Request.Headers["User-Agent"];
                 _message = $"{context.Request.Path}, {userAgent}";
             }

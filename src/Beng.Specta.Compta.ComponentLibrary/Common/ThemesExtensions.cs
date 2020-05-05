@@ -1,4 +1,4 @@
-using Dawn;
+using System;
 
 namespace Beng.Specta.Compta.ComponentLibrary.Common
 {
@@ -15,7 +15,8 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
         // customColor : Selected Color key or value
         public static string ComputeColor(this ThemeDictionary themeStore, string customColor = "")
         {
-            Guard.Argument(themeStore, nameof(themeStore)).NotNull();
+            if (themeStore == null) throw new ArgumentNullException(nameof(themeStore));
+
 
             if (!string.IsNullOrWhiteSpace(customColor)
                 && themeStore.TryGetValue(customColor, out var color))

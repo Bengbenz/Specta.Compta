@@ -48,6 +48,7 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
 
         [Description("text")]
         Text,
+        
         [Description("textarea")]
         TextArea,
 

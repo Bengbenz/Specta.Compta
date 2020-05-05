@@ -7,7 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-using Beng.Specta.Compta.Infrastructure.Data;
+using Beng.Specta.Compta.Infrastructure.Data.DbContext;
+using Beng.Specta.Compta.Infrastructure.Data.Repositories;
 using Beng.Specta.Compta.Server;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
 using Beng.Specta.Compta.UnitTests;

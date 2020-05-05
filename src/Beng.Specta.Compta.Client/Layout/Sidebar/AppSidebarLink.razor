@@ -55,12 +55,12 @@
             .AddStyle("color", ContextTheme[ThemeDictionary.GrayKey], ContextTheme.IsInverted && (!IsHovered && !IsActive))
             .AddStyle("color", ContextTheme[ThemeDictionary.PrimaryKey], !ContextTheme.IsInverted)
             .AddStyle("background-color", ContextTheme[ThemeDictionary.SecondaryKey]
-                .ColorShiftHsl(new HslType(h: 0, s: -13, l: 15)).ToString(), (IsHovered || IsActive) && ContextTheme.IsGradient)
+                .ColorShiftHsl(new HslType { Hue = 0, Saturation = -13, Lightness = 15 }).ToString(), (IsHovered || IsActive) && ContextTheme.IsGradient)
             .AddStyle("background-color", ContextTheme[ThemeDictionary.PrimaryKey], (IsHovered || IsActive) && !ContextTheme.IsGradient)
             .AddStyle("border-color", ContextTheme[ThemeDictionary.PrimaryKey], (IsHovered || IsActive) && ContextTheme.IsGradient && IsActive)
             .AddStyle("border-color", "transparent", (IsHovered || IsActive) && ContextTheme.IsGradient && !IsActive)
             .AddStyle("border-color", ContextTheme[ThemeDictionary.PrimaryKey]
-                .ColorShiftHsl(new HslType(h: 0, s: 13, l: -15)).ToString(), (IsHovered || IsActive) && !ContextTheme.IsGradient)
+                .ColorShiftHsl(new HslType { Hue = 0, Saturation = 13, Lightness = -15 }).ToString(), (IsHovered || IsActive) && !ContextTheme.IsGradient)
             .Build();
 
     private void UpdateHoverState(bool isHovered) => IsHovered = isHovered;

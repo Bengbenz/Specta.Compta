@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Blazor.Hosting;
 
 namespace Beng.Specta.Compta.Client
 {
-    public class Program
+    public sealed class Program
     {
         public static void Main(string[] args)
         {

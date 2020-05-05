@@ -1,8 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
 
-using Dawn;
-
 namespace Beng.Specta.Compta.ComponentLibrary.Common
 {
   public static class ColorExtensions
@@ -51,73 +49,89 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
         var cmax = rgb.Max();
         var delta = cmax - cmin;
 
-        var hls = new HslType();
-        hls.Hue = ComputeH(rgb, cmin, cmax, delta);
-        hls.Lightness = (cmax + cmin) / 2;
+        var hls = new HslType
+        {
+            Hue = ComputeH(rgb, cmax, delta),
+            Lightness = (cmax + cmin) / 2
+        };
+
         hls.Saturation = delta == 0 ? 0 : delta / (1 - Math.Abs(2 * hls.Lightness - 1));
         hls.Saturation = Convert.ToDouble(String.Format("{0:0.0}", hls.Saturation * 100));
         hls.Lightness = Convert.ToDouble(String.Format("{0:0.0}", hls.Lightness * 100));
-
         hls.Round();
 
         return hls;
     }
 
-    /**
-    public RgbType ToRgb()
+    private static double ComputeH(RgbType rgb, double cmax, double delta)
     {
-        
-    }*/
+        double hue;
 
-    private static double ComputeH(RgbType rgb, double cmin, double cmax, double delta)
-    {
-      double hue;
+        if (delta == 0)
+        { 
+            hue = 0;
+        }
+        else if (cmax == rgb.Red)
+        { 
+            hue = ((rgb.Green - rgb.Blue) / delta) % 6;
+        }
+        else if (cmax == rgb.Green)
+        {
+            hue = ((rgb.Blue - rgb.Red) / delta) + 2;
+        }
+        else
+        {
+            hue = ((rgb.Red - rgb.Green) / delta) + 4;
+        }
 
-      if (delta == 0)
-      { 
-        hue = 0;
-      }
-      else if (cmax == rgb.Red)
-      { 
-        hue = ((rgb.Green - rgb.Blue) / delta) % 6;
-      }
-      else if (cmax == rgb.Green)
-      {
-        hue = ((rgb.Blue - rgb.Red) / delta) + 2;
-      }
-      else
-      {
-        hue = ((rgb.Red - rgb.Green) / delta) + 4;
-      }
+        hue = Math.Round(hue * 60);
+        if (hue < 0)
+        {
+            hue += 360;
+        }
 
-      hue = Math.Round(hue * 60);
-      if (hue < 0)
-      {
-        hue += 360;
-      }
-
-      return hue;
+        return hue;
     }
 
     private static double NormalizeValue(double value, double minValue = 0, double maxValue = 100)
     {
-        if (value <= minValue) {
+        if (value <= minValue)
+        {
             return minValue;
         }
 
-        if (value >= maxValue) {
+        if (value >= maxValue)
+        {
             return maxValue;
         }
 
         return value;
     }
 
-    public static string GetBoxShadowColor(this string color) => color.HexToRgb(0.6).ToString();
-    public static string GetHoverColor(this string color) => color.HexToRgb(0.2).ToString();
-    public static string GetFocusColor(this string color) => color.HexToRgb(0.3).ToString();
+    public static string GetBoxShadowColor(this string color)
+    {
+        if (color == null) throw new ArgumentNullException(nameof(color));
+
+        return color.HexToRgb(0.6).ToString();
+    }
+
+    public static string GetHoverColor(this string color)
+    {
+        if (color == null) throw new ArgumentNullException(nameof(color));
+
+        return color.HexToRgb(0.2).ToString();
+    }
+
+    public static string GetFocusColor(this string color)
+    {
+        if (color == null) throw new ArgumentNullException(nameof(color));
+
+        return color.HexToRgb(0.3).ToString();
+    }
+
     public static (string, string) GetGradientColor(this string color)
     {
-        Guard.Argument(color, nameof(color)).NotNull();
+        if (color == null) throw new ArgumentNullException(nameof(color));
 
         HslType first = color.HexToHsl();
         HslType second = color.HexToHsl();
@@ -185,7 +199,7 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
 
     public static string GetGradientBackground(this string color)
     {
-        Guard.Argument(color, nameof(color)).NotNull();
+        if (color == null) throw new ArgumentNullException(nameof(color));
 
         var (left, right) = color.GetGradientColor();
         return $"linear-gradient(to right, {left}, {right})";
@@ -193,8 +207,8 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
 
     public static HslType ColorShiftHsl(this string main, HslType offset)
     {
-        Guard.Argument(main, nameof(main)).NotNull();
-        Guard.Argument(offset, nameof(offset)).NotNull();
+        if (main == null) throw new ArgumentNullException(nameof(main));
+        if (offset == null) throw new ArgumentNullException(nameof(offset));
 
         var offsetCopy = new HslType(offset);
 

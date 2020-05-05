@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Microsoft.AspNetCore.Mvc;
@@ -7,8 +8,6 @@ using Microsoft.Extensions.Logging;
 using Beng.Specta.Compta.Core.DTOs;
 using Beng.Specta.Compta.Core.Entities;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
-
-using Dawn;
 
 namespace Beng.Specta.Compta.Server.Api
 {
@@ -43,7 +42,7 @@ namespace Beng.Specta.Compta.Server.Api
         [HttpPost]
         public IActionResult Post([FromBody] ToDoItemDTO item)
         {
-            Guard.Argument(item, nameof(item)).NotNull();
+            if (item == null) throw new ArgumentNullException(nameof(item));
 
             var todoItem = new ToDoItem
             {

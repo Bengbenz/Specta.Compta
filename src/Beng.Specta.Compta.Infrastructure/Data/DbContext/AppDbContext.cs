@@ -8,12 +8,13 @@ using Ardalis.EFCore.Extensions;
 
 using Beng.Specta.Compta.Core.Entities;
 using Beng.Specta.Compta.Core.Entities.Funding;
+using Beng.Specta.Compta.Core.Entities.Security.Auth;
 using Beng.Specta.Compta.SharedKernel;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
 
 using Finbuckle.MultiTenant;
 
-namespace Beng.Specta.Compta.Infrastructure.Data {
+namespace Beng.Specta.Compta.Infrastructure.Data.DbContext {
 
     public class AppDbContext : MultiTenantDbContext
     {
@@ -37,6 +38,13 @@ namespace Beng.Specta.Compta.Infrastructure.Data {
         public DbSet<Project> Projects { get; set; }
 
         //public DbSet<FundingContract> Contracts { get; set; }
+
+        // Security : Custom authentification/authorisation parts
+        public DbSet<UserToRole> UserToRoles { get; set; }
+
+        public DbSet<RoleToPermissions> RolesToPermissions { get; set; }
+        
+        public DbSet<ModulesForUser> ModulesForUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

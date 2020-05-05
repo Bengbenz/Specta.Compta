@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+
 using Beng.Specta.Compta.Core.Entities;
 
 namespace Beng.Specta.Compta.Core.DTOs
@@ -13,6 +15,8 @@ namespace Beng.Specta.Compta.Core.DTOs
 
         public static ToDoItemDTO FromToDoItem(ToDoItem item)
         {
+            if (item == null) throw new ArgumentNullException(nameof(item));
+
             return new ToDoItemDTO
             {
                 Id = item.Id,

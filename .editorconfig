@@ -1,0 +1,5 @@
+﻿# This file is the top-most EditorConfig file
+root = true
+
+[*.cs]
+dotnet_diagnostic.CA2007.severity = none

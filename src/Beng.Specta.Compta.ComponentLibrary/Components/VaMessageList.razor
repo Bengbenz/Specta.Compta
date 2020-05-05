@@ -1,14 +1,13 @@
 
 @if (Messages.Any())
 {
-<div class="@ComputedClass"
-     style="@ComputedStyle" attributes="AdditionalAttributes">
-     @foreach (var message in Messages)
-     {
-         <div class="va-message-list__message" >
+<div class="@ComputedClass" style="@ComputedStyle" attributes="AdditionalAttributes">
+    @foreach (var message in Messages)
+    {
+        <div class="va-message-list__message">
             @message
         </div>
-     }
+    }
 </div>
 }
 
@@ -16,19 +15,20 @@
 
     [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
     [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
-    [Parameter] public IEnumerable<string> Value { get; set; }
+    [Parameter] public IEnumerable<string> Value { get; set; } = new List<string>();
     [Parameter] public int Limit { get; set; } = 1;
     [Parameter] public string Color { get; set; } = ThemeDictionary.GrayKey;
     [Parameter] public string Class { get; set; }
 
     private string ComputedClass =>
         CssBuilder.Default("va-message-list")
-            .AddClass(Class)
+            .AddClass(Class, !string.IsNullOrWhiteSpace(Class))
             .Build();
 
     private string ComputedStyle =>
-        StyleBuilder.Default("color", ContextTheme[ThemeDictionary.GrayKey])
+        StyleBuilder.Empty()
             .AddStyle("color", ContextTheme.ComputeColor(Color), !string.IsNullOrWhiteSpace(Color))
+            .AddStyle("color", ContextTheme[ThemeDictionary.GrayKey], string.IsNullOrWhiteSpace(Color))
             .Build();
 
     private IEnumerable<string> Messages => Limit > 0 ? Value.Take(Limit) : Value;

@@ -12,7 +12,9 @@
         <div class="profile-dropdown__content pl-4 pr-4 pt-2 pb-2">
         @foreach(var option in Options)
         {
-            <NavLink id="@option.Label" class="profile-dropdown__item pt-1 pb-1 mt-2 mb-2" href="@option.Value">
+            <NavLink id="@option.Label"
+                class="profile-dropdown__item pt-1 pb-1 mt-2 mb-2"
+                href="@option.Value">
                 @option.Label
             </NavLink>
         }
@@ -24,8 +26,10 @@
 
     [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
     [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; }
     [Parameter] public string Class { get; set; }
-    [Parameter] public string Label { get; set; }
+    
+    private string Label { get; set; }
 
     private bool IsExpanded { get; set; } = false;
 
@@ -43,12 +47,20 @@
     private IReadOnlyCollection<OptionType> Options { get; } = new List<OptionType>
     {
         new OptionType { Label = "Profile", Value = "/profile" },
-        new OptionType { Label = "Logout", Value = "/login" },
+        new OptionType { Label = "Logout", Value = "/user/signout" },
     };
 
     private void OnExpand()
     {
         IsExpanded = !IsExpanded;
         StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var userIdentity = (await AuthenticationStateTask).User.Identity;
+        Label = userIdentity.Name;
+        
+        await base.OnInitializedAsync();
     }
 }

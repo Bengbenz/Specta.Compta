@@ -49,7 +49,7 @@
         StyleBuilder.Empty()
             .AddStyle("background-color", "white", !ContextTheme.IsGradient)
             .AddStyle("background-color", ContextTheme[ThemeDictionary.SecondaryKey]
-                .ColorShiftHsl(new HslType(h: 0, s: -13, l: 15)).ToString(), ContextTheme.IsGradient)
+                .ColorShiftHsl(new HslType { Hue = 0, Saturation = -13, Lightness = 15 }).ToString(), ContextTheme.IsGradient)
             .AddStyle("box-shadow", "0 2px 3px 0 rgba(52, 56, 85, 0.25)", ContextTheme.ShadowSize == SizeType.Small)
             .Build();
 
@@ -57,7 +57,7 @@
         StyleBuilder.Empty()
             .AddStyle("border-top-color", "transparent", !ContextTheme.IsGradient)
             .AddStyle("border-top-color", ContextTheme[ThemeDictionary.SecondaryKey]
-                .ColorShiftHsl(new HslType(h: -1, s: -11, l: 10)).ToString(), ContextTheme.IsGradient)
+                .ColorShiftHsl(new HslType { Hue = -1, Saturation = -11, Lightness = 10 }).ToString(), ContextTheme.IsGradient)
             .Build();
 
     private void ToggleMinimized() => LayoutState.ToggleMinimized();
