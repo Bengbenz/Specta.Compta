@@ -1,4 +1,5 @@
 ﻿using System;
+
 using Beng.Specta.Compta.Core.Entities;
 
 namespace Beng.Specta.Compta.UnitTests.Helpers
@@ -52,7 +53,6 @@ namespace Beng.Specta.Compta.UnitTests.Helpers
         {
             _project = new Project
             {
-                Id = 1,
                 Code="Test",
                 Name = "Test Item",
                 Description = "Test Description",

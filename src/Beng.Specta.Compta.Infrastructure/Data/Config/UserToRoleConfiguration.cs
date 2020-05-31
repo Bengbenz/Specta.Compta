@@ -1,4 +1,4 @@
-using Beng.Specta.Compta.Core.Entities.Security.Auth;
+using Beng.Specta.Compta.Core.Entities.Auth;
 
 namespace Beng.Specta.Compta.Infrastructure.Data.Config
 {

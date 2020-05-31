@@ -1,4 +1,5 @@
-using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
@@ -9,25 +10,30 @@ namespace Beng.Specta.Compta.Client.Services
 {
     public class TenantService
     {
-        private NavigationManager NavigationManager { get; }
+        private readonly NavigationManager _navigationManager;
+        private readonly HttpClient _httpClient;
+        private readonly ILogger<TenantService> _logger;
 
-        protected ILogger<TenantService> Logger { get; set; }
+        private TenantInfoDTO _tenantInfo;
 
-        public TenantInfoDTO TenantInfo { get; set; }
-
-        public TenantService (ILogger<TenantService> logger, NavigationManager navigationManager)
+        public TenantService (
+            NavigationManager navigationManager,
+            HttpClient httpClient,
+            ILogger<TenantService> logger)
         {
-            NavigationManager = navigationManager;
-            Logger = logger;
+            _navigationManager = navigationManager;
+            _httpClient = httpClient;
+            _logger = logger;
         }
 
-        public string GetTenantIdentifier()
+        public async Task<TenantInfoDTO> GetTenantInfoAsync()
         {
-            string currentUrlWithoutBase = NavigationManager.Uri.Substring(NavigationManager.BaseUri.Length);
-            var separator = "/";
-            var tenantIdentifier = currentUrlWithoutBase.Split(separator).FirstOrDefault();
-            Logger.LogDebug($"{GetType().Name}: Current uri={currentUrlWithoutBase} from complete Url={NavigationManager.Uri}, BaseUri={NavigationManager.BaseUri}, TenantId requested={tenantIdentifier}");
-            return tenantIdentifier;
+            if (_tenantInfo == null)
+            {
+                _tenantInfo = await _httpClient.GetJsonAsync<TenantInfoDTO>("api/tenant/currenttenant");
+            }
+
+            return _tenantInfo;
         }
     }
 }

@@ -1,0 +1,95 @@
+@using Beng.Specta.Compta.Core.DTOs.Auth
+@inject IHttpApiClientRequestBuilder HttpRequestBuilder
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime 
+@inject ILogger<LoginForm> Logger
+
+<EditForm EditContext="@_editContext" OnSubmit="CreateNewAccount">
+    <DataAnnotationsValidator />
+    <ServerSideValidator @ref="ServerSideValidator" />
+    <VaInput @bind-Value="_userInfo.Email"
+      Type="@InputType.Email"
+      Label="Email" />
+
+    <VaInput @bind-Value="_userInfo.UserName"
+      Label="Nom" />
+
+    <VaInput @bind-Value="_userInfo.NewPassword"
+      Type="@InputType.Password"
+      Label="Mot de passe" />
+    
+    <VaInput @bind-Value="_userInfo.ConfirmPassword"
+      Type="@InputType.Password"
+      Label="Confirmer votre mot de passe" />
+
+    <div class="auth-layout__options d-flex align--center justify--space-between">
+        <VaCheckBox @bind-Value="_userInfo.AgreeWithTerms" class="mb-0" Label="En créeant votre compte, vous acceptez">
+            <NavLink class="ml-1 link" style="@LinkStyle" href="/agree-with-terms">les conditions préalables  ?</NavLink>
+        </VaCheckBox>
+    </div>
+
+    <div class="d-flex justify--center mt-3">
+        <VaButton Type="@ButtonType.Submit" class="my-0">Créer un compte</VaButton>
+    </div>
+</EditForm>
+
+@code
+{
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+
+    private RegisterUserInfoDTO _userInfo { get; set; } = new RegisterUserInfoDTO();
+    private ServerSideValidator ServerSideValidator { get; set; }
+    private EditContext _editContext;
+
+    private string LinkStyle =>
+        StyleBuilder.Empty()
+            .AddStyle("color", ContextTheme[ThemeDictionary.PrimaryKey], ContextTheme.IsInverted)
+            .Build();
+
+    private async Task CreateNewAccount()
+    {
+        var isValid = _editContext.Validate() && await ServerValidate();
+
+        if (isValid)
+        {
+            await HttpRequestBuilder.CreateRequest("api/account/register")
+                .OnBadRequest<Dictionary<string, List<string>>>(errors =>
+                {
+                    ServerSideValidator.DisplayErrors(errors, true);
+                })
+                .OnOK(() =>
+                {
+                    Logger.LogDebug($"{GetType().Name}: User registred. Redirection to /login");
+                    _userInfo = new RegisterUserInfoDTO();
+                    NavigationManager.NavigateTo("/login");
+                    JSRuntime.LaunchToast("success", "Your account created. Let your admin validate it, then you'll can login.");
+                })
+                .PostAsync(_userInfo);
+        }
+        else
+        {
+            Logger.LogWarning($"{GetType().Name}: Form not valid");
+        }
+    }
+
+    private async Task<bool> ServerValidate()
+    {
+        var result = false;
+        await HttpRequestBuilder.CreateRequest("api/account/details")
+            .OnBadRequest(() => result = true)
+            .OnOK<Dictionary<string, List<string>>>(errors =>
+            {
+                // user with this email found, user is already exist
+                ServerSideValidator.DisplayErrors(errors, true);
+                result = false;
+            })
+            .GetAsync(_userInfo.Email);
+
+        return result;
+    }
+
+    protected override void OnInitialized()
+    {
+        _editContext = new EditContext(_userInfo);
+    }
+}

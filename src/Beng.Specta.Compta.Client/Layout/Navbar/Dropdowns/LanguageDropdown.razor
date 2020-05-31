@@ -4,17 +4,19 @@
     </Anchor>
     <Content>
         <div class="language-dropdown__content pl-4 pr-4 pt-2 pb-2">
-      @foreach(var option in Options)
-      {
-        <div @key="option.Value" class="@OptionClass(option.Value)"
-              @onclick="@(() => SetLanguage(option.Value))">
-            <VaIcon Name="@ContentIconClass(option.Value)"/>
-            <span class="dropdown-item__text">
-                @option.Label
-            </span>
+        @foreach(var option in Options)
+        {
+            <div @key="option.Value" class="@OptionClass(option.Value)" style="@OptionStyle(option.Value)"
+                @onclick="@(() => SetLanguage(option.Value))"
+                @onmouseover="@(() => HoverHandler(option.Value))"
+                @onmouseout="@(() => HoverHandler())" >
+                <VaIcon Name="@ContentIconClass(option.Value)"/>
+                <span class="dropdown-item__text">
+                    @option.Label
+                </span>
+            </div>
+        }
         </div>
-      }
-      </div>
     </Content>
 </VaDropdown>
 
@@ -22,9 +24,11 @@
 @code{
    
     [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
     [Parameter] public string Class { get; set; }
     
     private string CurrentLanguage { get; set; } = "fr";
+    private string HoveredItem { get; set; }
 
     private string FlagIconClass(string code) => $"flag-icon-{code}";
 
@@ -48,7 +52,14 @@
             .AddClass("active", code == CurrentLanguage)
             .Build();
 
-    private void SetLanguage (string locale) => CurrentLanguage = locale; // Vue.i18n.set(locale)
+    private string OptionStyle(string code) =>
+        StyleBuilder.Empty()
+            .AddStyle("color", $"{ContextTheme[ThemeDictionary.PrimaryKey]} !important", code == CurrentLanguage || code == HoveredItem)
+            .Build();
+
+    private void SetLanguage (string code) => CurrentLanguage = code; // Vue.i18n.set(locale)
+    
+    private void HoverHandler(string code = null) => HoveredItem = code;
 
     private IReadOnlyList<OptionType> Options { get; } = new List<OptionType>
     {

@@ -2,20 +2,25 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
-using Beng.Specta.Compta.Infrastructure.Data.DbContext;
-using Beng.Specta.Compta.Server.Security.Auth;
-using Beng.Specta.Compta.Server.Security.Auth.Policies;
+using Beng.Specta.Compta.Infrastructure.Data;
+using Beng.Specta.Compta.Server.Auth;
+using Beng.Specta.Compta.Server.Auth.Policies;
 
 namespace Beng.Specta.Compta.Server
 {
     public static class ContainerExtensions
     {
-
         public static IServiceCollection AddCustomAuthorization(this IServiceCollection services)
 		{
             // Register DbContext for IdentityUser
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+            services.AddDefaultIdentity<IdentityUser>(options => 
+				{
+					options.SignIn.RequireConfirmedAccount = false;
+					options.User.RequireUniqueEmail = true;
+				})
                 .AddEntityFrameworkStores<AppDbContext>();
+
+			// services.ConfigureApplicationCookie(o => o.LoginPath = "/login");
 
 			//This registers the code to add the Permissions on login
 			services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, AddPermissionsToUserClaimsFactory>();

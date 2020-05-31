@@ -1,30 +1,29 @@
-﻿using System;
+﻿using System.Text;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Beng.Specta.Compta.Core.DTOs
 {
-    public class UserInfoDTO : BaseDTO
+    [Serializable]
+    public class UserInfoDTO
     {
-        public string UserId { get; private set; }
+        public string UserId { get; set; } = string.Empty;
+
+        public string UserName { get; set; } = string.Empty;
 
         [Required]
-        public string UserName { get; set; } = string.Empty;
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
         public bool IsAuthenticated { get; set; }
-        public string Email { get; set; }
-        public string Title { get; set; }
+        public bool IsEmailConfirmed { get; set; }
+        public bool HasPassword { get; set; }
+        public string RoleNames { get; set; } = string.Empty;
+        public string PackedPermissions { get; set; } = string.Empty;
 
-        public string RoleNames { get; set; }
-
-        public string PackedPermissions { get; set; }
-
-        public UserInfoDTO ()
+        public override string ToString()
         {
-        }
-
-        public UserInfoDTO(string userName, bool isAuthenticated)
-        {
-            UserName = userName ?? throw new ArgumentNullException(nameof(userName));
-            IsAuthenticated = isAuthenticated;
+            return $"UserName: {UserName} - Email: {Email} - IsAuthenticated: {IsAuthenticated} - IsEmailConfirmed: {IsEmailConfirmed} - HasPassword: {HasPassword} - RoleNames: {RoleNames} - PackedPermissions: {PackedPermissions}";
         }
     }
 }

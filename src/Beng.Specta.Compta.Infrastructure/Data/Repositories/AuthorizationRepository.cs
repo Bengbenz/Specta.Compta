@@ -4,15 +4,18 @@ using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
 
-using Beng.Specta.Compta.Core.Entities.Security.Auth;
+using Beng.Specta.Compta.Core.Entities.Auth;
 using Beng.Specta.Compta.Core.Interfaces;
-using Beng.Specta.Compta.Infrastructure.Data.DbContext;
+using Microsoft.Extensions.Logging;
 
 namespace Beng.Specta.Compta.Infrastructure.Data.Repositories
 {
     public class AuthorizationRepository : EfRepository, IAuthorizationRepository
     {
-        public AuthorizationRepository(AppDbContext dbContext) : base(dbContext)
+        public AuthorizationRepository(
+            AppDbContext dbContext,
+            ILogger<AuthorizationRepository> logger = null)
+            : base(dbContext, logger)
         {
         }
 
