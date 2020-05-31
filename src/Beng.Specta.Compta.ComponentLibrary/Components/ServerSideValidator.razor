@@ -1,0 +1,38 @@
+@using System.Globalization
+@inject ILogger<ServerSideValidator> Logger
+
+@code {
+
+    private ValidationMessageStore _messageStore;
+
+    [CascadingParameter] private EditContext CurrentEditContext { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (CurrentEditContext == null)
+        {
+            throw new InvalidOperationException($"{GetType().Name} requires a cascading " +
+                $"parameter of type {nameof(EditContext)}. For example, you can use {GetType().Name} " +
+                $"inside an {nameof(EditForm)}.");
+        }
+
+        _messageStore = new ValidationMessageStore(CurrentEditContext);
+        CurrentEditContext.OnValidationRequested += (s, e) => _messageStore.Clear();
+        CurrentEditContext.OnFieldChanged += (s, e) => _messageStore.Clear(e.FieldIdentifier);
+    }
+
+    public void DisplayErrors(IDictionary<string, List<string>> errors, bool shouldLog = false)
+    {
+        if (errors == null) throw new ArgumentNullException(nameof(errors));
+        
+        foreach (var err in errors)
+        {
+            _messageStore.Add(CurrentEditContext.Field(ToTitleCase(err.Key)), err.Value);
+        }
+
+        if (shouldLog) Logger.LogDebug($"{GetType().Name} - DisplayErrors: {string.Join(" | ", errors.Select(x  => ToTitleCase(x.Key) + ": " + string.Join(",", x.Value)))}");
+        CurrentEditContext.NotifyValidationStateChanged();
+    }
+
+    private string ToTitleCase(string key) => CultureInfo.InvariantCulture.TextInfo.ToTitleCase(key);
+}

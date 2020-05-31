@@ -19,6 +19,7 @@
     <PackageReference Include="NodaMoney" />
     <PackageReference Include="Syncfusion.Blazor" />
     <PackageReference Include="Syncfusion.Licensing" />
+    <PackageReference Include="System.Net.Http.Json" />
   </ItemGroup>
 
   <ItemGroup>

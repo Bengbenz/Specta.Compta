@@ -25,21 +25,24 @@ namespace Beng.Specta.Compta.Client
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IHttpApiClientRequestBuilder, HttpApiClientRequestBuilder>();
+
             services.AddSingleton<LayoutState>();
             services.AddSingleton<ThemeState>();
-            services.AddScoped<SpinnerState>();
-            services.AddScoped<TenantService>();
-            services.AddScoped<DisplaySpinnerAutomaticallyHttpMessageHandler>();
+            services.AddSingleton<TenantService>();
+            services.AddSingleton<SpinnerState>();
+            
+            services.AddScoped<AutoSpinnerHttpMessageHandler>();
             services.AddScoped(s =>
             {
-                var blazorDisplaySpinnerAutomaticallyHttpMessageHandler = s.GetRequiredService<DisplaySpinnerAutomaticallyHttpMessageHandler>();
+                var spinnerHttpMessageHandler = s.GetRequiredService<AutoSpinnerHttpMessageHandler>();
                 var wasmHttpMessageHandlerType = Assembly.Load("WebAssembly.Net.Http").GetType("WebAssembly.Net.Http.HttpClient.WasmHttpMessageHandler");
 
                 var wasmHttpMessageHandler = (HttpMessageHandler)Activator.CreateInstance(wasmHttpMessageHandlerType);
                
-                blazorDisplaySpinnerAutomaticallyHttpMessageHandler.InnerHandler = wasmHttpMessageHandler;
+                spinnerHttpMessageHandler.InnerHandler = wasmHttpMessageHandler;
                 var uriHelper = s.GetRequiredService<NavigationManager>();
-                return new HttpClient(blazorDisplaySpinnerAutomaticallyHttpMessageHandler)
+                return new HttpClient(spinnerHttpMessageHandler)
                 {
                     BaseAddress = new Uri(uriHelper.BaseUri)
                 };
@@ -53,7 +56,8 @@ namespace Beng.Specta.Compta.Client
             // Add auth services
             services.AddOptions();
             services.AddAuthorizationCore();
-            services.AddScoped<AuthenticationStateProvider, AppAuthenticationStateProvider>();
+            services.AddSingleton<AppAuthenticationStateProvider>();
+            services.AddSingleton<AuthenticationStateProvider>(s => s.GetRequiredService<AppAuthenticationStateProvider>());
         }
 
         public void Configure(IComponentsApplicationBuilder app)

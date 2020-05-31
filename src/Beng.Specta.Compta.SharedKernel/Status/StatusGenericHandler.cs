@@ -1,7 +1,4 @@
-﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.ComponentModel.DataAnnotations;
@@ -66,11 +63,8 @@ namespace Beng.Specta.Compta.SharedKernel.Status
         /// <param name="propertyNames">optional. A list of property names that this error applies to</param>
         public IStatusGeneric AddError(string errorMessage, params string[] propertyNames)
         {
-            if (errorMessage == null) 
-            {
-                throw new ArgumentNullException(nameof(errorMessage));
-            }
-
+            if (errorMessage == null)  throw new ArgumentNullException(nameof(errorMessage));
+            
             _errors.Add(new ErrorGeneric(Header, new ValidationResult(errorMessage, propertyNames)));
             return this;
         }
@@ -102,6 +96,8 @@ namespace Beng.Specta.Compta.SharedKernel.Status
         /// <param name="status"></param>
         public IStatusGeneric CombineStatuses(IStatusGeneric status)
         {
+            if (status == null)  throw new ArgumentNullException(nameof(status));
+
             if (!status.IsValid)
             {
                 _errors.AddRange(string.IsNullOrEmpty(Header)

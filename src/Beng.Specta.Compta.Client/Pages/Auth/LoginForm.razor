@@ -1,20 +1,24 @@
-<EditForm Model="_userInfo" OnValidSubmit="Login"> <!-- @submit.prevent="onsubmit" -->
+@using Beng.Specta.Compta.Core.DTOs.Auth
+@inject AppAuthenticationStateProvider AuthService
+@inject IHttpApiClientRequestBuilder HttpRequestBuilder
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime 
+@inject ILogger<LoginForm> Logger
+
+<EditForm EditContext="@_editContext" OnSubmit="LoginUser">
     <DataAnnotationsValidator />
+    <ServerSideValidator @ref="ServerSideValidator" />
     <VaInput @bind-Value="_userInfo.Email"
       Type="@InputType.Email"
-      Label="Email"
-      IsRemovable="true"
-      ValidationFor="@(() => _userInfo.Email)" />
+      Label="Email" />
 
     <VaInput @bind-Value="_userInfo.Password"
       Type="@InputType.Password"
-      Label="Mot de passe"
-      IsRemovable="true"
-      ValidationFor="@(() => _userInfo.Password)" />
+      Label="Mot de passe" />
 
     <div class="auth-layout__options d-flex align--center justify--space-between">
-        <VaCheckBox @bind-Value="_userInfo.KeepLoggedIn" class="mb-0" Label="Se souvenir de moi"/>
-        <NavLink class="ml-1 link" style="@LinkStyle" href="/recover-password">Mot de passe oublié ? Retrouver</NavLink>
+        <VaCheckBox @bind-Value="_userInfo.RememberMe" class="mb-0" Label="Se souvenir de moi ?"/>
+        <NavLink class="ml-1 link" style="@LinkStyle" href="/forgot-password">Mot de passe oublié ?</NavLink>
     </div>
 
     <div class="d-flex justify--center mt-3">
@@ -25,23 +29,60 @@
 @code
 {
     [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
-    
-    private UserInfo _userInfo { get; set; } = new UserInfo();
+
+    private SignInUserInfoDTO _userInfo { get; set; } = new SignInUserInfoDTO();
+    private ServerSideValidator ServerSideValidator { get; set; }
+    private EditContext _editContext;
 
     private string LinkStyle =>
         StyleBuilder.Empty()
             .AddStyle("color", ContextTheme[ThemeDictionary.PrimaryKey], ContextTheme.IsInverted)
             .Build();
 
-    private class UserInfo
+    private async Task LoginUser()
     {
-        [Required] public string Email { get; set; } = string.Empty;
-        [Required] public string Password { get; set; } = string.Empty;
-        [Required] public bool KeepLoggedIn { get; set; }
+        var isValid = _editContext.Validate() && await ServerValidate();
+        if (isValid)
+        {
+            await HttpRequestBuilder.CreateRequest("api/account/signin")
+                .OnBadRequest<Dictionary<string, List<string>>>(errors =>
+                {
+                    Logger.LogDebug($"{GetType().Name}: Login is failed.");
+                    ServerSideValidator.DisplayErrors(errors, true);
+                })
+                .OnOK(() =>
+                {
+                    AuthService.Login();
+                    Logger.LogDebug($"{GetType().Name}: User Logged");
+                    NavigationManager.NavigateTo("/");
+                    JSRuntime.LaunchToast("success", $"Welcome {_userInfo.Email}");
+                    _userInfo = new SignInUserInfoDTO();
+                })
+                .PostAsync(_userInfo);
+        }
+        else
+        {
+            Logger.LogWarning($"{GetType().Name}: Form not valid");
+        }
     }
 
-    private void Login()
+    private async Task<bool> ServerValidate()
     {
-        //Console.WriteLine("Welcome");
+        var result = false;
+        await HttpRequestBuilder.CreateRequest("api/account/details")
+            .OnBadRequest<Dictionary<string, List<string>>>(errors =>
+            {
+                ServerSideValidator.DisplayErrors(errors, true);
+                result = false;
+            })
+            .OnOK(() => result = true)
+            .GetAsync(_userInfo.Email);
+
+        return result;
+    }
+
+    protected override void OnInitialized()
+    {
+        _editContext = new EditContext(_userInfo);
     }
 }

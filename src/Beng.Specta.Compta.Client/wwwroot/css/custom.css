@@ -3389,7 +3389,7 @@ body {
     background-color: #f5f8f9;
     box-shadow: 0 2px 3px 0 rgba(98, 106, 119, 0.25);
     border-radius: 0.5rem;
-    width: 8rem; }
+    width: auto; }
   .profile-dropdown__item {
     display: block;
     color: #34495e; }
@@ -4177,5 +4177,30 @@ body {
     margin-left: 2rem; }
   .va-checkbox__content {
     flex-direction: row; }
+
+.va-tooltip {
+  display: inline; }
+
+.tippy-box[data-theme~='va-popover'] {
+  opacity: 1;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: white;
+  color: #34495e;
+  padding: 0.65rem 1rem; }
+
+.va-popover {
+  display: flex;
+  align-items: center;
+  font-size: 1rem; }
+  .va-popover__icon + div {
+    padding-left: 0.75rem;
+    width: 100%;
+    overflow: hidden; }
+  .va-popover__title {
+    font-weight: bold;
+    margin-bottom: 0.125rem; }
+  .va-popover__text {
+    line-height: 1.5; }
 
 /*# sourceMappingURL=custom.css.map */
