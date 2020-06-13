@@ -1,5 +1,6 @@
-@inject SpinnerState SpinnerState;
 @implements IDisposable
+@inject ThemeState ThemeState
+@inject SpinnerState SpinnerState
 
 @if (IsVisible)
 {
@@ -13,11 +14,11 @@
 
 @code{
 
-    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
 
     // For request to server, show spinner for waiting to render
     private bool IsVisible => SpinnerState.IsVisible;
+    private ThemeDictionary ContextTheme => ThemeState.SelectedTheme;
 
     protected override async Task OnInitializedAsync()
     {

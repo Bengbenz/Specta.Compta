@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Beng.Specta.Compta.UnitTests\Beng.Specta.Compta.UnitTests.csproj" />
+    <ProjectReference Include="..\Beng.Specta.Compta.IntegrationTests\Beng.Specta.Compta.IntegrationTests.csproj" />
   </ItemGroup>
 
   <ItemGroup>

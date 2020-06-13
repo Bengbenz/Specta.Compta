@@ -1,3 +1,6 @@
+@inherits InputBase<bool>
+@using System.Linq.Expressions
+
 <div class="@ComputedClass">
     <div class="va-checkbox__input-container"
         @onclick="ToggleSelection"
@@ -26,12 +29,11 @@
     <VaMessageList class="va-checkbox__error-message-container"
                    Value="@ErrorMessages"
                    Color="@ThemeDictionary.DangerKey"
-                   Limit="@ErrorCount" />
+                   Limit="@ErrorMessages.Count" />
   </div>
 
   @code{
 
-    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
     [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
     [Parameter] public RenderFragment ChildContent { get; set; }
     [Parameter] public string Class { get; set; }
@@ -39,33 +41,25 @@
     [Parameter] public string Color { get; set; } = ThemeDictionary.PrimaryKey;
     [Parameter] public string CheckedIcon { get; set; } = "ion ion-md-checkmark";
     [Parameter] public string IndeterminateIcon { get; set; } = "ion ion-md-remove";
-    [Parameter] public bool Value { get; set; }
     [Parameter] public bool IsReadOnly { get; set; }
     [Parameter] public bool IsDisabled { get; set; }
     [Parameter] public bool IsIndeterminated { get; set; }
-    [Parameter] public bool IsError { get; set; }
-    [Parameter] public int ErrorCount { get; set; }
-    [Parameter] public IEnumerable<string> Messages { get; set; } = new List<string>();
-    [Parameter] public IEnumerable<string> ErrorMessages { get; set; } = new List<string>();
+    [Parameter] public IEnumerable<string> Messages { get; set; } = Enumerable.Empty<string>();
     [Parameter] public string Label { get; set; }
+    [Parameter] public Expression<Func<object>> ValidationFor { get; set; }
 
     private bool IsKeyboardFocused { get; set; }    
     private bool HasMouseDown { get; set; }
-    private bool IsChecked => Value;
-    private string ValueString { get; set; }
+    private bool IsChecked => CurrentValue;
+    
+    private IList<string> ErrorMessages => ValidationFor != null
+        ? EditContext.GetValidationMessages(ValidationFor).ToList()
+        : EditContext.GetValidationMessages(FieldIdentifier).ToList();
 
-    private bool ShowError
-    {
-        get
-        {
-            // We make error active, if the error-message is not empty and checkbox is not disabled
-            if (!IsDisabled)
-            {
-                return ErrorMessages.Any() || IsError;
-            }
-            return false;
-        }
-    }
+    private bool IsError => ErrorMessages.Any();
+
+    // We make error active, if the error-message is not empty and checkbox is not disabled
+    private bool ShowError => !IsDisabled && IsError;
 
     private string ComputedClass =>
         CssBuilder.Default("va-checkbox")
@@ -108,6 +102,13 @@
             return;
         }
 
-        Value = !Value;
+        CurrentValue = !CurrentValue;
     }
+
+    /// <inheritdoc />
+    protected override bool TryParseValueFromString(
+        string value,
+        out bool result,
+        out string validationErrorMessage) =>
+    throw new NotImplementedException($"This component does not parse string inputs. Bind to the '{nameof(CurrentValue)}' property, not '{nameof(CurrentValueAsString)}'.");
 }

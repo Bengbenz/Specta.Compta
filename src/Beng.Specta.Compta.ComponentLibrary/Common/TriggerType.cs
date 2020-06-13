@@ -11,6 +11,9 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
         Click,
 
         [Description("hover")]
-        Hover
+        Hover,
+
+        [Description("mouseenter focus")]
+        Mouseenter // use for tippy
     }
 }
