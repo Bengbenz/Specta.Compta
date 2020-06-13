@@ -40,5 +40,13 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
         [Description("left-end")]
         LeftEnd,
 
+        [Description("auto")]
+        Auto,
+
+        [Description("auto-start")]
+        AutoStart,
+
+        [Description("auto-end")]
+        AutoEnd,
     }
 }

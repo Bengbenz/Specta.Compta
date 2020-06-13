@@ -1,6 +1,3 @@
-
-//import { createPopper } from '@popperjs/core';
-
 let popperInstance = null;
 let tippyInstance = null;
 
@@ -12,10 +9,34 @@ window.customComponentHandler = {
         window.removeEventListener("click", e => handleDocumentClick(e, anchor, content, dotnetHelper), false);
     },
     registerWindowResizeListener: function (mobileWidth, dotnetHelper) {
+        disableBlazorElement();
         window.addEventListener("resize", () => updateSidebarState(mobileWidth, dotnetHelper), false);
     },
     unregisterWindowResizeListener: function (mobileWidth, dotnetHelper) {
         window.removeEventListener("resize", () => updateSidebarState(mobileWidth, dotnetHelper), false);
+    },
+    disableElement: function () {
+      disableBlazorElement();
+    },
+    showTippyTooltip: function (target,
+      content,
+      position,
+      trigger,
+      duration,
+      showDelay,
+      hideDelay,
+      hasArrow) {
+      
+      tippy(target, {
+        duration: duration,
+        arrow: hasArrow,
+        delay: [showDelay, hideDelay],
+        allowHTML: true,
+        content: content,
+        placement: position,
+        trigger: trigger, // mouseenter focus click, focusin, manual
+        theme: 'va-popover'
+      });
     },
     handlePopperInstance: function (anchor,
         content,
@@ -54,6 +75,19 @@ window.customComponentHandler = {
         
         this.popperInstance.destroy();
         this.popperInstance = null;
+    },
+    launchToast: function (type, message, title)
+    {
+        toastr.options = {
+          "closeButton": true,
+          "newestOnTop": true,
+          "progressBar": true,
+          "positionClass": "toast-bottom-right",
+          "preventDuplicates": true
+        };
+
+        toastr[type](message, title);
+        console.log("toastr - type:"+ type + "message: "+ message +" title: "+ title);
     },
     computeNodeHeight: function (uiTextNode,
         useCache = false,
@@ -181,16 +215,20 @@ function updateSidebarState (mobileWidth, dotnetHelper) {
     {
       if (dotnetHelper) dotnetHelper.invokeMethodAsync("EnableMinimizedState");
     }
-    disableElement();
+    disableBlazorElement();
 }
 
-function disableElement ()
+function disableBlazorElement ()
 {
     var el = document.getElementById("blazor-license-warning");
     if (el)
     {
         el.style = "display: none";
         console.log("blazor disabled");
+    }
+    else
+    {
+        console.log("blazor not found");
     }
 }
 
@@ -332,20 +370,19 @@ var targetNode = document.getElementById('app');
 var config = { attributes: true, childList: true };
 
 // Callback function to execute when mutations are observed
-var callback = function(mutationsList) {
+function mutationObserverCallback (mutationsList) {
     for(var mutation of mutationsList) {
-        if (mutation.type == 'childList') {
-            console.log('A child node has been added or removed.');
-            disableElement();
-        }
-        else if (mutation.type == 'attributes') {
-            console.log('The ' + mutation.attributeName + ' attribute was modified.');
+        if (mutation.type == 'childList' || mutation.type == 'attributes') {
+          disableBlazorElement();
         }
     }
 };
 
 // Create an observer instance linked to the callback function
-var observer = new MutationObserver(callback);
+var observer = new MutationObserver(mutationObserverCallback);
 
 // Start observing the target node for configured mutations
 observer.observe(targetNode, config);
+
+document.addEventListener("DOMContentLoaded", disableBlazorElement);
+window.addEventListener("onload", disableBlazorElement);

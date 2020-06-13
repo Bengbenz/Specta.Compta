@@ -11,37 +11,37 @@ using Xunit;
 
 namespace Beng.Specta.Compta.IntegrationTests.Data
 {
-    public class ProjectRepositoryTest : BaseEfRepoTestFixture
+    public class ProjectRepositoryTest : BaseRepositoryTestFixture
     {
         [Fact]
-        public void AddsAndSetsId()
+        public async Task AddsAndSetsId()
         {
-            var repository = GetRepository();
+            var repository = GetEfRepository();
             var item = new Project();
 
-            repository.Add(item);
+            await repository.AddAsync(item);
 
-            var newItem = repository.List<Project>().FirstOrDefault();
+            var newItem = (await repository.ListAsync<Project>()).FirstOrDefault();
 
             Assert.Equal(item, newItem);
             Assert.True(newItem?.Id > 0);
         }
 
         [Fact]
-        public void UpdatesAfterAddingIt()
+        public async Task UpdatesAfterAddingIt()
         {
             // add an item
-            var repository = GetRepository();
+            var repository = GetEfRepository();
             var initialTitle = Guid.NewGuid().ToString();
             var item = new ProjectBuilder().SetCode(initialTitle).Build();
 
-            repository.Add(item);
+            await repository.AddAsync(item);
 
             // detach the item so we get a different instance
             AppDbContext.Entry(item).State = EntityState.Detached;
 
             // fetch the item and update its title
-            var newItem = repository.List<Project>()
+            var newItem = (await repository.ListAsync<Project>())
                 .FirstOrDefault(i => i.Code == initialTitle);
             Assert.NotNull(newItem);
             Assert.NotSame(item, newItem);
@@ -49,8 +49,8 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
             newItem.Code = newCode;
 
             // Update the item
-            repository.Update(newItem);
-            var updatedItem = repository.List<Project>()
+            await repository.UpdateAsync(newItem);
+            var updatedItem = (await repository.ListAsync<Project>())
                 .FirstOrDefault(i => i.Code == newCode);
 
             Assert.NotNull(updatedItem);
@@ -62,15 +62,15 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
         public async Task DeletesAfterAddingIt()
         {
             // add an item
-            var repository = GetRepository();
+            var repository = GetEfRepository();
             var initialTitle = Guid.NewGuid().ToString();
             var item = new ProjectBuilder().SetName(initialTitle).Build();
-            repository.Add(item);
+            await repository.AddAsync(item);
 
             // delete the item
             await repository.DeleteAsync(item);
 
-            var items = repository.List<Project>();
+            var items = await repository.ListAsync<Project>();
             // verify it's no longer there
             Assert.DoesNotContain(items, i => i.Name == initialTitle);
         }

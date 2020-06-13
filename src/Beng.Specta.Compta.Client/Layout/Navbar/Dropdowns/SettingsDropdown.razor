@@ -26,6 +26,8 @@
     [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
     [Parameter] public string Class { get; set; }
 
+    private string HoveredItem { get; set; }
+
     private IReadOnlyList<OptionType> ModelOptions => new List<OptionType>
     {
         new OptionType { Label = ThemeDictionary.DEFAULT.Name, Value = ThemeDictionary.DEFAULT.Name, OnSelectedItemHandler = ThemeDictionary.OnToggle  },

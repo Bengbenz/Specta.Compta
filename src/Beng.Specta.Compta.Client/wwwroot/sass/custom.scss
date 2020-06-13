@@ -286,7 +286,7 @@ body {
       background-color: $dropdown-background;
       box-shadow: $gray-box-shadow;
       border-radius: 0.5rem;
-      width: 8rem;
+      width: auto; //8rem;
     }
   
     &__item {
@@ -1537,5 +1537,41 @@ $va-close-icon-font-size: 1.5rem;
 
   &__content {
     flex-direction: row;
+  }
+}
+
+// va-popover
+.va-tooltip {
+  display: inline;
+}
+
+// .va-popover
+.tippy-box[data-theme~='va-popover'] {
+  opacity: 1;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: white;
+  color: #34495e;
+  padding: 0.65rem 1rem;
+}
+
+.va-popover {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+
+  &__icon + div{
+     padding-left: 0.75rem;
+     width: 100%;
+     overflow: hidden;
+  }
+
+  &__title {
+    font-weight: bold;
+    margin-bottom: 0.125rem;
+  }
+
+  &__text {
+    line-height: 1.5;
   }
 }

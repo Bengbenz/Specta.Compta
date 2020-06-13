@@ -1,7 +1,4 @@
-﻿// Copyright (c) 2018 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
-// Licensed under MIT licence. See License.txt in the project root for license information.
-
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Beng.Specta.Compta.SharedKernel.Status.Messages
@@ -9,7 +6,7 @@ namespace Beng.Specta.Compta.SharedKernel.Status.Messages
     /// <summary>
     /// This holds an error registered in the <see cref="IStatusGeneric"/> Errors collection
     /// </summary>
-    public struct ErrorGeneric
+    public struct ErrorGeneric : IEquatable<ErrorGeneric>
     {
         /// <summary>
         /// If there are multiple headers this separator is placed between them, e.g. Update>Author
@@ -57,5 +54,34 @@ namespace Beng.Specta.Compta.SharedKernel.Status.Messages
             return start + ErrorResult.ToString();
         }
 
+        public bool Equals(ErrorGeneric other)
+        {
+            return Header == other.Header && ErrorResult.Equals(other.ErrorResult);
+        }
+
+        public override bool Equals(object other)
+        {
+            if (!(other is ErrorGeneric error))
+            {
+                return false;
+            }              
+
+            return Equals(error);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Header, ErrorResult);
+        }
+
+        public static bool operator ==(ErrorGeneric error1, ErrorGeneric error2)
+        {
+            return error1.Equals(error2);
+        }
+
+        public static bool operator !=(ErrorGeneric error1, ErrorGeneric error2)
+        {
+            return !error1.Equals(error2);
+        }
     }
 }

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace Beng.Specta.Compta.Core.DTOs
 {
-    public class BaseDTO
+    public abstract class BaseDTO
     {
-        [Key]
         public long Id { get; set; }
     }
 }

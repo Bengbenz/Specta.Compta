@@ -1,13 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using Beng.Specta.Compta.SharedKernel;
-
 using Finbuckle.MultiTenant.EntityFrameworkCore;
 
 namespace Beng.Specta.Compta.Infrastructure.Data.Config
 {
-    public abstract class BaseEntityConfiguration<T> : IEntityTypeConfiguration<T> where T : BaseEntity
+    public abstract class BaseEntityConfiguration<T> : IEntityTypeConfiguration<T> where T : class
     {
         protected EntityTypeBuilder<T> Builder { get; private set; }
 

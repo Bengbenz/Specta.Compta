@@ -1,5 +1,4 @@
 
-@inject HttpClient HttpClient
 @inject TenantService TenantService
 @inject LayoutState LayoutState
 @inject ILogger<AppNavbar> Logger
@@ -64,23 +63,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await GetTenantInfoAsync();
+        TenantInfo = await TenantService.GetTenantInfoAsync();
         await base.OnInitializedAsync();
-    }
-
-    protected async Task GetTenantInfoAsync()
-    {
-        string tenantId = TenantService.GetTenantIdentifier();
-        string apiRequest = "/tenant"; //$"/{tenantId}/tenantname";
-        try
-        {
-            TenantInfo = await HttpClient.GetJsonAsync<TenantInfoDTO>(apiRequest);
-            
-            Logger.LogDebug($"{GetType().Name} initializing... Requested={apiRequest}, Response={TenantInfo?.Name}");
-        }
-        catch(Exception ex)
-        {
-            Logger.LogError($"{GetType().Name} Can't get Tenant Info from Requested={apiRequest}./n {ex}");
-        }
     }
 }

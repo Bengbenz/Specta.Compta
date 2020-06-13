@@ -1,5 +1,3 @@
-@using Syncfusion.Blazor.Popups
-
 @typeparam TSubMenuItem
 
 <li class="@ComputedClass" >
@@ -26,24 +24,25 @@
   }
   else
   { 
-
-    <VaDropdown position="@PositionType.Right" IsFixed="true" IsPreventOverflow="false">
-        <Anchor>
-            <AppSidebarLink Icon="@Icon"
-                IconRight="material-icons"
-                IconRightContent="more_horiz"
-                IsActive="@IsActive"
-                IsMinimized="true"/>
-        </Anchor>
-        <Content>
-            <ul class="app-sidebar-link-group__submenu" style="@ComputedSubMenuColor" >
-            @foreach(var subMenuItem in SubMenuItems)
-            {
-                @SubMenuItemTemplate(subMenuItem)
-            }
-            </ul>
-        </Content>
-    </VaDropdown>
+    <VaTooltip Message="@Tooltip" Position="@PositionType.Right">
+        <VaDropdown Position="@PositionType.Right" IsFixed="true" IsPreventOverflow="false">
+            <Anchor>
+                <AppSidebarLink Icon="@Icon"
+                    IconRight="material-icons"
+                    IconRightContent="more_horiz"
+                    IsActive="@IsActive"
+                    IsMinimized="true"/>
+            </Anchor>
+            <Content>
+                <ul class="app-sidebar-link-group__submenu" style="@ComputedSubMenuColor" >
+                @foreach(var subMenuItem in SubMenuItems)
+                {
+                    @SubMenuItemTemplate(subMenuItem)
+                }
+                </ul>
+            </Content>
+        </VaDropdown>
+    </VaTooltip>
   }
 </li>
 
@@ -52,6 +51,7 @@
     [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
     [Parameter] public string Title { get; set; }
     [Parameter] public string Icon { get; set; }
+    [Parameter] public string Tooltip { get; set; }
     [Parameter] public bool IsActive { get; set; }
     [Parameter] public bool IsExpanded { get; set; }
     [Parameter] public bool IsMinimized { get; set; }

@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-using Beng.Specta.Compta.Infrastructure.Data.DbContext;
 using Beng.Specta.Compta.SharedKernel;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
 
@@ -13,51 +13,37 @@ namespace Beng.Specta.Compta.Infrastructure.Data.Repositories
     public class EfRepository : IRepository
     {
         protected AppDbContext DbContext { get; }
+        protected ILogger Logger { get; }
 
-        public EfRepository(AppDbContext dbContext)
+        public EfRepository(AppDbContext dbContext, ILogger<EfRepository> logger = null)
         {
-            DbContext = dbContext;
+            DbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            Logger = logger;
         }
 
-        public T GetById<T>(long id) where T : BaseEntity
+        public Task<T> GetByIdAsync<T>(long id) where T : BaseEntity
         {
-            return DbContext.Set<T>().SingleOrDefault(e => e.Id == id);
+            return DbContext.Set<T>().SingleOrDefaultAsync(e => e.Id == id);
         }
 
-        public List<T> List<T>() where T : BaseEntity
+        public async Task<ICollection<T>> ListAsync<T>() where T : class
         {
-            return DbContext.Set<T>().ToList();
+            return await DbContext.Set<T>().ToListAsync();
         }
 
-        public T Add<T>(T entity) where T : BaseEntity
+        public async Task AddAsync<T>(params T[] entities) where T : class
         {
-            DbContext.Set<T>().Add(entity);
-            DbContext.SaveChanges();
-
-            return entity;
-        }
-
-        public async Task<T> AddAsync<T>(T entity) where T : BaseEntity
-        {
-            DbContext.Set<T>().Add(entity);
+            await DbContext.Set<T>().AddRangeAsync(entities);
             await DbContext.SaveChangesAsync();
-
-            return entity;
         }
 
-        public void Update<T>(T entity) where T : BaseEntity
+        public async Task UpdateAsync<T>(T entity) where T : class
         {
             DbContext.Entry(entity).State = EntityState.Modified;
-            DbContext.SaveChanges();
-        }
-
-        public async Task DeleteAsync<T>(T entity) where T : BaseEntity
-        {
-            DbContext.Set<T>().Remove(entity);
             await DbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteRangeAsync<T>(IEnumerable<T> entities) where T : BaseEntity
+        public async Task DeleteAsync<T>(params T[] entities) where T : class
         {
             DbContext.Set<T>().RemoveRange(entities);
             await DbContext.SaveChangesAsync();

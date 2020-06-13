@@ -43,7 +43,7 @@
                         disabled="@IsDisabled"
                         readonly="@IsReadOnly"
                         @ref="TextArea"
-                        @bind="Value"
+                        @bind="@CurrentValue"
                         @onfocus="@(() => IsFocused = true)"
                         @onblur="@(() => IsFocused = false)"  />
                 }
@@ -53,10 +53,11 @@
                         style="@InputStyle"
                         aria-label="@Label"
                         type="@Type.ToDescriptionString()"
+                        autocomplete="@Autocomplete"
                         placeholder="@PlaceHolder"
                         disabled="@IsDisabled"
                         readonly="@IsReadOnly"
-                        @bind="Value"
+                        @bind="@CurrentValue"
                         @onfocus="@(() => IsFocused = true)"
                         @onblur="@(() => IsFocused = false)" />
                 }
@@ -94,28 +95,30 @@
     [Parameter] public RenderFragment Append { get; set; }
     [Parameter] public string Color { get; set; } = ThemeDictionary.PrimaryKey;
     [Parameter] public string Class { get; set; }
+    [Parameter] public string Autocomplete { get; set; }
     [Parameter] public bool IsSuccess { get; set; }
     [Parameter] public bool IsDisabled { get; set; }
     [Parameter] public bool IsReadOnly { get; set; }
-    [Parameter] public bool IsRemovable { get; set; }
+    [Parameter] public bool IsRemovable { get; set; } = true;
     [Parameter] public bool IsAutoSize { get; set; } // textarea-specific
     [Parameter] public int? MinRows { get; set; }
     [Parameter] public int? MaxRows { get; set; }
-    [Parameter] public IEnumerable<string> Messages { get; set; } = new List<string>();
+    [Parameter] public IEnumerable<string> Messages { get; set; } = Enumerable.Empty<string>();
     [Parameter] public string Label { get; set; }
     [Parameter] public string PlaceHolder { get; set; }
     [Parameter] public InputType Type { get; set; } = InputType.Text;
-    [Parameter] public Expression<Func<string>> ValidationFor { get; set; }
+    [Parameter] public Expression<Func<object>> ValidationFor { get; set; }
     
     private ElementReference TextArea { get; set; }
-    private ValidationMessage<string> ValidationMessage { get; set; }
     private bool IsFocused { get; set; }
     private bool HasContent => !string.IsNullOrWhiteSpace(Value);
     private bool IsTextarea => Type == InputType.TextArea;
 
-    private IList<string> ErrorMessages => EditContext.GetValidationMessages(FieldIdentifier).ToList();
-    private bool IsError => ErrorMessages.Any();
+    private IList<string> ErrorMessages => ValidationFor != null
+        ? EditContext.GetValidationMessages(ValidationFor).ToList()
+        : EditContext.GetValidationMessages(FieldIdentifier).ToList();
 
+    private bool IsError => ErrorMessages.Any();
 
     private string ComputedClass =>
         CssBuilder.Default("va-input")

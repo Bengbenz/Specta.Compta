@@ -1,0 +1,31 @@
+
+@layout LoginLayout
+@page "/login"
+@using Syncfusion.Blazor.Popups
+
+<SfTab OverflowMode="OverflowMode.Popup">
+    <TabItems>
+        <TabItem>
+            <ChildContent>
+                <TabHeader Text="Se connecter"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <VaSeparator/>
+                <div class="pa-3">
+                    <LoginForm />
+                </div>
+            </ContentTemplate>
+        </TabItem>
+        <TabItem>
+            <ChildContent>
+                <TabHeader Text="Créer un compte"></TabHeader>
+            </ChildContent>
+            <ContentTemplate>
+                <VaSeparator/>
+                <div class="pa-3">
+                    <CreateAccountForm />
+                </div>     
+            </ContentTemplate>
+        </TabItem>
+    </TabItems>
+</SfTab>

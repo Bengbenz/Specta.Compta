@@ -5,7 +5,8 @@ using Beng.Specta.Compta.SharedKernel;
 
 using Dawn;
 
-namespace Beng.Specta.Compta.Core.ValueTypes.Funding {
+namespace Beng.Specta.Compta.Core.ValueTypes.Funding
+{
     public class FundingOrganization : ValueObject
     {
         public FundingOrganization (string name, string description = "")
