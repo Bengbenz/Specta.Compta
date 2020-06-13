@@ -1,0 +1,213 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+
+using Beng.Specta.Compta.Core.DTOs;
+using Beng.Specta.Compta.Core.DTOs.Auth;
+using Beng.Specta.Compta.Core.Interfaces;
+using Beng.Specta.Compta.Infrastructure.Services;
+using Beng.Specta.Compta.Server.Auth.Services;
+using Beng.Specta.Compta.Server.Objects;
+
+namespace Beng.Specta.Compta.Server.Controllers
+{
+    [Authorize]
+    public class AccountController : BaseApiController
+    {
+        private readonly IAuthorizationRepository _repository;
+        private readonly IEmailSender _emailSender;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
+
+        public AccountController(
+            IAuthorizationRepository repository,
+            UserManager<IdentityUser> userManager,
+            SignInManager<IdentityUser> signInManager,
+            IEmailSender emailSender,
+            ILogger<AccountController> logger) : base(logger)
+        {
+            _repository = repository;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _emailSender = emailSender;
+        }
+
+        [HttpGet, AllowAnonymous]
+        public async Task<ActionResult> Details()
+        {
+            IdentityUser identity = await _userManager.GetUserAsync(User);
+
+            ActionResult result;
+            if (identity == null)
+            {
+                Logger.LogInformation($"Can't get a logged user.");
+                result = Unauthorized();
+            }
+            else
+            {
+                var userInfo = identity.ToDTO(User);
+                Logger.LogInformation($"Get a logged user : {userInfo}");
+                result = Ok(userInfo);
+            }
+
+            return result;
+        }
+
+        [HttpGet("{email}"), AllowAnonymous]
+        public async Task<ActionResult> Details(string email)
+        {
+            IdentityUser user = await _userManager.FindByEmailAsync(email);
+
+            ActionResult result;
+            if (user == null)
+            {
+                Logger.LogError($"Can't get user '{email}'.");
+                ModelState.AddModelError(nameof(email), $"Any account with this email doesn't exist. Please register before.");
+                result = BadRequest(ModelState);
+            }
+            else
+            {
+                ModelState.AddModelError(nameof(email), $"An account with this email already exists. Please log in.");
+                Logger.LogInformation($"Find user by email: '{email}'.");
+                result = Ok(ModelState);
+            }
+            
+            return result;
+        }
+
+        [HttpPost, AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> SignIn([FromBody] SignInUserInfoDTO model)
+        {
+            if (model == null) throw new ArgumentNullException(nameof(model));
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: false);
+            if (result.Succeeded)
+            {
+                Logger.LogInformation($"User '{model.Email}' successfully log in.");
+                return Ok();
+            }
+            if (result.RequiresTwoFactor)
+            {
+                Logger.LogInformation($"Requires Tow factor.");
+                return Ok();
+            }
+            if (result.IsLockedOut)
+            {
+                Logger.LogWarning("User account locked out.");
+                ModelState.AddModelError(nameof(model.Email), "User account locked out. contact your admin.");
+                return BadRequest(ModelState);
+            }
+            else
+            {
+                Logger.LogError($"Failed to log in user: '{model.Email}'");
+                ModelState.AddModelError(nameof(model.Password), "Your password doesn't match");
+                return BadRequest(ModelState);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SignOut()
+        {
+            await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
+            return Ok();
+        }
+
+        [HttpPost, AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        public async Task<ActionResult> Register([FromBody] RegisterUserInfoDTO model)
+        {
+            if (model == null) throw new ArgumentNullException(nameof(model));
+
+            var user = new IdentityUser { UserName = model.UserName, Email = model.Email };
+            var result = await _userManager.CreateAsync(user, model.NewPassword);
+
+            ActionResult actionResult;
+            if (!result.Succeeded)
+            {
+                var errorDescriptions = result.Errors.Select(x => x.Description);
+                Logger.LogError($"Tried to register user '{model.Email}', but failed. Errors:\n {string.Join("; ", errorDescriptions)}");
+
+                ModelState.AddModelErrors(result.GetFormatedErrors());
+                actionResult = BadRequest(ModelState);
+            }
+            else
+            {
+                Logger.LogInformation($"User '{model.Email}' created a new account with password.");
+                actionResult = Ok(user);
+            }
+
+            return actionResult;
+        }
+
+        [HttpPost, AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword([FromBody] UserInfoDTO model)
+        {
+            if (model == null) throw new ArgumentNullException(nameof(model));
+
+            ActionResult actionResult;
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+            {
+                // Don't reveal that the user does not exist or is not confirmed
+                ModelState.AddModelError(nameof(model.Email), "Invalid account.");
+                actionResult = BadRequest(ModelState);
+            }
+            else
+            {
+                // For more information on how to enable account confirmation and password reset please
+                // visit https://go.microsoft.com/fwlink/?LinkID=532713
+                // var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                //var callbackUrl = _urlHelper.ResetPasswordCallbackLink(_ravenDBIdUtil.GetUrlId(user.Id), code, _httpContextAccessor.HttpContext.Request.Scheme);
+                //await _emailSender.SendPasswordForgetAsync(model.Email, user.UserName, callbackUrl);
+                actionResult = Ok();
+            }
+            
+            return actionResult;
+        }
+
+        [HttpPost, AllowAnonymous]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO model)
+        {
+            if (model == null) throw new ArgumentNullException(nameof(model));
+
+            ActionResult actionResult;
+            model.Code = WebUtility.UrlDecode(model.Code);
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                // Don't reveal that the user does not exist
+                ModelState.AddModelError(nameof(model.Email), "Invalid link.");
+                actionResult = BadRequest(ModelState);
+            }
+            else
+            {
+                IdentityResult result = await _userManager.ResetPasswordAsync(user, model.Code, model.NewPassword);
+                if (result.Succeeded) 
+                {
+                    actionResult = Ok();
+                }
+                else
+                {
+                    ModelState.AddModelErrors(new Dictionary<string, List<string>>
+                    {
+                        [nameof(model.NewPassword)] = result.Errors.Select(e => e.Description).ToList()
+                    });
+                    actionResult = BadRequest(ModelState);
+                }
+            }
+            
+            return actionResult;
+        }
+    }
+}

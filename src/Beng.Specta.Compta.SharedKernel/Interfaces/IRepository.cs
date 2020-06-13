@@ -5,18 +5,14 @@ namespace Beng.Specta.Compta.SharedKernel.Interfaces
 {
     public interface IRepository
     {
-        T GetById<T>(long id) where T : BaseEntity;
+        Task<T> GetByIdAsync<T>(long id) where T : BaseEntity;
 
-        List<T> List<T>() where T : BaseEntity;
+        Task<ICollection<T>> ListAsync<T>() where T : class;
 
-        T Add<T>(T entity) where T : BaseEntity;
+        Task AddAsync<T>(params T[] entities) where T : class;
 
-        Task<T> AddAsync<T>(T entity) where T : BaseEntity;
+        Task UpdateAsync<T>(T entity) where T : class; 
 
-        void Update<T>(T entity) where T : BaseEntity;
-
-        Task DeleteAsync<T>(T entity) where T : BaseEntity;
-
-        Task DeleteRangeAsync<T>(IEnumerable<T> entity) where T : BaseEntity;
+        Task DeleteAsync<T>(params T[] entities) where T : class;
     }
 }

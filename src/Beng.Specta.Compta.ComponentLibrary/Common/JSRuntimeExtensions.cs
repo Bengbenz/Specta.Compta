@@ -47,6 +47,37 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
         public static ValueTask<string> RemovePopper(this IJSRuntime jsRuntime) =>
                 jsRuntime.InvokeAsync<string>("customComponentHandler.removePopper");
 
+        public static ValueTask<object> DisableElement(this IJSRuntime jsRuntime) =>
+                jsRuntime.InvokeAsync<object>("customComponentHandler.disableElement");
+
+        public static ValueTask<object> ShowTippyTooltip(this IJSRuntime jsRuntime,
+            ElementReference targetRef,
+            ElementReference contentRef,
+            PositionType position,
+            TriggerType trigger,
+            int duration,
+            int showDelay,
+            int hideDelay,
+            bool hasArrow) =>
+                jsRuntime.InvokeAsync<object>("customComponentHandler.showTippyTooltip",
+                    targetRef,
+                    contentRef,
+                    position.ToDescriptionString(),
+                    trigger.ToDescriptionString(),
+                    duration,
+                    showDelay,
+                    hideDelay,
+                    hasArrow);
+
+        public static ValueTask<object> LaunchToast(this IJSRuntime jsRuntime,
+            string type,
+            string message,
+            string title = null) =>
+                jsRuntime.InvokeAsync<object>("customComponentHandler.launchToast",
+                    type,
+                    message,
+                    title);
+
         public static ValueTask<string> HandlePopperInstanceAsync(this IJSRuntime jsRuntime,
             ElementReference anchorRef,
             ElementReference contentRef,

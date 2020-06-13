@@ -1,0 +1,72 @@
+@inject IJSRuntime JSRuntime
+
+<div class="va-tooltip" @ref="TargetRef">
+    @ChildContent
+</div>
+<div class="tooltip_content_template" style="display: none" >
+    <div class="va-popover" @ref="ContentRef" >
+        @if (!string.IsNullOrWhiteSpace(Icon))
+        {
+        <div class="va-popover__icon">
+            <i class="icon" style="@ComputedIconStyle" />
+        </div> 
+        }
+        @if (!string.IsNullOrWhiteSpace(Title) || !string.IsNullOrWhiteSpace(Message))
+        {
+        <div>
+            @if (!string.IsNullOrWhiteSpace(Title))
+            {
+            <div class="va-popover__title">@Title</div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Message))
+            {
+            <div class="va-popover__text">@Message</div>
+            }
+        </div>
+        }
+    </div>
+</div>
+
+@code{
+
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [Parameter] public string Color { get; set; } = ThemeDictionary.GrayKey;
+    [Parameter] public string Title { get; set; }
+    [Parameter] public string Message { get; set; }
+    [Parameter] public string Icon { get; set; }
+    [Parameter] public bool HasArrow { get; set; }
+    [Parameter] public int Duration { get; set; } = 300;
+    [Parameter] public int ShowDelay { get; set; } = 500;
+    [Parameter] public int HideDelay { get; set; } = 100;
+    [Parameter] public PositionType Position { get; set; } = PositionType.BottomEnd;
+    [Parameter] public TriggerType Trigger { get; set; } = TriggerType.Mouseenter;
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    private ElementReference TargetRef { get; set; }
+    private ElementReference ContentRef { get; set; }
+
+    private string ComputedColor => ContextTheme.TryGetValue(Color, out var color) ? color : Color;
+
+    private string ComputedIconStyle =>
+        StyleBuilder.Empty()
+            .AddStyle("font-size", "1.5rem")
+            .AddStyle("color", ComputedColor, !string.IsNullOrWhiteSpace(ComputedColor))
+            .Build();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.ShowTippyTooltip(
+                TargetRef,
+                ContentRef,
+                Position,
+                Trigger,
+                Duration,
+                ShowDelay,
+                HideDelay,
+                HasArrow);
+        }
+    }
+}

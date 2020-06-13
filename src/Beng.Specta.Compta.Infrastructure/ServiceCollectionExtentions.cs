@@ -10,9 +10,10 @@ using Autofac.Extensions.DependencyInjection;
 
 using Beng.Specta.Compta.Core.DTOs;
 using Beng.Specta.Compta.Core.Interfaces;
-using Beng.Specta.Compta.Infrastructure.Data.DbContext;
+using Beng.Specta.Compta.Infrastructure.Data;
 using Beng.Specta.Compta.Infrastructure.Data.Repositories;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
+using Beng.Specta.Compta.Infrastructure.Services;
 
 namespace Beng.Specta.Compta.Infrastructure
 {
@@ -28,11 +29,11 @@ namespace Beng.Specta.Compta.Infrastructure
 
 			//Tenants Store
             services.AddDbContext<TenantStoreDbContext>(options =>                    
-    					options.UseNpgsql(_configuration.GetConnectionString("TenantConnection"))); // will be created in server project root
+    					options.UseSqlServer(_configuration.GetConnectionString("TenantConnection"))); // will be created in server project root
 
             // App store : Per-tenant Data Store
             services.AddDbContext<AppDbContext>(options =>
-						options.UseNpgsql(_configuration.GetConnectionString("AppConnection")));
+				options.UseSqlServer(_configuration.GetConnectionString("AppConnection")));
 
 			return services;
 		}
@@ -101,10 +102,12 @@ namespace Beng.Specta.Compta.Infrastructure
 			return container.Build();
 		}
 
-		public static IServiceCollection AddRepository(this IServiceCollection services)
+		public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
 		{
             services.AddScoped<IRepository, EfRepository>()
 					.AddScoped<IAuthorizationRepository, AuthorizationRepository>();
+
+			services.AddTransient<IEmailSender, AuthMessageService>();
 
 			return services;
 		}

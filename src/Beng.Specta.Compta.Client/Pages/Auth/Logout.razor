@@ -1,0 +1,19 @@
+@page "/logout"
+@inject IHttpApiClientRequestBuilder HttpRequestBuilder
+@inject NavigationManager NavigationManager
+@inject AppAuthenticationStateProvider AuthService
+@inject ILogger<Logout> Logger
+
+@code{
+
+    protected override async Task OnInitializedAsync()
+    {
+        await HttpRequestBuilder.CreateRequest("/api/account/signout")
+            .OnOK(() => {
+                AuthService.Logout();
+                Logger.LogInformation("You have successfuly logged off.");
+                NavigationManager.NavigateTo("/login");
+            })
+            .PostAsync();
+    }
+}

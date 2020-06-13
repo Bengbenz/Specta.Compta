@@ -1,8 +1,5 @@
 @page "/"
 @using Beng.Specta.Compta.Core.DTOs
-@inject ILogger<Index> Logger
-@inject HttpClient HttpClient
-@inject TenantService TenantService;
 @inject NavigationManager NavigationManager
 
 <GenericPage Title="Dashboard"
@@ -27,34 +24,9 @@
 @code{
 
     [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
-    [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; }
-    [Parameter] public bool IsOpen4 { get; set; }
-    [Parameter] public bool IsOpen5 { get; set; }
-
-    private string _info;
-
-    void Onclick4(MouseEventArgs e)
-    {
-        IsOpen4 = !IsOpen4;
-        StateHasChanged();
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        string tenantId = TenantService.GetTenantIdentifier();
-        // Call api/info Api
-        _info = await HttpClient.GetStringAsync($"{tenantId}/info");
-
-        var userIdentity = (await AuthenticationStateTask).User.Identity;
-        
-        Logger.LogDebug($"Index initialized. User logged: {userIdentity.Name}");
-        await base.OnInitializedAsync();
-    }
 
     protected async Task<IList<ProjectDTO>> LoadItems()
     {
-        //await Task.Delay(3000);
-        
         return await Task.Run(() => new List<ProjectDTO>());//GetProjects();
     }
 

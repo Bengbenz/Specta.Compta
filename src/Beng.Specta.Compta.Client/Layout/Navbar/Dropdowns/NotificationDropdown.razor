@@ -11,8 +11,10 @@
         <div class="notification-dropdown__content pl-3 pr-3 pt-2 pb-2">
           @foreach (var option in Notifications)
           {
-            <div @key="option.Id" class="notification-dropdown__item row pt-1 pb-1 mt-2 mb-2 @ComputeUnReadItemClass(option)"
-                @onclick="(() => option.MarkAsRead())" >
+            <div @key="option.Id" class="@OptionClass(option)" style="@OptionStyle(option.Id)"
+                @onclick="(() => option.MarkAsRead())"
+                @onmouseover="@(() => HoverHandler(option.Id))"
+                @onmouseout="@(() => HoverHandler())" >
             @if(!string.IsNullOrWhiteSpace(option.Details.Avatar))
             {
                 <img class="mr-2 notification-dropdown__item__avatar" src="@option.Details.Avatar"/>
@@ -40,6 +42,8 @@
     [Parameter] public string Class { get; set; }
     [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
 
+    private int HoveredItem { get; set; }
+
     private string ComputedClass =>
         CssBuilder.Default("notification-dropdown")
                 .AddClass(Class, !string.IsNullOrWhiteSpace(Class))
@@ -50,10 +54,17 @@
                 .AddClass("notification-dropdown__icon--unread", !AreAllRead)
                 .Build();
     
-    private string ComputeUnReadItemClass(Notification notif) =>
-        CssBuilder.Empty()
-                .AddClass("notification-dropdown__item--unread", notif.IsUnRead)
-                .Build();
+    private string OptionClass(Notification notif) =>
+        CssBuilder.Default("notification-dropdown__item row pt-1 pb-1 mt-2 mb-2")
+            .AddClass("notification-dropdown__item--unread", notif.IsUnRead)
+            .Build();
+
+    private string OptionStyle(int code) =>
+        StyleBuilder.Empty()
+            .AddStyle("color", $"{ContextTheme[ThemeDictionary.PrimaryKey]} !important", code == HoveredItem)
+            .Build();
+
+    private void HoverHandler(int id = 0) => HoveredItem = id;
 
     private string IconColor => (ContextTheme.IsInverted) ? $"{ContextTheme[ThemeDictionary.GrayKey]}" : "white";
     

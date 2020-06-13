@@ -20,15 +20,15 @@ namespace Beng.Specta.Compta.Server
 {
     public class Startup
 	{
-		public Startup(IConfiguration configuration, IWebHostEnvironment env)
+		public IConfiguration Configuration { get; }
+
+        public IWebHostEnvironment Env { get; }
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
             Env = env;
         }
-
-		public IConfiguration Configuration { get; }
-
-        public IWebHostEnvironment Env { get; }
 
         ///<summary>
         /// This method gets called by the runtime. Use this method to add services to the container.
@@ -48,8 +48,8 @@ namespace Beng.Specta.Compta.Server
             services.AddDbContext()
                     .AddMultiTenantInfra()
                     .AddCustomAuthorization()
-                    .AddRepository()
-                    .AddAppWebServices(typeof(Startup).Assembly);
+                    .AddInfrastructureServices();
+                    //.AddAppWebServices(typeof(Startup).Assembly);
         }
 
         ///<summary>

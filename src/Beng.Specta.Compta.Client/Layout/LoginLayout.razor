@@ -1,0 +1,40 @@
+@inherits LayoutComponentBase
+@inject ThemeState ThemeState
+@inject IJSRuntime JSRuntime
+
+<CascadingValue Value="ContextTheme">
+    <PageLoader>
+        <div class="auth-layout row align-content--center" style="@ComputedStyle">
+            <div class="flex xs12 pa-3 flex-center">
+                <div class="d-flex justify--center">
+                    <VaCard class="auth-layout__card">
+                        <BodyContent>
+                            <div class="flex pa-3 flex-center" >
+                                <NavLink class="py-5 flex-center" href="/">
+                                    <VaIconApp />
+                                </NavLink>
+                            </div>
+                            @Body
+                        </BodyContent>
+                    </VaCard>
+                </div>
+            </div>
+        </div>
+    </PageLoader>
+</CascadingValue>
+
+@code{
+
+    private ThemeDictionary ContextTheme => ThemeState.SelectedTheme;
+
+    private string ComputedStyle =>
+        StyleBuilder.Empty()
+            .AddStyle("background-image", $"url('{@ThemeState.AuthBackgroundImage}')", ContextTheme.IsInverted)
+            .AddStyle("background-color", "linear-gradient(to right, #0e4ac4, #002c85)", !ContextTheme.IsInverted)
+            .Build();
+            
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JSRuntime.DisableElement();
+    }
+}
