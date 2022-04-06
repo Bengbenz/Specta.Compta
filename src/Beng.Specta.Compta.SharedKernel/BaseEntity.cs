@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Beng.Specta.Compta.SharedKernel
 {
@@ -7,6 +8,8 @@ namespace Beng.Specta.Compta.SharedKernel
     {
         public long Id { get; set; }
 
-        public ICollection<BaseDomainEvent> Events = new List<BaseDomainEvent>();
+        // Events (event-driven pattern). Don't need to make them as Properties otherwise, EF persist them in DB
+        [NotMapped]
+        public ICollection<BaseDomainEvent> Events { get; private set; } = new List<BaseDomainEvent>();
     }
 }

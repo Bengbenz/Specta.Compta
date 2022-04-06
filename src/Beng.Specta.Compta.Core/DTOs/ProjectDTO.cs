@@ -7,6 +7,20 @@ namespace Beng.Specta.Compta.Core.DTOs
     // Note: doesn't expose events or behavior
     public class ProjectDTO : BaseDTO
     {
+        public ProjectDTO ()
+        {
+        }
+        
+        public ProjectDTO (ProjectDTO value)
+        {
+            Id = value.Id;
+            Code = value.Code;
+            Name = value.Name;
+            Description = value.Description;
+            StartDate = value.StartDate;
+            Duration = value.Duration;
+        }
+
         public string Code { get; set; }
 
         [Required]

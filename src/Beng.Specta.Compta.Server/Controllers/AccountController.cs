@@ -99,7 +99,7 @@ namespace Beng.Specta.Compta.Server.Controllers
             }
             if (result.RequiresTwoFactor)
             {
-                Logger.LogInformation($"Requires Tow factor.");
+                Logger.LogInformation($"Requires two factor.");
                 return Ok();
             }
             if (result.IsLockedOut)

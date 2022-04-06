@@ -6,6 +6,12 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 namespace Beng.Specta.Compta.Infrastructure.Data
 {
+    /// <summary>
+    ///     Used for design time migrations.  
+    ///     Will look to the appsettings.json file in this project for the connection string.
+    ///     EF Core tools scans the assembly containing the dbcontext for an implementation
+    ///     of IDesignTimeDbContextFactory.
+    /// </summary>
     public class TenantStoreDesignTimeFactory : IDesignTimeDbContextFactory<TenantStoreDbContext>
     {
         public TenantStoreDbContext CreateDbContext(string[] args)
@@ -22,6 +28,7 @@ namespace Beng.Specta.Compta.Infrastructure.Data
                 .Build();
 
             var optionsBuilder = new DbContextOptionsBuilder<TenantStoreDbContext>();
+            optionsBuilder.UseNpgsql(config.GetConnectionString("TenantConnection"));
 
             return new TenantStoreDbContext(optionsBuilder.Options, config);
         }

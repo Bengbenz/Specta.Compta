@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -14,6 +15,7 @@ using Beng.Specta.Compta.SharedKernel.Interfaces;
 namespace Beng.Specta.Compta.Server.Controllers
 {
     //[HasPermission(Permission.ProjectAllAccess)]
+    [Authorize]
     public class ProjectController : BaseApiController
     {
         private readonly IRepository _repository;

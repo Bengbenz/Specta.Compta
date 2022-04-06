@@ -356,3 +356,4 @@ CodeCoverage/
 tests/.DS_Store
 **/*.DS_Store
 src/Beng.Specta.Compta.ComponentLibrary/IconSet/*.svg
+tests/Beng.Specta.Compta.UnitTests/.DS_Store

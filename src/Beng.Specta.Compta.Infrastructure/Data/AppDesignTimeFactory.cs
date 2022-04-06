@@ -9,6 +9,12 @@ using Finbuckle.MultiTenant;
 
 namespace Beng.Specta.Compta.Infrastructure.Data
 {
+    /// <summary>
+    ///     Used for design time migrations.  
+    ///     Will look to the appsettings.json file in this project for the connection string.
+    ///     EF Core tools scans the assembly containing the dbcontext for an implementation
+    ///     of IDesignTimeDbContextFactory.
+    /// </summary>
     public class AppDesignTimeFactory : IDesignTimeDbContextFactory<AppDbContext>
     {
         public AppDbContext CreateDbContext(string[] args)
@@ -31,6 +37,7 @@ namespace Beng.Specta.Compta.Infrastructure.Data
                                             configSection.GetValue<string>("ConnectionString"),
                                             null);
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
+            optionsBuilder.UseNpgsql(config.GetConnectionString("AppConnection"));
 
             return new AppDbContext(tenantInfo, optionsBuilder.Options, config);
         }
