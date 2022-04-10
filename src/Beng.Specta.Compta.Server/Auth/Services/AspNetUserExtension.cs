@@ -46,24 +46,37 @@ namespace Beng.Specta.Compta.Server.Auth.Services
             // for diffrent error codes
             var keyMapping = new Dictionary<string, string>()
             {
-                {"PasswordMismatch","Password" },
-                {"InvalidUserName","Name" },
+                {"DefaultError","Name" },
+                {"ConcurrencyFailure","Concurrency" },
+                
                 {"InvalidEmail","Email" },
-                {"DuplicateUserName","UserName" },
                 {"DuplicateEmail","Email" },
+
+                {"InvalidUserName","UserName" },
+                {"DuplicateUserName","UserName" },
+                {"LoginAlreadyAssociated","UserName" },
+                {"UserLockoutNotEnabled","UserName" },
+
+                {"InvalidToken","Password" },
+                {"RecoveryCodeRedemptionFailed","Password" },
+                {"PasswordMismatch","Password" },
                 {"PasswordTooShort","Password" },
                 {"PasswordRequiresUniqueChars","Password" },
                 {"PasswordRequiresNonAlphanumeric","Password" },
                 {"PasswordRequiresDigit","Password" },
                 {"PasswordRequiresLower","Password" },
                 {"PasswordRequiresUpper","Password" },
-
+                {"UserAlreadyHasPassword","Password" },
+                
+                {"InvalidRoleName","Role" },
+                {"DuplicateRoleName","Role" },
+                {"UserAlreadyInRole","Role" },
+                {"UserNotInRole","Role" }
             };
             var formatedErrors = identityResult.Errors
                 .Select(e =>
                 {
-                    var key = e.Code;
-                    keyMapping.TryGetValue(key, out key);
+                    var key = keyMapping.TryGetValue(e.Code, out var value) ? value : "Name";
                     return new { Key = key, e.Description };
                 }
                 ).ToLookup(e => e.Key, e => e.Description)

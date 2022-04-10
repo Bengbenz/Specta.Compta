@@ -58,7 +58,7 @@ namespace Beng.Specta.Compta.FunctionalTests.Controllers
         [Fact(Skip="To fix later, fix UserManager service")]
         public async Task Details_ReturnNotFound()
         {
-            //SETUP
+            //SETPU
 
             //ATTEMPT
             var response = await _client.GetAsync(new Uri("api/account/details/Super@g1.com", UriKind.Relative));

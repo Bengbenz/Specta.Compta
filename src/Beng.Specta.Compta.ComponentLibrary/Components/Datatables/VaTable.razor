@@ -1,0 +1,320 @@
+<!--
+@if (!IsFixedHeader) // no fixed header - regular table
+{
+<table class="vuetable @Css["TableClass"]">  
+    <thead>
+        <tr>
+        @foreach (var field in TableFields)
+        {
+            @if (field.IsVisible)
+            {
+                @if (IsSpecialField(field.Name))
+                {
+                    @if (ExtractName(field.Name) == "__checkbox")
+                    {
+                        <th @key="field.Name"
+                            style="width: @field.Width"
+                            class="vuetable-th-checkbox-@TrackBy @field.TitleClass" >
+                            <input type="checkbox" @onchange="(() => ToggleAllCheckboxes(field.Name))"
+                                checked="CheckCheckboxesState(field.Name)">
+                        </th>
+                    }
+                    @if (ExtractName(field.Name) == "__component")
+                    {
+                        <th @key="field.Name"
+                            style="width: @field.Width"
+                            class="['vuetable-th-component-'+trackBy, @field.TitleClass, sortClass(field), {'sortable': isSortable(field)}]"
+                            v-html="renderTitle(field)"
+                            @onclick="(() => OrderBy(field))" >
+                        </th>
+                    @if (ExtractName(field.Name) == "__slot")
+                    {
+                        <th @key="field.Name"
+                            style="width: @field.Width"
+                            class="['vuetable-th-slot-'+extractArgs(field.name), @field.TitleClass, sortClass(field), {'sortable': isSortable(field)}]"
+                            v-html="renderTitle(field)"
+                            @onclick="orderBy(field)" >
+                        </th>
+                    }
+                    @if (ExtractName(field.Name) == "__sequence")
+                    {
+                        <th @key="field.Name"
+                            style="width: @field.Width"
+                            class="['vuetable-th-sequence', @field.TitleClass || '', sortClass(field)]" v-html="renderTitle(field)" >
+                        </th>
+                    }
+                    @if (!IsIn(ExtractName(field.Name), "__sequence", "__checkbox", "__component", "__slot"))
+                    {
+                        <th @key="field.Name"
+                            style="width: @field.Width"
+                            class="['vuetable-th-'+field.name, @field.TitleClass || '', sortClass(field)]" v-html="renderTitle(field)" >
+                        </th>
+                    }
+                }
+                else
+                {
+                    <th @onclick="(() => OrderBy(field))"
+                        @key="field.Name"
+                        id="'_' + @field.Name"
+                        style="width: @field.Width}"
+                        class="['vuetable-th-'+field.name, @field.TitleClass, sortClass(field),  {'sortable': isSortable(field)}]"
+                        v-html="renderTitle(field)">
+                    </th>
+                }
+            }
+        }}
+        </tr>
+    </thead>
+    <tbody v-cloak class="vuetable-body">
+    @foreach (var item in TableData)
+    {
+        <tr @dblclick="@(() => OnRowDoubleClicked(item))" 
+            @key="item.Key"
+            item-index="@item.Key" 
+            :render="OnRowChanged(item)" 
+            class="@OnRowClass(item, itemIndex)"
+            @onclick="@(() => OnRowClicked(item))" >
+            @foreach (var field in TableFields)
+            {
+                @if (field.IsVisible)
+                {
+                    @if (IsSpecialField(field.Name))
+                    {
+                        @if (ExtractName(field.Name) == "__sequence")
+                        {
+                            <td @key="field.Key"
+                                class="vuetable-sequence @field.DataClass"
+                                v-html="renderSequence(itemIndex)" >
+                            </td>
+                        }
+                        @if (ExtractName(field.Name) == "__handle")
+                        {
+                            <td @key="field.Key"
+                                class="vuetable-handle @field.DataClass"
+                                v-html="renderIconTag(['handle-icon', css.handleIcon])" >
+                            </td>
+                        }
+                        @if (ExtractName(field.Name) == "__checkbox")
+                        {
+                            <td @key="field.Name"
+                                class="vuetable-checkboxes @field.DataClass" >
+                                <input type="checkbox"
+                                    @onchange="@(() => RoggleCheckbox(item, field.Name))"
+                                    checked="@RowSelected(item, field.Name)">
+                            </td>
+                        }
+                        @if (ExtractName(field.Name) == "__component")
+                        {
+                            <td @key="field.Name"
+                                class="vuetable-component @field.DataClass" >
+                                <component :is="extractArgs(field.name)"
+                                :row-data="item" :row-index="itemIndex" :row-field="field.sortField" ></component>
+                            </td>
+                        }
+                        @if (ExtractName(field.Name) == "__slot")
+                        {
+                            <td @key="field.Name"
+                                class="vuetable-slot @field.DataClass" >
+                                <slot :name="extractArgs(field.name)"
+                                    :row-data="item" :row-index="itemIndex" :row-field="field.sortField" />
+                            </td>
+                        }
+                    }
+                    else
+                    {
+                        @if (HasCallback(field))
+                        {
+                            <td @key="field.Name"
+                                class="@field.DataClass"
+                                v-html="callCallback(field, item)"
+                                @onclick="@(() => OnCellClicked(item, field))"
+                                @dblclick="@(() => OnCellDoubleClicked(item, field))"
+                                @contextmenu="@(() => OnCellRightClicked(item, field))" >
+                            </td>
+                        }
+                        else
+                        {
+                            <td @key="field.Name"
+                                class="@field.DataClass"
+                                v-html="getObjectValue(item, field.name, '')"
+                                @onclick="@(() => OnCellClicked(item, field))"
+                                @dblclick="@(() => OnCellDoubleClicked(item, field))"
+                                @contextmenu="@(() => OnCellRightClicked(item, field))" />
+                        }
+                    }
+                }
+            }
+        </tr>
+        @if (CanUseDetailRow)
+        {
+            <transition :name="detailRowTransition" @key="item.Key">
+            @if (IsVisibleDetailRow(item[TrackBy]))
+            {
+            <tr class="@Css["DetailRowClass"]"
+                @onclick="@(() => OnDetailRowClick(item))" >
+                <td colspan="@CountVisibleFields">
+                    <component :is="detailRowComponent" :row-data="item" :row-index="itemIndex"></component>
+                </td>
+            </tr>
+            }
+            </transition>
+        }
+    }
+    @if (CanDisplayEmptyDataRow)
+    {
+        <tr>
+            <td colspan="@CountVisibleFields" class="vuetable-empty-result">
+                @NoDataTemplate
+            </td>
+        </tr>
+    }
+    @if (IsLessThanMinRows)
+    {
+        @for (var i = 0; i < BlankRows; i++)
+        {
+        <tr class="blank-row" @key="i">
+            @foreach (var field in TableFields)
+            {
+                @if (field.IsVisible)
+                {
+                    <td @key="field.Name">&nbsp;</td>
+                }
+            }
+        </tr>
+        }
+    }   
+    </tbody>
+</table>
+}
+
+@code{
+
+    [Parameter] public IEnumerable<FieldType> Fields { get; set; }
+    [Parameter] public IDictionary<string, string> Data { get; set; }
+    [Parameter] public int PerPage { get; set; } = 10;
+    [Parameter] public int InitialPage { get; set; } = 1;
+    [Parameter] public int DataTotal { get; set; }
+    [Parameter] public int MinRows { get; set; } = 0;
+    [Parameter] public string PaginationPath { get; set; }
+    [Parameter] public string DataPath { get; set; } = "data";
+    [Parameter] public string TableHeight { get; set; }
+    [Parameter] public string RowClass { get; set; }
+    [Parameter] public string DetailRowComponent { get; set; }
+    [Parameter] public string DetailRowTransition { get; set; }
+    [Parameter] public string TrackBy { get; set; } = "id";
+    [Parameter] public string ApiUrl { get; set; } = string.Empty;
+    [Parameter] public string NoDataTemplate { get; set; } = "No Data Available";
+    [Parameter] public bool IsApiMode { get; set; } = true;
+    [Parameter] public bool IsLoadedOnStart { get; set; }
+    [Parameter] public bool IsSilent { get; set; }
+    //[Parameter] public Func<Task<IList<TItem>>> DataManager { get; set; }
+    [Parameter] public IDictionary<string, string> Styles { get; set; }
+
+    public IDictionary<string, string> Css { get; set; } = new Dictionary<string, string>
+    {
+        { "TableClass",  "ui blue selectable celled stackable attached table" },
+        { "LoadingClass", "loading" },
+        { "AscendingIcon", "blue chevron up icon" },
+        { "DescendingIcon", "blue chevron down icon" },
+        { "AscendingClass", "sorted-asc" },
+        { "DescendingClass", "sorted-desc" },
+        { "SortableIcon", string.Empty },
+        { "DetailRowClass", "vuetable-detail-row" },
+        { "TableBodyClass", "vuetable-semantic-no-top vuetable-fixed-layout" },
+        { "TableHeaderClass", "vuetable-fixed-layout" },
+    };
+
+    public IDictionary<string, string> DataTable { get; set; }
+    public IEnumerable<FieldType> TableFields { get; set; }
+    private bool IsFixedHeader => !string.IsNullOrWhiteSpace(TableHeight);
+    private bool IsIn (string str, params string[] arr) => arr.Contains(str);
+    
+    private bool CanUseDetailRow()
+    {
+      /*if (this.tableData && this.tableData[0] && this.detailRowComponent != '' && typeof this.tableData[0][this.trackBy] == 'undefined') {
+        this.warn('You need to define unique row identifier in order for detail-row feature to work. Use `track-by` prop to define one!')
+        return false;
+      }
+
+      return this.detailRowComponent != '';*/
+      return true;
+    }
+
+    private int CountVisibleFields => TableFields.Count(x => x.IsVisible);
+
+    private bool IsVisibleDetailRow(string value) => true;
+
+    private int CountTableData
+    { 
+        get
+        {
+            if (DataTable == null)
+            {
+                return 0;
+            }
+            return DataTable.Count;
+        }
+    }
+
+    private bool CanDisplayEmptyDataRow => CountTableData == 0 && string.IsNullOrWhiteSpace(NoDataTemplate);
+
+    private bool IsLessThanMinRows
+    { 
+        get
+        {
+            if (DataTable == null || DataTable.Count == 0)
+            {
+                return true;
+            }
+            return DataTable.Count < MinRows;
+        }
+    }
+
+    private int BlankRows
+    { 
+        get
+        {
+            if (DataTable == null || DataTable.Count == 0)
+            {
+                return MinRows;
+            }
+            if (DataTable.Count >= MinRows)
+            {
+                return 0;
+            }
+
+            return MinRows - DataTable.Count;
+        }
+    }
+
+    private bool IsDataMode => ! IsApiMode;
+
+    private void NormalizeStyles()
+    {
+        foreach(var css in Css)
+        {
+            Css[css.Key] = Styles.TryGetValue(css.Key, out var style) ? style : css.Value;
+        }
+    }
+
+    private string ExtractName(string fieldName) => fieldName.Split(':')[0].Trim();
+
+    private string ExtractArgs (string fieldName) => fieldName.Split(':')[1];
+
+    private bool IsSpecialField(string fieldName) => fieldName.StartsWith("__");
+
+    protected override async Task OnParametersSetAsync()
+    {
+        NormalizeStyles();
+        NormalizeFields();
+        await base.OnParametersSetAsync();
+    }
+
+    public void NormalizeFields()
+    {
+        if (Fields == null) throw new ArgumentNullException($"You need to provide {nameof(Fields)} prop.");
+
+        TableFields = Fields;
+    }
+}
+-->
