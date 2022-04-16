@@ -55,6 +55,7 @@ namespace Beng.Specta.Compta.Client.Services
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:
+                case HttpStatusCode.Created:
                 {
                     if (_onOK != null)
                     {
