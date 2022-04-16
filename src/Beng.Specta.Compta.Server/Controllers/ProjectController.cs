@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -14,6 +17,7 @@ using Beng.Specta.Compta.SharedKernel.Interfaces;
 namespace Beng.Specta.Compta.Server.Controllers
 {
     //[HasPermission(Permission.ProjectAllAccess)]
+    [Authorize]
     public class ProjectController : BaseApiController
     {
         private readonly IRepository _repository;
@@ -27,10 +31,10 @@ namespace Beng.Specta.Compta.Server.Controllers
 
         // GET: api/Project
         [HttpGet]
-        public async Task<IActionResult> List()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IReadOnlyCollection<ProjectDTO>> List()
         {
-            var items = (await _repository.ListAsync<Project>()).Select(x => x.ToDTO());
-            return Ok(items);
+            return (await _repository.ListAsync<Project>()).Select(x => x.ToDTO()).ToList();
         }
 
         // GET: api/Project
@@ -58,7 +62,7 @@ namespace Beng.Specta.Compta.Server.Controllers
             };
 
             await _repository.AddAsync(projectItem);
-            return Ok(projectItem.ToDTO());
+            return Ok(projectItem.ToDTO()); // CreatedAtAction(nameof(projectItem.Code), projectItem.ToDTO());
         }
 
         /*

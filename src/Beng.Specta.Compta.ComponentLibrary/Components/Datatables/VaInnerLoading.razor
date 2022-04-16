@@ -1,0 +1,18 @@
+<div class="inner-loading">
+    @ChildContent
+    @if (IsLoading)
+    {
+        <div class="inner-loading__overlay">
+            <SemipolarSpinner Color="@ContextTheme[ThemeDictionary.PrimaryKey]"
+              Size="48" AnimationDuration="2000" /> <!-- spring-spinner -->
+        </div>
+    }
+    
+</div>
+
+@code{
+
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}

@@ -7,7 +7,7 @@ namespace Beng.Specta.Compta.Server.Controllers
     [ApiController]
     public abstract class BaseApiController : Controller
     {
-        protected ILogger Logger { get; set; }
+        protected ILogger Logger { get; }
 
         protected BaseApiController(ILogger logger)
         {

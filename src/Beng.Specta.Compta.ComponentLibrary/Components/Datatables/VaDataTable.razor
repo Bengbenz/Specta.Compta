@@ -1,0 +1,70 @@
+<div class="va-data-table">
+    <VaInnerLoading IsLoading="@IsLoading">
+        <VaTable ref="vuetable"
+            IsApiMode="false"
+            Fields="@Fields"
+            Data="apiMode ? data : undefined"
+            DataManager="apiMode ? undefined : dataManager"
+            PaginationPath="apiMode ? '' : 'pagination'"
+            Styles="@Styles"
+            RowClass="rowClass"
+            @vuetable:row-clicked="rowClicked" >
+            <!-- https://stackoverflow.com/questions/50891858/vue-how-to-pass-down-slots-inside-wrapper-component   -->
+            <template
+                v-for="slot in Object.keys($scopedSlots)"
+                :slot="slot"
+                slot-scope="scope" >
+                <slot :name="slot" v-bind="scope" />
+            </template>
+        </VaTable>
+
+    @if (IsPaginable && PaginationTotal > 1)
+    {
+        <div class="va-data-table__pagination" >
+            <VaPagination @bind-Value="@CurrentPage"
+                Pages="@PaginationTotal"
+                VisiblePages="@VisiblePages"
+                IsBoundaryLinks="@(PaginationTotal > VisiblePages)"
+                @input="inputPage" />
+        </div>
+    }
+    </VaInnerLoading>
+</div>
+
+@code{
+
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
+    [Parameter] public string Class { get; set; }
+    [Parameter] public string Color { get; set; }
+    [Parameter] public IDictionary<string, FieldType> Fields { get; set; }
+    [Parameter] public IDictionary<string, string> Data { get; set; }
+    [Parameter] public int PerPage { get; set; } = 6;
+    [Parameter] public int VisiblePages { get; set; } = 4;
+    [Parameter] public int TotalPages { get; set; } = 0;
+    [Parameter] public bool IsApiMode { get; set; }
+    [Parameter] public bool IsClickable { get; set; }
+    [Parameter] public bool IsHoverable { get; set; }
+    [Parameter] public bool IsPaginable { get; set; }
+    [Parameter] public bool IsLoading { get; set; }
+
+    private int CurrentPage { get; set; } = 1;
+    private int PaginationTotal => IsApiMode ? TotalPages : (int)Math.Round((double)Data.Count / PerPage);
+
+    private string ComputedClass =>
+        CssBuilder.Default("va-dropdown")
+            .AddClass(Class, !string.IsNullOrWhiteSpace(Class))
+            .Build();
+
+    private string BuildTableClass => 
+        CssBuilder.Default("va-data-table__vuetable va-table va-table--striped")
+            .AddClass("va-table--clickable", IsClickable)
+            .AddClass("va-table--hoverable", IsHoverable)
+            .Build();
+    private IDictionary<string, string> Styles => new Dictionary<string, string>
+    {
+        { "TableClass", BuildTableClass },
+        { "AscendingIcon", "fa fa-caret-up" },
+        { "DescendingIcon", "fa fa-caret-down" },
+        // { "RenderIcon", classes => $"<span class="{string.Join(" ", classes)}"></span>" }
+    };
+}

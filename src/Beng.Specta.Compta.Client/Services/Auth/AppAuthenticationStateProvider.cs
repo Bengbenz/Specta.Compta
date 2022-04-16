@@ -41,7 +41,7 @@ namespace Beng.Specta.Compta.Client.Services.Auth
                   }, "serverauth")
                 : new ClaimsIdentity();
             
-            _logger.LogInformation(isAuthenticated ? $"User authentified: {account}" : $"Anonymous user");
+            _logger.LogInformation(isAuthenticated ? $"User authentified: {account}" : "Anonymous user");
             return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(identity)));
         }
 

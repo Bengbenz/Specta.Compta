@@ -28,12 +28,15 @@ namespace Beng.Specta.Compta.Infrastructure
 			_configuration = serviceProvider.GetRequiredService<IConfiguration>();
 
 			//Tenants Store
-            services.AddDbContext<TenantStoreDbContext>(options =>                    
-    					options.UseSqlServer(_configuration.GetConnectionString("TenantConnection"))); // will be created in server project root
+			// will be created in server project root
+			services.AddDbContext<TenantStoreDbContext>(options =>
+				options.UseNpgsql(_configuration.GetConnectionString("TenantConnection")));
+				// options.UseSqlServer(_configuration.GetConnectionString("TenantConnection")));
 
             // App store : Per-tenant Data Store
             services.AddDbContext<AppDbContext>(options =>
-				options.UseSqlServer(_configuration.GetConnectionString("AppConnection")));
+				options.UseNpgsql(_configuration.GetConnectionString("AppConnection")));
+				// options.UseSqlServer(_configuration.GetConnectionString("AppConnection")));
 
 			return services;
 		}

@@ -7,20 +7,21 @@
 <EditForm EditContext="@_editContext" OnSubmit="CreateNewAccount">
     <DataAnnotationsValidator />
     <ServerSideValidator @ref="ServerSideValidator" />
+    <ValidationSummary />
     <VaInput @bind-Value="_userInfo.Email"
-      Type="@InputType.Email"
-      Label="Email" />
+             Type="@InputType.Email"
+             Label="Email" />
 
     <VaInput @bind-Value="_userInfo.UserName"
-      Label="Nom" />
+             Label="Nom" />
 
     <VaInput @bind-Value="_userInfo.NewPassword"
-      Type="@InputType.Password"
-      Label="Mot de passe" />
-    
+             Type="@InputType.Password"
+             Label="Mot de passe" />
+
     <VaInput @bind-Value="_userInfo.ConfirmPassword"
-      Type="@InputType.Password"
-      Label="Confirmer votre mot de passe" />
+             Type="@InputType.Password"
+             Label="Confirmer votre mot de passe" />
 
     <div class="auth-layout__options d-flex align--center justify--space-between">
         <VaCheckBox @bind-Value="_userInfo.AgreeWithTerms" class="mb-0" Label="En créeant votre compte, vous acceptez">
@@ -59,10 +60,11 @@
                 })
                 .OnOK(() =>
                 {
+                    JSRuntime.LaunchToast("success", "Your account created. Let your admin validate it, then you'll can login.");
                     Logger.LogDebug($"{GetType().Name}: User registred. Redirection to /login");
                     _userInfo = new RegisterUserInfoDTO();
-                    NavigationManager.NavigateTo("/login");
-                    JSRuntime.LaunchToast("success", "Your account created. Let your admin validate it, then you'll can login.");
+                    NavigationManager.NavigateTo("/login", true);
+                    
                 })
                 .PostAsync(_userInfo);
         }

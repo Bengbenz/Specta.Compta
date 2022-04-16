@@ -5,7 +5,7 @@
 
   <PropertyGroup>
     <Company>Bengbenz</Company>
-    <Authors>$(Company)</Authors>
+    <Authors>Caleb BENGUELET</Authors>
     <Copyright>Copyright © $(Company) $([System.DateTime]::Now.Year)</Copyright>
     <Trademark>$(Company)™</Trademark>
     <Product>Specta.Compta</Product>

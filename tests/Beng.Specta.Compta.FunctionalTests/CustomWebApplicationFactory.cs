@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -12,6 +13,8 @@ using Beng.Specta.Compta.Server;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
 using Beng.Specta.Compta.UnitTests;
 using Beng.Specta.Compta.UnitTests.Helpers;
+using Microsoft.AspNetCore.Authorization.Policy;
+using Microsoft.AspNetCore.TestHost;
 
 namespace Beng.Specta.Compta.FunctionalTests
 {
@@ -53,6 +56,29 @@ namespace Beng.Specta.Compta.FunctionalTests
                     }
                 }
             });
+        }
+
+        public HttpClient CreateClientWithoutAuthorization()
+        {
+            return WithWebHostBuilder(builder =>
+                {
+                    builder.ConfigureTestServices(services =>
+                        services.AddSingleton<IPolicyEvaluator, ByPassAuthorizationPolicyEvaluator>());
+                })
+                .CreateClient(new WebApplicationFactoryClientOptions
+                {
+                    AllowAutoRedirect = false
+                });
+        }
+
+        public WebApplicationFactory<TStartup> AddTestService(Action<IServiceCollection> configureTestServices)
+        {
+            WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(configureTestServices);
+            });
+
+            return this;
         }
     }
 }

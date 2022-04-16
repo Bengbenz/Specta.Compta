@@ -1,0 +1,154 @@
+<VaButtonGroup class="va-pagination">
+    <VaButton IsVisible="@(Pages != VisiblePages && IsBoundaryLinks)"
+        Style="@DirectionButtonStyle"
+        IsOutline="true"
+        Color="@Color"
+        IsLarge="@IsLarge"
+        IsSmall="@IsSmall"
+        IsDisabled="@(IsDisabled || Value == 1)"
+        Icon="@IconClass.Boundary"
+        @onclick="@(() => ChangePage(1))" />
+    <VaButton IsVisible="@(Pages != VisiblePages && IsDirectionLinks)"
+        Style="@DirectionButtonStyle"
+        IsOutline="true"
+        Color="@Color"
+        IsLarge="@IsLarge"
+        IsSmall="@IsSmall"
+        IsDisabled="@(IsDisabled || Value == 1)"
+        Icon="@IconClass.Boundary"
+        @onclick="@(() => ChangePage(Value - 1))" />
+
+    @foreach (var n in PaginationRange)
+    {
+        <VaButton Style="@(ActiveButtonStyle(n))"
+            IsOutline="true"
+            Color="@Color"
+            IsLarge="@IsLarge"
+            IsSmall="@IsSmall"
+            IsDisabled="@IsDisabled"
+            @key="n"
+            Class="@(n == Value ? "va-button--active" : string.Empty)"
+            @onclick="@(() => ChangePage(n))" >
+            @n
+        </VaButton>
+    }
+    
+    <VaButton IsVisible="@(Pages != VisiblePages && IsDirectionLinks)"
+        Style="@DirectionButtonStyle"
+        IsOutline="true"
+        Color="@Color"
+        IsLarge="@IsLarge"
+        IsSmall="@IsSmall"
+        IsDisabled="@(IsDisabled || Value == Pages)"
+        Icon="@IconRightClass.Direction"
+        @onclick="@(() => ChangePage(Value + 1))" />
+    <VaButton IsVisible="@(Pages != VisiblePages && IsBoundaryLinks)"
+        Style="@DirectionButtonStyle"
+        IsOutline="true"
+        Color="@Color"
+        IsLarge="@IsLarge"
+        IsSmall="@IsSmall"
+        IsDisabled="@(IsDisabled || Value == Pages)"
+        Icon="@IconRightClass.Boundary"
+        @onclick="@(() => ChangePage(Pages))" />
+  </VaButtonGroup>
+
+@code{
+
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public bool IsSmall { get; set; }
+    [Parameter] public bool IsLarge { get; set; }
+    [Parameter] public bool IsDisabled { get; set; }
+    [Parameter] public bool IsBoundaryLinks { get; set; } = true;
+    [Parameter] public bool IsDirectionLinks { get; set; } = true;
+    [Parameter] public string Class { get; set; }
+    [Parameter] public string Color { get; set; } = ThemeDictionary.PrimaryKey;
+    [Parameter] public string Icon { get; set; }
+    [Parameter] public string IconRight { get; set; }
+    [Parameter] public int Pages { get; set; }
+    [Parameter] public int VisiblePages { get; set; } = 5;
+    [Parameter] public int Value { get; set; }
+
+    private IconStruct DefaultIconClass { get; } = new IconStruct 
+    {
+        Direction = "fa fa-angle-left",
+        Boundary = "fa fa-angle-double-left"
+    };
+
+    private IconStruct DefaultIconRightClass { get; } = new IconStruct 
+    {
+        Direction = "fa fa-angle-right",
+        Boundary = "fa fa-angle-double-right"
+    };
+
+    private IconStruct IconClass => Icon == null ? DefaultIconClass : new IconStruct { Direction = Icon };
+    private IconStruct IconRightClass => IconRight == null ? DefaultIconClass : new IconStruct { Direction = IconRight };
+
+    private string DirectionButtonStyle =>
+        StyleBuilder.Default("background-color", "transparent")
+            .AddStyle("border-color", "#babfc2", IsDisabled)
+            .AddStyle("opacity", "1")
+            .Build();
+
+    private string ActiveButtonStyle(int buttonValue) =>
+        StyleBuilder.Empty()
+            .AddStyle("background-color", "#babfc2", buttonValue == Value && IsDisabled)
+            .AddStyle("background-color", ContextTheme.TryGetValue(Color, out var color) ? color : Color, buttonValue == Value && !IsDisabled)
+            .AddStyle("background-color", "transparent", buttonValue != Value)
+            .AddStyle("border-color", "#babfc2", IsDisabled)
+            .AddStyle("border-color", string.IsNullOrWhiteSpace(color) ? color : Color, !IsDisabled)
+            .AddStyle("opacity", "1")
+            .AddStyle("color", "#babfc2", IsDisabled)
+            .AddStyle("color", "#ffffff", !IsDisabled)
+            .Build();
+
+    private IList<int> PaginationRange => SetPaginationRange(Value, VisiblePages, Pages);
+
+    private IList<int> SetPaginationRange(int value, int visiblePages, int pages)
+    {
+        var start = 0;
+
+        if (visiblePages > pages)
+        {
+            visiblePages = pages;
+        }
+
+        var paginationMiddlePage = visiblePages / 2d;
+        if (value - paginationMiddlePage <= 0 || value > pages)
+        {
+            start = 1;
+        }
+        else
+        {
+            start = value + paginationMiddlePage > pages
+            ? pages - visiblePages + 1
+            : (int)Math.Round(value - paginationMiddlePage);
+        }
+
+        var range = new List<int>();
+        for (var i = 0; i < visiblePages; i++)
+        {
+            range.Add(start + i);
+        }
+
+        return range;
+    }
+
+    private void ChangePage(int pageNum)
+    {
+        if (pageNum < 1 || pageNum > Pages)
+        {
+            return;
+        }
+        //this.$emit('input', pageNum)
+        Value = pageNum;
+    }
+
+    private struct IconStruct 
+    {
+        internal string Direction { get; set; }
+        internal string Boundary { get; set; }
+    }
+}

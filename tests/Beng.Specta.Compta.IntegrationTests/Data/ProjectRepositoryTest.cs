@@ -16,11 +16,14 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
         [Fact]
         public async Task AddsAndSetsId()
         {
+            //SETUP
             var repository = GetEfRepository();
             var item = new Project();
 
+            //ATTEMPT
             await repository.AddAsync(item);
 
+            //VERIFY
             var newItem = (await repository.ListAsync<Project>()).FirstOrDefault();
 
             Assert.Equal(item, newItem);
@@ -30,6 +33,7 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
         [Fact]
         public async Task UpdatesAfterAddingIt()
         {
+            //SETUP
             // add an item
             var repository = GetEfRepository();
             var initialTitle = Guid.NewGuid().ToString();
@@ -48,8 +52,11 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
             var newCode = Guid.NewGuid().ToString();
             newItem.Code = newCode;
 
+            //ATTEMPT
             // Update the item
             await repository.UpdateAsync(newItem);
+            
+            //VERIFY
             var updatedItem = (await repository.ListAsync<Project>())
                 .FirstOrDefault(i => i.Code == newCode);
 
@@ -61,15 +68,18 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
         [Fact]
         public async Task DeletesAfterAddingIt()
         {
+            //SETUP
             // add an item
             var repository = GetEfRepository();
             var initialTitle = Guid.NewGuid().ToString();
             var item = new ProjectBuilder().SetName(initialTitle).Build();
             await repository.AddAsync(item);
 
+            //ATTEMPT
             // delete the item
             await repository.DeleteAsync(item);
 
+            //VERIFY
             var items = await repository.ListAsync<Project>();
             // verify it's no longer there
             Assert.DoesNotContain(items, i => i.Name == initialTitle);

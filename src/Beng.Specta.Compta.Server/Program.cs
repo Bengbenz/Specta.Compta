@@ -50,9 +50,9 @@ namespace Beng.Specta.Compta.Server
             }
         }
 
-        private static void MigrateDatabases(IHost iHost)
+        private static void MigrateDatabases(IHost host)
         {
-            using var scope = iHost.Services.CreateScope();
+            using var scope = host.Services.CreateScope();
             var services = scope.ServiceProvider;
 
             using (var context = services.GetRequiredService<TenantStoreDbContext>())

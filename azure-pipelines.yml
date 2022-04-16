@@ -30,9 +30,9 @@ variables:
 
 steps:
 - task: UseDotNet@2
-  displayName: 'Install .NET Core SDK 3.x'
+  displayName: 'Install .NET Core SDK 3.1.x'
   inputs:
-    version: 3.x
+    version: 3.1.x
 
 # do this before your build tasks
 - task: DotNetCoreCLI@2
@@ -69,7 +69,7 @@ steps:
   inputs:
     command: custom
     custom: tool
-    arguments: 'install -g dotnet-reportgenerator-globaltool'
+    arguments: 'install -g dotnet-reportgenerator-globaltool --version 5.1.4'
 
 - script: 'reportgenerator -reports:tests/**/coverage.cobertura.xml -targetdir:CodeCoverage -assemblyfilters:"-xunit*;-*Tests*" -reporttypes:"Cobertura;HtmlInline_AzurePipelines;Badges"' #TeamCitySummary, HtmlChart
   displayName: 'Codecoverage Report'
