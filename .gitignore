@@ -359,3 +359,4 @@ src/Beng.Specta.Compta.ComponentLibrary/IconSet/*.svg
 tests/Beng.Specta.Compta.UnitTests/.DS_Store
 src/.DS_Store
 .idea
+.vscode
