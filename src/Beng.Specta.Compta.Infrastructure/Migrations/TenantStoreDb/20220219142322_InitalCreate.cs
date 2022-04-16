@@ -2,7 +2,7 @@
 
 namespace Beng.Specta.Compta.Infrastructure.Migrations.TenantStoreDb
 {
-    public partial class TenantStore_InitialCreate : Migration
+    public partial class InitalCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -24,8 +24,7 @@ namespace Beng.Specta.Compta.Infrastructure.Migrations.TenantStoreDb
                 name: "IX_TenantInfo_Identifier",
                 table: "TenantInfo",
                 column: "Identifier",
-                unique: true,
-                filter: "[Identifier] IS NOT NULL");
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

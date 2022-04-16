@@ -42,7 +42,7 @@ namespace Beng.Specta.Compta.Server.Controllers
         }
 
         [HttpGet, AllowAnonymous]
-        public async Task<ActionResult> Details()
+        public async Task<IActionResult> Details()
         {
             IdentityUser identity = await _userManager.GetUserAsync(User);
 
@@ -63,7 +63,7 @@ namespace Beng.Specta.Compta.Server.Controllers
         }
 
         [HttpGet("{email}"), AllowAnonymous]
-        public async Task<ActionResult> Details(string email)
+        public async Task<IActionResult> Details(string email)
         {
             IdentityUser user = await _userManager.FindByEmailAsync(email);
 
@@ -72,7 +72,7 @@ namespace Beng.Specta.Compta.Server.Controllers
             {
                 Logger.LogError($"Can't get user '{email}'.");
                 ModelState.AddModelError(nameof(email), $"Any account with this email doesn't exist. Please register before.");
-                actionResult = BadRequest(ModelState);
+                actionResult = NotFound(ModelState);
             }
             else
             {
@@ -99,7 +99,7 @@ namespace Beng.Specta.Compta.Server.Controllers
             }
             if (result.RequiresTwoFactor)
             {
-                Logger.LogInformation($"Requires Tow factor.");
+                Logger.LogInformation($"Requires two factor.");
                 return Ok();
             }
             if (result.IsLockedOut)
@@ -108,12 +108,10 @@ namespace Beng.Specta.Compta.Server.Controllers
                 ModelState.AddModelError(nameof(model.Email), "User account locked out. contact your admin.");
                 return BadRequest(ModelState);
             }
-            else
-            {
-                Logger.LogError($"Failed to log in user: '{model.Email}'");
-                ModelState.AddModelError(nameof(model.Password), "Your password doesn't match");
-                return BadRequest(ModelState);
-            }
+            
+            Logger.LogError($"Failed to log in user: '{model.Email}'");
+            ModelState.AddModelError(nameof(model.Password), "Your password doesn't match");
+            return BadRequest(ModelState);
         }
 
         [HttpPost]
@@ -125,7 +123,7 @@ namespace Beng.Specta.Compta.Server.Controllers
 
         [HttpPost, AllowAnonymous]
         //[ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register([FromBody] RegisterUserInfoDTO model)
+        public async Task<IActionResult> Register([FromBody] RegisterUserInfoDTO model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
 

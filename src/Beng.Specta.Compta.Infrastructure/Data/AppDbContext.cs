@@ -51,6 +51,7 @@ namespace Beng.Specta.Compta.Infrastructure.Data
         public DbSet<ModulesForUser> ModulesForUsers { get; set; }
 
         /*
+         * Don't need with AppDesignTimeFactory
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(_configuration.GetConnectionString("AppConnection"));

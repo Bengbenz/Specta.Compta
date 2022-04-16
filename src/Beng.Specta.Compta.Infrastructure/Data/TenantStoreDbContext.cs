@@ -18,6 +18,7 @@ namespace Beng.Specta.Compta.Infrastructure.Data
         }
 
         /*
+         * Don't need with TenantStoreDesignTimeFactory
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(_configuration.GetConnectionString("TenantConnection"));
