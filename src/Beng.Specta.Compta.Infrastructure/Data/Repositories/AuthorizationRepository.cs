@@ -43,6 +43,11 @@ namespace Beng.Specta.Compta.Infrastructure.Data.Repositories
                 .Where(o => o.RoleName == roleName)
                 .ToListAsync();
         }
+        
+        public bool IsAnyUsersWithRole(string roleName)
+        {
+            return DbContext.UserToRoles.Any(o => o.RoleName == roleName);
+        }
 
         public async Task<ICollection<UserToRole>> GetUsersToRoleByIdAsync(string userId)
         {

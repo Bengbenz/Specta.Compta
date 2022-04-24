@@ -1,5 +1,5 @@
 @using Beng.Specta.Compta.Core.DTOs.Auth
-@inject IHttpApiClientRequestBuilder HttpRequestBuilder
+@inject HttpWebApiClient WebApiClient
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime 
 @inject ILogger<LoginForm> Logger
@@ -53,7 +53,7 @@
 
         if (isValid)
         {
-            await HttpRequestBuilder.CreateRequest("api/account/register")
+            await WebApiClient.CreateRequest("api/account/register")
                 .OnBadRequest<Dictionary<string, List<string>>>(errors =>
                 {
                     ServerSideValidator.DisplayErrors(errors, true);
@@ -77,7 +77,7 @@
     private async Task<bool> ServerValidate()
     {
         var result = false;
-        await HttpRequestBuilder.CreateRequest("api/account/details")
+        await WebApiClient.CreateRequest("api/account/details")
             .OnBadRequest(() => result = true)
             .OnOK<Dictionary<string, List<string>>>(errors =>
             {

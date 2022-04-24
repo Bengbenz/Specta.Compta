@@ -6,9 +6,9 @@ using Beng.Specta.Compta.Infrastructure.Data;
 using Beng.Specta.Compta.Server.Auth;
 using Beng.Specta.Compta.Server.Auth.Policies;
 
-namespace Beng.Specta.Compta.Server
+namespace Beng.Specta.Compta.Server.Config
 {
-    public static class ContainerExtensions
+    public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddCustomAuthorization(this IServiceCollection services)
 		{
@@ -20,12 +20,10 @@ namespace Beng.Specta.Compta.Server
 				})
                 .AddEntityFrameworkStores<AppDbContext>();
 
-			// services.ConfigureApplicationCookie(o => o.LoginPath = "/login");
-
-			//This registers the code to add the Permissions on login
+			// This registers the code to add the Permissions on login
 			services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, AddPermissionsToUserClaimsFactory>();
 		
-			//Register the Permission policy handlers
+			// Register the Permission policy handlers
 			services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
 			services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 					

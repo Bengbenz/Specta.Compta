@@ -12,7 +12,7 @@ using Beng.Specta.Compta.ComponentLibrary.Common;
 
 namespace Beng.Specta.Compta.Client.Services
 {
-    public class HttpApiClientRequestBuilder : IHttpApiClientRequestBuilder
+    public class HttpWebApiClient
     {
         private string _uri;
         private readonly HttpClient _httpClient;
@@ -21,12 +21,12 @@ namespace Beng.Specta.Compta.Client.Services
         
         private Func<HttpResponseMessage, Task> _onBadRequest;
         private Func<HttpResponseMessage, Task> _onNotFound;
-        private Func<HttpResponseMessage, Task> _onOK;
+        private Func<HttpResponseMessage, Task> _onOk;
 
         // private readonly IBrowserCookieService _browserCookieService;
         // private readonly IMessageService _messageService;
 
-        public HttpApiClientRequestBuilder(
+        public HttpWebApiClient(
             HttpClient httpClient,
             NavigationManager navigationManager,
             IJSRuntime jsRuntime)
@@ -57,9 +57,9 @@ namespace Beng.Specta.Compta.Client.Services
                 case HttpStatusCode.OK:
                 case HttpStatusCode.Created:
                 {
-                    if (_onOK != null)
+                    if (_onOk != null)
                     {
-                        await _onOK(response);
+                        await _onOk(response);
                     }
                     break;
                 }
@@ -115,15 +115,15 @@ namespace Beng.Specta.Compta.Client.Services
             await ExecuteHttpQuery(async () => await _httpClient.PostAsync(_uri, null));
         }
 
-        public IHttpApiClientRequestBuilder CreateRequest(string link)
+        public HttpWebApiClient CreateRequest(string link)
         {
             _uri = link ?? throw new ArgumentNullException(nameof(link));
             return this;
         }
         
-        public IHttpApiClientRequestBuilder OnOK<T>(Action<T> action)
+        public HttpWebApiClient OnOK<T>(Action<T> action)
         {
-            _onOK = async (HttpResponseMessage r) =>
+            _onOk = async (HttpResponseMessage r) =>
             {
                 T response = await JsonSerializer.DeserializeAsync<T>(await r.Content.ReadAsStreamAsync());
                 action(response);
@@ -131,18 +131,18 @@ namespace Beng.Specta.Compta.Client.Services
             return this;
         }
 
-        public IHttpApiClientRequestBuilder OnOK(Func<Task> func)
+        public HttpWebApiClient OnOK(Func<Task> func)
         {
-            _onOK = async (HttpResponseMessage r) =>
+            _onOk = async (HttpResponseMessage r) =>
             {
                 await func();
             };
             return this;
         }
 
-        public IHttpApiClientRequestBuilder OnOK(Action action)
+        public HttpWebApiClient OnOK(Action action)
         {
-            _onOK = (HttpResponseMessage r) =>
+            _onOk = (HttpResponseMessage r) =>
             {
                 action();
                 return Task.CompletedTask;
@@ -150,7 +150,7 @@ namespace Beng.Specta.Compta.Client.Services
             return this;
         }
 
-        public IHttpApiClientRequestBuilder OnOK(string successMessage = null, string navigateTo = null)
+        public HttpWebApiClient OnOK(string successMessage = null, string navigateTo = null)
         {
             OnOK(() =>
             {
@@ -164,18 +164,18 @@ namespace Beng.Specta.Compta.Client.Services
             return this;
         }
 
-        public IHttpApiClientRequestBuilder OnBadRequest(Func<Task> func)
+        public HttpWebApiClient OnBadRequest(Func<Task> func)
         {
-            _onBadRequest = async (HttpResponseMessage r) =>
+            _onBadRequest = async (r) =>
             {
                 await func();
             };
             return this;
         }
 
-        public IHttpApiClientRequestBuilder OnBadRequest<T>(Action<T> action)
+        public HttpWebApiClient OnBadRequest<T>(Action<T> action)
         {
-            _onBadRequest = async (HttpResponseMessage r) =>
+            _onBadRequest = async (r) =>
             {
                 T response = await JsonSerializer.DeserializeAsync<T>(await r.Content.ReadAsStreamAsync());
                 action(response);
@@ -183,9 +183,9 @@ namespace Beng.Specta.Compta.Client.Services
             return this;
         }
 
-        public IHttpApiClientRequestBuilder OnBadRequest(Action action)
+        public HttpWebApiClient OnBadRequest(Action action)
         {
-            _onBadRequest = (HttpResponseMessage r) =>
+            _onBadRequest = (r) =>
             {
                 action();
                 return Task.CompletedTask;
@@ -193,9 +193,9 @@ namespace Beng.Specta.Compta.Client.Services
             return this;
         }
 
-         public IHttpApiClientRequestBuilder OnNotFound<T>(Action<T> action)
+         public HttpWebApiClient OnNotFound<T>(Action<T> action)
         {
-            _onNotFound = async (HttpResponseMessage r) =>
+            _onNotFound = async (r) =>
             {
                 T response = await JsonSerializer.DeserializeAsync<T>(await r.Content.ReadAsStreamAsync());
                 action(response);
@@ -203,9 +203,9 @@ namespace Beng.Specta.Compta.Client.Services
             return this;
         }
 
-        public IHttpApiClientRequestBuilder OnNotFound(Action action)
+        public HttpWebApiClient OnNotFound(Action action)
         {
-            _onNotFound= (HttpResponseMessage r) =>
+            _onNotFound= (r) =>
             {
                 action();
                 return Task.CompletedTask;

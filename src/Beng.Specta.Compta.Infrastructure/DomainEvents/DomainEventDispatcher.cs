@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Autofac;
-
 using Beng.Specta.Compta.SharedKernel;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Beng.Specta.Compta.Infrastructure.DomainEvents
 {
@@ -15,11 +14,11 @@ namespace Beng.Specta.Compta.Infrastructure.DomainEvents
     // http://lostechies.com/jimmybogard/2014/05/13/a-better-domain-events-pattern/
     public class DomainEventDispatcher : IDomainEventDispatcher
     {
-        private readonly IComponentContext _container;
+        private readonly IServiceProvider _serviceProvider;
 
-        public DomainEventDispatcher(IComponentContext container)
+        public DomainEventDispatcher(IServiceProvider serviceProvider)
         {
-            _container = container;
+            _serviceProvider = serviceProvider;
         }
 
         public async Task Dispatch(BaseDomainEvent domainEvent)
@@ -40,8 +39,8 @@ namespace Beng.Specta.Compta.Infrastructure.DomainEvents
 
             Type handlerType = typeof(IHandle<>).MakeGenericType(domainEvent.GetType());
             Type wrapperType = typeof(DomainEventHandler<>).MakeGenericType(domainEvent.GetType());
-            IEnumerable handlers = (IEnumerable)_container.Resolve(typeof(IEnumerable<>).MakeGenericType(handlerType));
-            IEnumerable<DomainEventHandler> wrappedHandlers = handlers.Cast<object>()
+            IEnumerable<object> handlers = _serviceProvider.GetServices(handlerType);
+            IEnumerable<DomainEventHandler> wrappedHandlers = handlers
                 .Select(handler => (DomainEventHandler)Activator.CreateInstance(wrapperType, handler));
 
             return wrappedHandlers;

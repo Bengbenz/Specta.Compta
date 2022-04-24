@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -19,44 +20,43 @@ namespace Beng.Specta.Compta.Infrastructure.Data
     public class AppDbContext : MultiTenantIdentityDbContext
     {
         private readonly IDomainEventDispatcher _dispatcher;
-        private readonly IConfiguration _configuration;
 
         public AppDbContext(TenantInfo tenantInfo) : base(tenantInfo)
         {
         }
-
-        public AppDbContext(TenantInfo tenantInfo, IConfiguration configuration) : base(tenantInfo)
+        
+        public AppDbContext(
+            TenantInfo tenantInfo,
+            DbContextOptions<AppDbContext> options) : base(tenantInfo, options)
         {
-            _configuration = configuration;
         }
 
         public AppDbContext(
             TenantInfo tenantInfo,
             DbContextOptions<AppDbContext> options,
-            IConfiguration configuration
-            //IDomainEventDispatcher dispatcher
-            ) : base(tenantInfo, options)
+            IDomainEventDispatcher dispatcher) : this(tenantInfo, options)
         {
-            //_dispatcher = dispatcher;
-            _configuration = configuration;
+            _dispatcher = dispatcher;
         }
 
         public DbSet<Project> Projects { get; set; }
 
-        // Security : Custom authentification/authorisation parts
+        // Security : Custom authentication/authorisation parts
         public DbSet<UserToRole> UserToRoles { get; set; }
 
         public DbSet<RoleToPermissions> RolesToPermissions { get; set; }
 
         public DbSet<ModulesForUser> ModulesForUsers { get; set; }
 
-        /*
-         * Don't need with AppDesignTimeFactory
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(_configuration.GetConnectionString("AppConnection"));
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseNpgsql(TenantInfo.ConnectionString ?? throw new InvalidOperationException());
+            }
+            
             base.OnConfiguring(optionsBuilder);
-        }*/
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

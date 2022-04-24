@@ -31,15 +31,18 @@ namespace Beng.Specta.Compta.Infrastructure.Data
                 .Build();
 
             IConfigurationSection configSection = config.GetSection("DefaultTenant");
-            var tenantInfo = new TenantInfo(configSection.GetValue<string>("Id"),
-                                            configSection.GetValue<string>("Identifier"),
-                                            configSection.GetValue<string>("Name"),
-                                            configSection.GetValue<string>("ConnectionString"),
-                                            null);
+            var tenantInfo = new TenantInfo
+            {
+                Id = configSection.GetValue<string>("Id"),
+                Identifier = configSection.GetValue<string>("Identifier"),
+                Name = configSection.GetValue<string>("Name"),
+                ConnectionString = configSection.GetValue<string>("ConnectionString")
+            };
+            
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-            optionsBuilder.UseNpgsql(config.GetConnectionString("AppConnection"));
+            optionsBuilder.UseNpgsql(tenantInfo.ConnectionString);
 
-            return new AppDbContext(tenantInfo, optionsBuilder.Options, config);
+            return new AppDbContext(tenantInfo, optionsBuilder.Options);
         }
     }
 }

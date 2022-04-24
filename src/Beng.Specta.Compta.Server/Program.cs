@@ -1,68 +1,77 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 using Beng.Specta.Compta.Infrastructure.Data;
+using Finbuckle.MultiTenant;
 
 namespace Beng.Specta.Compta.Server
 {
     public sealed class Program
     {
-        public static async Task Main(string[] args) => (await BuildWebHostAsync(args)).Run();
-
-        private static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-
-        private static async Task<IHost> BuildWebHostAsync(string[] args)
+        public static async Task Main(string[] args)
         {
-            IHost host = CreateHostBuilder(args).Build();
+            var builder = WebApplication.CreateBuilder(args);
+            builder.Host.ConfigureLogging(logging =>
+            {
+                logging.ClearProviders();
+                logging.AddConsole();
+                logging.AddLog4Net("log4Net.xml");
+            });
 
-            //a) migrate/create the databases 
-            //b) add a SuperUser so you can log in and see what happens
-            MigrateDatabases(host);
-            await InitAppDatabaseAsync(host);
-            return host;
+            var startup = new Startup();
+            
+            // Add services to the container.
+            startup.ConfigureServices(builder.Services);
+            
+            var app = builder.Build();
+            
+            // Configure the HTTP request pipeline.
+            startup.Configure(app, app.Environment);
+            
+            // Seed App Database
+            //a) migrate/create the databases
+            var logger = app.Services.GetRequiredService<ILogger<Program>>();
+            await MigrateDatabasesAsync(app.Services, logger);
+            
+            //b) Add a Default Tenant and SuperUser, so you can log in and see what happens
+            await SeedData.PopulateAppDatabaseAsync(app.Services, logger);
+
+            // Run Server
+            await app.RunAsync();
         }
 
-        private static async Task InitAppDatabaseAsync(IHost host)
+        private static async Task MigrateDatabasesAsync(IServiceProvider serviceProvider, ILogger logger)
         {
-            using (var scope = host.Services.CreateScope())
+            try
             {
-                IServiceProvider serviceProvider = scope.ServiceProvider;
-                try
-                {
-                    await serviceProvider.PopulateAppDatabase();
-                }
-                catch (Exception ex)
-                {
-                    var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, $"An error occurred seeding the App DBs. Error: {ex.Message}");
-                }
+                var scopeServices = serviceProvider.CreateScope().ServiceProvider;
+                await using var tenantContext = scopeServices.GetRequiredService<TenantStoreDbContext>();
+                await tenantContext.Database.MigrateAsync();
             }
-        }
-
-        private static void MigrateDatabases(IHost host)
-        {
-            using var scope = host.Services.CreateScope();
-            var services = scope.ServiceProvider;
-
-            using (var context = services.GetRequiredService<TenantStoreDbContext>())
+            catch (Exception ex)
             {
-                context.Database.Migrate();
+                logger.LogError(ex, $"An error occurred seeding the App DBs. Error: {ex.Message}");
             }
 
-            using (var context = services.GetRequiredService<AppDbContext>())
+            try
             {
-                context.Database.Migrate();
+                var scopeServices = serviceProvider.CreateScope().ServiceProvider;
+                var store = scopeServices.GetRequiredService<IMultiTenantStore<TenantInfo>>();
+                foreach(var tenant in await store.GetAllAsync())
+                {
+                    await using var db = new AppDbContext(tenant);
+                    await db.Database.MigrateAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"An error occurred seeding the App DBs. Error: {ex.Message}");
             }
         }
     }
