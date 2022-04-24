@@ -2,7 +2,8 @@
 using System.Threading.Tasks;
 using Beng.Specta.Compta.Core.Entities;
 using Beng.Specta.Compta.Core.Events;
-using Beng.Specta.Compta.Core.Services;
+using Beng.Specta.Compta.Core.Handlers;
+
 using Xunit;
 
 namespace Beng.Specta.Compta.UnitTests.Core.Handlers

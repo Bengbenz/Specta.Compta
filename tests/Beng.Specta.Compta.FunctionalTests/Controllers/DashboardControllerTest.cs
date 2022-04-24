@@ -20,12 +20,12 @@ namespace Beng.Specta.Compta.FunctionalTests.Controllers
         [Fact]
         public async Task ReturnsViewWithCorrectMessage()
         {
-            //SETUP
+            // Arrange
 
-            //ATTEMPT
+            // Act
             var response = await _client.GetAsync(new Uri("/", UriKind.Relative));
             
-            //VERIFY
+            // Assert
             response.EnsureSuccessStatusCode();
             string responseAsString = await response.Content.ReadAsStringAsync();
 
