@@ -3,8 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Beng.Specta.Compta.Infrastructure.Data;
 using Beng.Specta.Compta.Infrastructure.Data.Repositories;
-
+using Beng.Specta.Compta.SharedKernel.Interfaces;
 using Finbuckle.MultiTenant;
+using Moq;
 
 namespace Beng.Specta.Compta.IntegrationTests.Data
 {
@@ -33,18 +34,27 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
 
         protected EfRepository GetEfRepository()
         {
-            // var mockDispatcher = new Mock<IDomainEventDispatcher>();
-
-            //_dbContext = new AppDbContext(options, mockDispatcher.Object);
-            var defaultTenant = new TenantInfo("finprod", "finprod", "Default Tenant", "", null);
-            AppDbContext = new AppDbContext(defaultTenant, CreateNewContextOptions(), null);
+            var mockDispatcher = new Mock<IDomainEventDispatcher>();
+            
+            AppDbContext = new AppDbContext(BuildDefaultTenantInfo(), CreateNewContextOptions(), mockDispatcher.Object);
             return new EfRepository(AppDbContext);
+        }
+
+        private TenantInfo BuildDefaultTenantInfo()
+        {
+            return new TenantInfo
+            {
+                Id = "finprod",
+                Identifier = "finprod",
+                ConnectionString = "Default_Connection_String",
+            };
         }
 
         protected AuthorizationRepository GetAuthorizationRepository()
         {
-            var defaultTenant = new TenantInfo("finprod", "finprod", "Default Tenant", "", null);
-            AppDbContext = new AppDbContext(defaultTenant, CreateNewContextOptions(), null);
+            var mockDispatcher = new Mock<IDomainEventDispatcher>();
+            
+            AppDbContext = new AppDbContext(BuildDefaultTenantInfo(), CreateNewContextOptions(), mockDispatcher.Object);
             return new AuthorizationRepository(AppDbContext);
         }
     }

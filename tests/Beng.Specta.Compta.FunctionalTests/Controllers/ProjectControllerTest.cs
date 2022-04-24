@@ -5,8 +5,7 @@ using System.Threading.Tasks;
 
 using Beng.Specta.Compta.Core.DTOs;
 using Beng.Specta.Compta.Server;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
+
 using Newtonsoft.Json;
 
 using Xunit;
@@ -25,16 +24,17 @@ namespace Beng.Specta.Compta.FunctionalTests.Controllers
         [Fact]
         public async Task List_ReturnsEmptyItems()
         {
-            //SETUP
+            // Arrange
 
-            //ATTEMPT
+            // Act
             var response = await _client.GetAsync(new Uri("api/project/list", UriKind.Relative));
             
-            //VERIFY
+            // Assert
             response.EnsureSuccessStatusCode();
             string responseAsString = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<IEnumerable<ProjectDTO>>(responseAsString);
 
+            Assert.NotNull(result);
             Assert.Empty(result);
         }
     }

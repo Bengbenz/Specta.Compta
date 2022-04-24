@@ -22,8 +22,7 @@ namespace Beng.Specta.Compta.FunctionalTests
                 new Claim(ClaimTypes.NameIdentifier, "John")
             }, testScheme);
             var principal = new ClaimsPrincipal(identity);
-            return await Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(principal,
-                new AuthenticationProperties(), testScheme)));
+            return await Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(principal, testScheme)));
         }
         
         public async Task<PolicyAuthorizationResult> AuthorizeAsync(

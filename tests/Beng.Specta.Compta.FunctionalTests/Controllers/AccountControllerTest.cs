@@ -5,9 +5,6 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-
 using Beng.Specta.Compta.Core.DTOs;
 using Beng.Specta.Compta.Core.DTOs.Auth;
 using Beng.Specta.Compta.IntegrationTests.Data;
@@ -31,12 +28,12 @@ namespace Beng.Specta.Compta.FunctionalTests.Controllers
         [Fact]
         public async Task Details_ReturnsLoggedOutUser()
         {
-            //SETUP
+            // Arrange
 
-            //ATTEMPT
+            // Act
             var response = await _client.GetAsync(new Uri("api/account/details", UriKind.Relative));
 
-            //VERIFY
+            // Assert
             response.EnsureSuccessStatusCode();
             var responseAsString = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<UserInfoDTO>(responseAsString);
@@ -49,19 +46,19 @@ namespace Beng.Specta.Compta.FunctionalTests.Controllers
         [Fact]
         public async Task Details_ReturnNotFound()
         {
-            //SETUP
+            // Arrange
 
-            //ATTEMPT
+            // Act
             var response = await _client.GetAsync(new Uri("api/account/details/Super@g1.com", UriKind.Relative));
 
-            //VERIFY
+            // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [Fact(Skip="To fix later, fix UserManager service")]
         public async Task Details_GetUserInfoByEmail()
         {
-            //SETUP
+            // Arrange
             var registerModel = new RegisterUserInfoDTO
             {
                 UserName = "Kevin01",
@@ -70,13 +67,14 @@ namespace Beng.Specta.Compta.FunctionalTests.Controllers
             };
             //await RegisterUserAsync(registerModel);
 
-            //ATTEMPT
+            // Act
             var response = await _client.GetAsync(new Uri("api/account/details/Kevin@g1.com", UriKind.Relative));
 
-            //VERIFY
+            // Assert
             response.EnsureSuccessStatusCode();
             var responseAsString = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(responseAsString);
+            Assert.NotNull(result);
             Assert.NotEmpty(result);
             Assert.True(result.ContainsKey("email"));
         }
@@ -84,7 +82,7 @@ namespace Beng.Specta.Compta.FunctionalTests.Controllers
         [Fact(Skip="To fix later, fix UserManager service")]
         public async Task SignIn_ReturnsLoggedUser()
         {
-            //SETUP
+            // Arrange
             var registerModel = new RegisterUserInfoDTO
             {
                 UserName = "SuperAdmin",
@@ -99,10 +97,10 @@ namespace Beng.Specta.Compta.FunctionalTests.Controllers
                 Password = registerModel.NewPassword
             };
             
-            //ATTEMPT
+            // Act
             var response = await _client.PostAsJsonAsync("api/account/signin", loginModel);
 
-            //VERIFY
+            // Assert
             response.EnsureSuccessStatusCode();
             var responseAsString = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<UserInfoDTO>(responseAsString);
@@ -115,7 +113,7 @@ namespace Beng.Specta.Compta.FunctionalTests.Controllers
         [Fact]
         public async Task Register_ReturnRegisterUser()
         {
-            //SETUP
+            // Arrange
             var model = new RegisterUserInfoDTO
             {
                 UserName = "Leo46",
@@ -125,10 +123,10 @@ namespace Beng.Specta.Compta.FunctionalTests.Controllers
                 AgreeWithTerms = true
             };
 
-            //ATTEMPT
+            // Act
             var response = await _client.PostAsJsonAsync("api/account/register", model);
             
-            //VERIFY
+            // Assert
             response.EnsureSuccessStatusCode();
             string responseAsString = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<UserInfoDTO>(responseAsString);

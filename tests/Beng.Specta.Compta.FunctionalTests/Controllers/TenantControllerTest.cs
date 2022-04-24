@@ -23,12 +23,12 @@ namespace Beng.Specta.Compta.FunctionalTests.Controllers
         [Fact]
         public async Task Info_ReturnsVersionAndLastUpdateDate()
         {
-            //SETUP
+            // Arrange
 
-            //ATTEMPT
+            // Act
             var response = await _client.GetAsync(new Uri("api/tenant/info", UriKind.Relative));
             
-            //VERIFY
+            // Assert
             response.EnsureSuccessStatusCode();
             var stringResponse = await response.Content.ReadAsStringAsync();
 
@@ -39,20 +39,19 @@ namespace Beng.Specta.Compta.FunctionalTests.Controllers
         [Fact]
         public async Task CurrentTenant_ReturnsTenantInfo()
         {
-            //SETUP
+            // Arrange
 
-            //ATTEMPT
+            // Act
             var response = await _client.GetAsync(new Uri("api/tenant/currenttenant", UriKind.Relative));
             
-            //VERIFY
+            // Assert
             response.EnsureSuccessStatusCode();
             var stringResponse = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<TenantInfoDTO>(stringResponse);
             
             Assert.NotNull(result);
-            Assert.NotEqual("Inconnu", result.Identifier);
-            Assert.Equal("finprod", result.Id);
-            Assert.Equal(result.Id, result.Identifier);
+            Assert.Equal("finprod", result.Identifier);
+            Assert.Equal("default-tenant-001", result.Id);
             Assert.NotEmpty(result.Name);
         }
     }

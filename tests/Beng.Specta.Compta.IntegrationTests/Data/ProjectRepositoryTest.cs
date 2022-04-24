@@ -16,14 +16,17 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
         [Fact]
         public async Task AddsAndSetsId()
         {
-            //SETUP
+            // Arrange
             var repository = GetEfRepository();
-            var item = new Project();
+            var item = new ProjectBuilder()
+                .SetCode("Bonjour")
+                .SetName("Mrs")
+                .Build();
 
-            //ATTEMPT
+            // Act
             await repository.AddAsync(item);
 
-            //VERIFY
+            // Assert
             var newItem = (await repository.ListAsync<Project>()).FirstOrDefault();
 
             Assert.Equal(item, newItem);
@@ -33,11 +36,11 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
         [Fact]
         public async Task UpdatesAfterAddingIt()
         {
-            //SETUP
+            // Arrange
             // add an item
             var repository = GetEfRepository();
             var initialTitle = Guid.NewGuid().ToString();
-            var item = new ProjectBuilder().SetCode(initialTitle).Build();
+            var item = new ProjectBuilder().SetCode(initialTitle).SetName("Nothing").Build();
 
             await repository.AddAsync(item);
 
@@ -52,11 +55,11 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
             var newCode = Guid.NewGuid().ToString();
             newItem.Code = newCode;
 
-            //ATTEMPT
+            // Act
             // Update the item
             await repository.UpdateAsync(newItem);
             
-            //VERIFY
+            // Assert
             var updatedItem = (await repository.ListAsync<Project>())
                 .FirstOrDefault(i => i.Code == newCode);
 
@@ -68,21 +71,21 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
         [Fact]
         public async Task DeletesAfterAddingIt()
         {
-            //SETUP
+            // Arrange
             // add an item
             var repository = GetEfRepository();
             var initialTitle = Guid.NewGuid().ToString();
-            var item = new ProjectBuilder().SetName(initialTitle).Build();
+            var item = new ProjectBuilder().SetCode(initialTitle).SetName("Bonjour").Build();
             await repository.AddAsync(item);
 
-            //ATTEMPT
+            // Act
             // delete the item
             await repository.DeleteAsync(item);
 
-            //VERIFY
+            // Assert
             var items = await repository.ListAsync<Project>();
             // verify it's no longer there
-            Assert.DoesNotContain(items, i => i.Name == initialTitle);
+            Assert.DoesNotContain(items, i => i.Code == initialTitle);
         }
     }
 }
