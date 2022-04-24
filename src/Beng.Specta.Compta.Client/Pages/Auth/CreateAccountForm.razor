@@ -9,18 +9,18 @@
     <ServerSideValidator @ref="ServerSideValidator" />
     <ValidationSummary />
     <VaInput @bind-Value="_userInfo.Email"
-             Type="@InputType.Email"
+             Type="@VaInputType.Email"
              Label="Email" />
 
     <VaInput @bind-Value="_userInfo.UserName"
              Label="Nom" />
 
     <VaInput @bind-Value="_userInfo.NewPassword"
-             Type="@InputType.Password"
+             Type="@VaInputType.Password"
              Label="Mot de passe" />
 
     <VaInput @bind-Value="_userInfo.ConfirmPassword"
-             Type="@InputType.Password"
+             Type="@VaInputType.Password"
              Label="Confirmer votre mot de passe" />
 
     <div class="auth-layout__options d-flex align--center justify--space-between">

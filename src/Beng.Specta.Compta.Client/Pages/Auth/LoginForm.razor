@@ -9,11 +9,11 @@
     <DataAnnotationsValidator />
     <ServerSideValidator @ref="ServerSideValidator" />
     <VaInput @bind-Value="_userInfo.Email"
-      Type="@InputType.Email"
+      Type="@VaInputType.Email"
       Label="Email" />
 
     <VaInput @bind-Value="_userInfo.Password"
-      Type="@InputType.Password"
+      Type="@VaInputType.Password"
       Label="Mot de passe" />
 
     <div class="auth-layout__options d-flex align--center justify--space-between">

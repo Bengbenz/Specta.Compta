@@ -2,7 +2,7 @@ using System.ComponentModel;
 
 namespace Beng.Specta.Compta.ComponentLibrary.Common
 {
-    public enum InputType
+    public enum VaInputType
     {
         [Description("checkbox")]
         Checkbox,
