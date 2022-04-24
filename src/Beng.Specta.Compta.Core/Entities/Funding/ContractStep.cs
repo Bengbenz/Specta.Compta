@@ -5,8 +5,6 @@ using Beng.Specta.Compta.Core.Events.Funding;
 using Beng.Specta.Compta.Core.ValueTypes.Funding;
 using Beng.Specta.Compta.SharedKernel;
 
-using Dawn;
-
 using NodaMoney;
 
 namespace Beng.Specta.Compta.Core.Entities.Funding
@@ -23,9 +21,7 @@ namespace Beng.Specta.Compta.Core.Entities.Funding
             DateTime paymentDate, 
             bool isComplete)
         {
-            Guard.Argument(title, nameof(title)).NotNull();
-
-            Title = title;
+            Title = title ?? throw new ArgumentNullException(nameof(title));
             AmountHT = amountHT;
             BillingDate = billingDate;
             PaymentDate = paymentDate;

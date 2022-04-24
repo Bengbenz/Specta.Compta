@@ -1,16 +1,21 @@
-using Microsoft.AspNetCore.Blazor.Hosting;
+using System.Threading.Tasks;
+
+using Beng.Specta.Compta.Client.Config;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 namespace Beng.Specta.Compta.Client
 {
     public sealed class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
-        }
+            var builder = WebAssemblyHostBuilder.CreateDefault(args); 
+            builder.RootComponents.Add<App>("#app");
 
-        public static IWebAssemblyHostBuilder CreateHostBuilder(string[] args) =>
-            BlazorWebAssemblyHost.CreateDefaultBuilder()
-            .UseBlazorStartup<Startup>();
+            // Add services to the container.
+            builder.Services.AddClientServices();
+
+            await builder.Build().RunAsync();
+        }
     }
 }

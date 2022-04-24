@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Beng.Specta.Compta.Core.Entities.Auth;
 using Beng.Specta.Compta.Core.Interfaces;
 using Beng.Specta.Compta.Core.Objects.Auth;
-using Beng.Specta.Compta.Infrastructure.Data;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
 
 [assembly: InternalsVisibleTo("Beng.Specta.Compta.FunctionalTests")]

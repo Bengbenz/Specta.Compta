@@ -16,6 +16,8 @@ namespace Beng.Specta.Compta.Core.Interfaces
 
         Task<ICollection<UserToRole>> GetUsersToRoleByNameAsync(string roleName);
 
+        bool IsAnyUsersWithRole(string roleName);
+
         Task<ICollection<UserToRole>> GetUsersToRoleByIdAsync(string userId);
     }
 }

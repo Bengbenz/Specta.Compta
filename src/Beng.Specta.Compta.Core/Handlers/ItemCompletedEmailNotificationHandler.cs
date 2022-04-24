@@ -1,17 +1,16 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using Beng.Specta.Compta.Core.Events;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
 
-using Dawn;
-
-namespace Beng.Specta.Compta.Core.Services
+namespace Beng.Specta.Compta.Core.Handlers
 {
     public class ItemCompletedEmailNotificationHandler : IHandle<ToDoItemCompletedEvent>
     {
         public Task Handle(ToDoItemCompletedEvent domainEvent)
         {
-            Guard.Argument(domainEvent, nameof(domainEvent)).NotNull();
+            if (domainEvent == null) throw new ArgumentNullException(nameof(domainEvent));
 
             // Do Nothing
             return Task.CompletedTask;

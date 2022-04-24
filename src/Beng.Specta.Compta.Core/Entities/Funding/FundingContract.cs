@@ -1,11 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 using Beng.Specta.Compta.Core.ValueTypes.Funding;
 using Beng.Specta.Compta.SharedKernel;
-
-using Dawn;
 
 using NodaMoney;
 
@@ -18,16 +17,11 @@ namespace Beng.Specta.Compta.Core.Entities.Funding
     {
         public FundingContract(FundingOrganization name)
         {
-            Guard.Argument(name, nameof(name)).NotNull();
-
-            FundingPartner = name;
+            FundingPartner = name ?? throw new ArgumentNullException(nameof(name));
         }
 
-        public FundingContract(string name)
+        public FundingContract(string name) : this(new FundingOrganization(name))
         {
-            Guard.Argument(name, nameof(name)).NotNull().NotEmpty();
-
-            FundingPartner = new FundingOrganization(name);
         }
 
         [Required]

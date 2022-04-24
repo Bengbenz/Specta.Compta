@@ -4,6 +4,7 @@ using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+
 namespace Beng.Specta.Compta.Infrastructure.Data
 {
     /// <summary>
@@ -28,7 +29,7 @@ namespace Beng.Specta.Compta.Infrastructure.Data
                 .Build();
 
             var optionsBuilder = new DbContextOptionsBuilder<TenantStoreDbContext>();
-            optionsBuilder.UseNpgsql(config.GetConnectionString("TenantConnection"));
+            optionsBuilder.UseNpgsql(config.GetConnectionString("TenantStore"));
 
             return new TenantStoreDbContext(optionsBuilder.Options, config);
         }

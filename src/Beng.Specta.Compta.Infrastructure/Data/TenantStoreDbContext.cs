@@ -1,28 +1,31 @@
+using Finbuckle.MultiTenant;
+using Finbuckle.MultiTenant.Stores;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-using Finbuckle.MultiTenant.Stores;
-
 namespace Beng.Specta.Compta.Infrastructure.Data
 {
-    public class TenantStoreDbContext : EFCoreStoreDbContext
+    public class TenantStoreDbContext : EFCoreStoreDbContext<TenantInfo>
     {
         private readonly IConfiguration _configuration;
 
         public TenantStoreDbContext(
             DbContextOptions<TenantStoreDbContext> options,
-            IConfiguration configuration = null)
+            IConfiguration configuration)
             : base(options)
         {
             _configuration = configuration;
         }
 
-        /*
-         * Don't need with TenantStoreDesignTimeFactory
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(_configuration.GetConnectionString("TenantConnection"));
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseNpgsql(_configuration.GetConnectionString("TenantStore"));
+            }
+            
             base.OnConfiguring(optionsBuilder);
-        }*/
+        }
     }
 }

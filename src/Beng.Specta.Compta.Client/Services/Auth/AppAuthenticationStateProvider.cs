@@ -1,8 +1,8 @@
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Logging;
 
@@ -26,7 +26,7 @@ namespace Beng.Specta.Compta.Client.Services.Auth
         
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var account = await _httpClient.GetJsonAsync<UserInfoDTO>("api/account/details");
+            var account = await _httpClient.GetFromJsonAsync<UserInfoDTO>("api/account/details");
 
             var isAuthenticated = (account?.IsAuthenticated).Value;
             var identity = isAuthenticated
