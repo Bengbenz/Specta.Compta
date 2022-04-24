@@ -1,4 +1,5 @@
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Components;
@@ -30,7 +31,7 @@ namespace Beng.Specta.Compta.Client.Services
         {
             if (_tenantInfo == null)
             {
-                _tenantInfo = await _httpClient.GetJsonAsync<TenantInfoDTO>("api/tenant/currenttenant");
+                _tenantInfo = await _httpClient.GetFromJsonAsync<TenantInfoDTO>("api/tenant/currenttenant");
             }
 
             return _tenantInfo;

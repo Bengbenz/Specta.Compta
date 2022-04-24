@@ -30,9 +30,9 @@ variables:
 
 steps:
 - task: UseDotNet@2
-  displayName: 'Install .NET Core SDK 3.1.x'
+  displayName: 'Install .NET Core SDK'
   inputs:
-    version: 3.1.x
+    version: 6.x
 
 # do this before your build tasks
 - task: DotNetCoreCLI@2

@@ -115,7 +115,7 @@ namespace Beng.Specta.Compta.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SignOut()
+        public async Task<IActionResult> SignUserOut()
         {
             await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
             return Ok();

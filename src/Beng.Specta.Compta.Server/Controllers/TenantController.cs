@@ -29,7 +29,7 @@ namespace Beng.Specta.Compta.Server.Controllers
         [HttpGet]
         public ActionResult<TenantInfoDTO> CurrentTenant()
         {
-            TenantInfo tenantInfo = HttpContext.GetMultiTenantContext()?.TenantInfo;
+            var tenantInfo = HttpContext.GetMultiTenantContext<TenantInfo>()?.TenantInfo;
             TenantInfoDTO tenantInfoDto;
             if (tenantInfo != null)
             {

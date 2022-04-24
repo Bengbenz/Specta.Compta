@@ -1,9 +1,8 @@
 
+using System;
 using System.ComponentModel.DataAnnotations;
 
 using Beng.Specta.Compta.SharedKernel;
-
-using Dawn;
 
 namespace Beng.Specta.Compta.Core.ValueTypes.Funding
 {
@@ -11,10 +10,8 @@ namespace Beng.Specta.Compta.Core.ValueTypes.Funding
     {
         public FundingOrganization (string name, string description = "")
         {
-            Guard.Argument(name, nameof(name)).NotNull();
-
-            this.Name = name;
-            this.Description = description;
+            Name = name ?? throw new ArgumentNullException(nameof(name));
+            Description = description;
         }
 
         [Required]

@@ -1,5 +1,5 @@
 @using Beng.Specta.Compta.Core.DTOs.Auth
-@inject IHttpApiClientRequestBuilder HttpRequestBuilder
+@inject HttpWebApiClient WebApiClient
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime 
 @inject ILogger<LoginForm> Logger
@@ -9,18 +9,18 @@
     <ServerSideValidator @ref="ServerSideValidator" />
     <ValidationSummary />
     <VaInput @bind-Value="_userInfo.Email"
-             Type="@InputType.Email"
+             Type="@VaInputType.Email"
              Label="Email" />
 
     <VaInput @bind-Value="_userInfo.UserName"
              Label="Nom" />
 
     <VaInput @bind-Value="_userInfo.NewPassword"
-             Type="@InputType.Password"
+             Type="@VaInputType.Password"
              Label="Mot de passe" />
 
     <VaInput @bind-Value="_userInfo.ConfirmPassword"
-             Type="@InputType.Password"
+             Type="@VaInputType.Password"
              Label="Confirmer votre mot de passe" />
 
     <div class="auth-layout__options d-flex align--center justify--space-between">
@@ -53,7 +53,7 @@
 
         if (isValid)
         {
-            await HttpRequestBuilder.CreateRequest("api/account/register")
+            await WebApiClient.CreateRequest("api/account/register")
                 .OnBadRequest<Dictionary<string, List<string>>>(errors =>
                 {
                     ServerSideValidator.DisplayErrors(errors, true);
@@ -77,7 +77,7 @@
     private async Task<bool> ServerValidate()
     {
         var result = false;
-        await HttpRequestBuilder.CreateRequest("api/account/details")
+        await WebApiClient.CreateRequest("api/account/details")
             .OnBadRequest(() => result = true)
             .OnOK<Dictionary<string, List<string>>>(errors =>
             {

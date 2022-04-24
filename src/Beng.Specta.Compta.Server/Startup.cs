@@ -6,32 +6,20 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
-using Beng.Specta.Compta.Infrastructure;
-
+using Beng.Specta.Compta.Core.Config;
+using Beng.Specta.Compta.Infrastructure.Config;
+using Beng.Specta.Compta.Server.Config;
 using log4net;
 
 namespace Beng.Specta.Compta.Server
 {
     public class Startup
 	{
-		public IConfiguration Configuration { get; }
-
-        public IWebHostEnvironment Env { get; }
-
-        public Startup(IConfiguration configuration, IWebHostEnvironment env)
-        {
-            Configuration = configuration;
-            Env = env;
-        }
-
         ///<summary>
-        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// Use this method to add services to the container.
         /// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         ///</summary>
 		public void ConfigureServices(IServiceCollection services)
@@ -45,25 +33,24 @@ namespace Beng.Specta.Compta.Server
                     new[] { MediaTypeNames.Application.Octet });
             });
             
-            services.AddDbContext()
-                    .AddMultiTenantInfra()
-                    .AddCustomAuthorization()
-                    .AddInfrastructureServices();
-                    //.AddAppWebServices(typeof(Startup).Assembly);
+            services.AddDatabaseDeveloperPageExceptionFilter();
+            services.AddAppDbContext()
+                .AddMultiTenantInfra()
+                .AddCustomAuthorization()
+                .AddInfrastructureServices()
+                .AddAppCoreServices();
         }
 
         ///<summary>
-        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// Use this method to configure the HTTP request pipeline.
         ///</summary>
-        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            loggerFactory.AddLog4Net("log4Net.xml");
-
-			if (Env.IsDevelopment())
+			if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
                 app.UseStatusCodePages();
-                app.UseBlazorDebugging();
+                app.UseWebAssemblyDebugging();
+                app.UseMigrationsEndPoint();
             }
             else
             {
@@ -72,7 +59,7 @@ namespace Beng.Specta.Compta.Server
                 app.UseHsts();
             }
 
-            // Middlware for Application_BeginRequest (log)
+            // Middleware for Application_BeginRequest (log)
             app.Use((ctx, next) =>
             {
                 LogicalThreadContext.Properties["activityid"] = new ActivityIdHelper(ctx);
@@ -81,24 +68,21 @@ namespace Beng.Specta.Compta.Server
             });
 
             app.UseHttpsRedirection();
+            app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
 
-            // In ASP.NET Core 3 this should be before UseMultiTenant!
-            app.UseRouting();
-
-            // Before UseAuthentication and UseMvc!
+            // Before UseAuthentication !
             app.UseMultiTenant();
+            app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseClientSideBlazorFiles<Client.Startup>();
+            //app.UseBlazorFrameworkFiles();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute("default", "{__tenant__=}/{controller}/{action}");
-                //endpoints.MapControllers();
-                endpoints.MapDefaultControllerRoute();
-                endpoints.MapFallbackToClientSideBlazor<Client.Startup>("index.html");
+                endpoints.MapFallbackToFile("index.html");
             });
 		}
 

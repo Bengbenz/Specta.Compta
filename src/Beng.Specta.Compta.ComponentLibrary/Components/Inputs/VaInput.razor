@@ -106,13 +106,13 @@
     [Parameter] public IEnumerable<string> Messages { get; set; } = Enumerable.Empty<string>();
     [Parameter] public string Label { get; set; }
     [Parameter] public string PlaceHolder { get; set; }
-    [Parameter] public InputType Type { get; set; } = InputType.Text;
+    [Parameter] public VaInputType Type { get; set; } = VaInputType.Text;
     [Parameter] public Expression<Func<object>> ValidationFor { get; set; }
     
     private ElementReference TextArea { get; set; }
     private bool IsFocused { get; set; }
     private bool HasContent => !string.IsNullOrWhiteSpace(Value);
-    private bool IsTextarea => Type == InputType.TextArea;
+    private bool IsTextarea => Type == VaInputType.TextArea;
 
     private IList<string> ErrorMessages => ValidationFor != null
         ? EditContext.GetValidationMessages(ValidationFor).ToList()

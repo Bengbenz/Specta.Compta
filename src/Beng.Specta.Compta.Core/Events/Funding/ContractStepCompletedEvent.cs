@@ -1,7 +1,6 @@
+using System;
 using Beng.Specta.Compta.Core.Entities.Funding;
 using Beng.Specta.Compta.SharedKernel;
-
-using Dawn;
 
 namespace Beng.Specta.Compta.Core.Events.Funding
 {
@@ -11,9 +10,7 @@ namespace Beng.Specta.Compta.Core.Events.Funding
 
         public ContractStepCompletedEvent(ContractStep completedItem)
         {
-            Guard.Argument(completedItem, nameof(completedItem)).NotNull();
-            
-            CompletedStep = completedItem;
+            CompletedStep = completedItem ?? throw new ArgumentNullException(nameof(completedItem));
         }
     }
 }

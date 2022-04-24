@@ -2,41 +2,36 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <PackageReference Update="Ardalis.EFCore.Extensions" Version="1.1.0" />
-    <PackageReference Update="Dawn.Guard" Version="1.12.0" />
-    <PackageReference Update="Autofac" Version="4.9.4" />
-    <PackageReference Update="Autofac.Extensions.DependencyInjection" Version="5.0.0" />
-    <PackageReference Update="BlazorComponentUtilities" Version="1.6.0" />
-    <PackageReference Update="Blazor.Extensions.Logging" Version="1.1.0-preview2" />
-    <PackageReference Update="Finbuckle.MultiTenant" Version="5.0.4" />
-    <PackageReference Update="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
-    <PackageReference Update="Microsoft.Web.LibraryManager.Build" Version="2.0.96" />
-    <PackageReference Update="Microsoft.AspNetCore.Blazor" Version="3.1.0-preview4.19579.2" />
-    <PackageReference Update="Microsoft.AspNetCore.Blazor.HttpClient" Version="3.1.0-preview4.19579.2" />
-    <PackageReference Update="Microsoft.AspNetCore.Blazor.Build" Version="3.1.0-preview4.19579.2" PrivateAssets="all" />
-    <PackageReference Update="Microsoft.AspNetCore.Blazor.Server" Version="3.1.0-preview4.19579.2" />
-    <PackageReference Update="Microsoft.AspNetCore.Components" Version="3.1.4" />
-    <PackageReference Update="Microsoft.AspNetCore.Components.Web" Version="3.1.4" />
-    <PackageReference Update="Microsoft.AspNetCore.Components.Authorization" Version="3.1.4" />
-    <PackageReference Update="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.4" />
-    <PackageReference Update="Microsoft.AspNetCore.Identity.UI" Version="3.1.4" />
-    <PackageReference Update="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.4" />
-    <PackageReference Update="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.4" />
-    <PackageReference Update="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.4" />
-    <PackageReference Update="Microsoft.EntityFrameworkCore.Tools" Version="3.1.4" /> <!-- Tools for NuGet Package Manager Console -->
-    <PackageReference Update="Microsoft.EntityFrameworkCore.Design" Version="3.1.4" PrivateAssets="all" /> <!-- Tools for Dotnet ef cli (dotnet ef migrations for example) -->
-    <PackageReference Update="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="3.1.0" />
-    <PackageReference Update="log4net" Version="2.0.8" />
-    <PackageReference Update="NETStandard.Library" Version="2.0.3" />
-    <PackageReference Update="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.4" />
+    <PackageReference Update="BlazorComponentUtilities" Version="1.8.0" /> <!-- CSS & Style Builder Pattern -->
+    <PackageReference Update="Blazor.Extensions.Logging" Version="2.0.4" /> <!-- Logging extension for Blazor -->
+    <PackageReference Update="Finbuckle.MultiTenant.AspNetCore" Version="6.7.2" />
+    <PackageReference Update="Finbuckle.MultiTenant.EntityFrameworkCore" Version="6.7.2" />
+    <PackageReference Update="Microsoft.AspNetCore.Components.Authorization" Version="6.0.4" /> <!-- Authentication and authorization support for Blazor applications. -->
+    <PackageReference Update="Microsoft.AspNetCore.Components.Web" Version="6.0.4" /> <!-- Support for rendering ASP.NET Core components for browsers. Includes Microsoft.AspNetCore.Components -->
+    <PackageReference Update="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.4" /> <!-- Support building SPAs with Blazor running under WebAssembly -->
+    <PackageReference Update="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.4" />
+    <PackageReference Update="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.4" /> <!-- ASP.NET Core middleware for Entity Framework Core error pages -->
+    <PackageReference Update="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.4" />
+    <PackageReference Update="Microsoft.AspNetCore.Identity.UI" Version="6.0.4" />
+    <PackageReference Update="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.4" />
+    <PackageReference Update="Microsoft.EntityFrameworkCore.Tools" Version="6.0.4" PrivateAssets="all" /> <!-- Tools for Dotnet ef cli (dotnet ef migrations for example); Includes Microsoft.EntityFrameworkCore.Design -->
+    <PackageReference Update="Microsoft.Extensions.Configuration.Json" Version="6.0.0" /> <!-- JSON configuration provider implementation for Microsoft.Extensions.Configuration  -->
+    <PackageReference Update="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="6.0.1" />
+    <PackageReference Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+    <PackageReference Update="Microsoft.Extensions.Http" Version="6.0.0" />
+    <PackageReference Update="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="6.1.0" />
+    <PackageReference Update="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.3" /> <!-- Tools to scaffold code (controller, identity,...) -->
+    <PackageReference Update="Microsoft.Web.LibraryManager.Build" Version="2.1.161" /> <!-- Libman package: Microsoft Library Manager -->
+    <PackageReference Update="log4net" Version="2.0.14" />
+    <PackageReference Update="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.3" />
     <PackageReference Update="NodaMoney" Version="1.0.5" />
-    <PackageReference Update="SQLite" Version="3.13.0" />
-    <PackageReference Update="Syncfusion.Blazor" Version="18.1.0.36-beta" />
-    <PackageReference Update="Syncfusion.Blazor.WordProcessor" Version="18.1.0.36-beta" />
-    <PackageReference Update="Syncfusion.Licensing" Version="18.1.0.36-beta" />
-    <PackageReference Update="System.ComponentModel.Annotations" Version="4.7.0"/>
-    <PackageReference Update="System.Collections.Immutable" Version="1.7.0" />
-    <PackageReference Update="System.Net.Http.Json" Version="3.2.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+    <PackageReference Update="Syncfusion.Blazor" Version="20.1.0.50" />
+    <PackageReference Update="Syncfusion.Blazor.WordProcessor" Version="20.1.0.50" />
+    <PackageReference Update="Syncfusion.Licensing" Version="20.1.0.50" />
+    <PackageReference Update="System.ComponentModel.Annotations" Version="5.0.0"/>
+    <PackageReference Update="System.Collections.Immutable" Version="6.0.0" />
+    <PackageReference Update="System.Net.Http.Json" Version="6.0.0" /> <!--Provides extension methods for System.Net.Http.HttpClient -->
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="6.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -47,18 +42,19 @@
   </ItemGroup>
   
   <ItemGroup Condition="'$(TestProjectMode)' == 'true'">
-    <PackageReference Include="NETStandard.Library" Version="2.0.3" />
     <PackageReference Include="ReportGenerator" Version="5.1.4" />
-    <PackageReference Include="Moq" Version="4.13.0" />
-    <PackageReference Include="coverlet.msbuild" Version="2.8.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.4" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.4" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.4" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.4" />
-    <PackageReference Include="System.Net.Http.Json" Version="3.2.0" />
+    <PackageReference Include="Moq" Version="4.17.2" />
+    <PackageReference Include="coverlet.msbuild" Version="3.1.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.4" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.4" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.4" />
+    <PackageReference Include="System.Net.Http.Json" Version="6.0.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.console" Version="2.4.1" PrivateAssets="all" />
-    <PackageReference Update="xunit.runner.visualstudio" Version="2.4.1" PrivateAssets="all" />
+    <PackageReference Update="xunit.runner.visualstudio" Version="2.4.3" PrivateAssets="all" />
   </ItemGroup>
 </Project>
