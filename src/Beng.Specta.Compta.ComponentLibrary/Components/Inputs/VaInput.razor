@@ -1,6 +1,6 @@
 @inherits InputBase<string>
 @using System.Linq.Expressions
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JsRuntime
 
 <VaInputWrapper class="@ComputedClass"
     IsDisabled="@IsDisabled"
@@ -76,10 +76,15 @@
                     <div style="@IconStyle">
                         @Append
                     </div>
-                    <VaIcon IsVisible="@(IsRemovable && HasContent)"
+                    <VaIcon IsVisible="@(IsRemovable && HasContent && !IsPassword)"
                             @onclick="ClearContent"
                             class="va-input__container__close-icon"
                             name="fa fa-times-circle"
+                            style="@IconStyle" />
+                    <VaIcon IsVisible="@(IsPassword && HasContent)"
+                            @onclick="ToggleShowPassword"
+                            class="va-input__container__close-icon"
+                            name="@_passwordIcon"
                             style="@IconStyle" />
                 </div>
             }
@@ -113,6 +118,9 @@
     private bool IsFocused { get; set; }
     private bool HasContent => !string.IsNullOrWhiteSpace(Value);
     private bool IsTextarea => Type == VaInputType.TextArea;
+    private bool IsPassword => _originalInputType == VaInputType.Password;
+    private VaInputType _originalInputType;
+    private string _passwordIcon = "fa fa-eye";
 
     private IList<string> ErrorMessages => ValidationFor != null
         ? EditContext.GetValidationMessages(ValidationFor).ToList()
@@ -184,7 +192,21 @@
     
     private void ClearContent() => Value = string.Empty;
 
-    private async Task AdjusteHeightAsync()
+    private void ToggleShowPassword()
+    {
+        if (Type == VaInputType.Password)
+        {
+            Type = VaInputType.Text;
+            _passwordIcon = "fa fa-eye-slash";
+        }
+        else
+        {
+            Type = VaInputType.Password;
+            _passwordIcon = "fa fa-eye";
+        }
+    }
+
+    private async Task AdjustHeightAsync()
     {
         if (!IsAutoSize || !IsTextarea)
         {
@@ -193,12 +215,17 @@
 
         int minRows = MinRows ?? 1;
         int maxRows = MaxRows ?? int.MaxValue;
-        await JSRuntime.CalculateNodeHeightAsync(TextArea, false, minRows, maxRows);
+        await JsRuntime.CalculateNodeHeightAsync(TextArea, false, minRows, maxRows);
     }
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await AdjusteHeightAsync();
+        await AdjustHeightAsync();
+    }
+    
+    protected override void OnInitialized()
+    {
+        _originalInputType = Type;
     }
 
     protected override bool TryParseValueFromString(

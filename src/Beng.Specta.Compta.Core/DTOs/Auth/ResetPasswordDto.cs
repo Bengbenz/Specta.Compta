@@ -2,7 +2,7 @@
 
 namespace Beng.Specta.Compta.Core.DTOs.Auth
 {
-    public class RegisterUserInfoDTO : UserInfoDTO
+    public class ResetPasswordDto : UserInfoDto
     {
         [Required]
         [DataType(DataType.Password)]
@@ -14,7 +14,6 @@ namespace Beng.Specta.Compta.Core.DTOs.Auth
         [Compare("NewPassword", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
 
-        [Range(typeof(bool), "true", "true", ErrorMessage = "You must read and agree with terms, or leave.")]
-        public bool AgreeWithTerms { get; set; }
+        public string Code { get; set; }
     }
 }

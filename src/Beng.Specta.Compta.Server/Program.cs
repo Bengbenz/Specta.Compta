@@ -52,7 +52,10 @@ namespace Beng.Specta.Compta.Server
             {
                 var scopeServices = serviceProvider.CreateScope().ServiceProvider;
                 await using var tenantContext = scopeServices.GetRequiredService<TenantStoreDbContext>();
-                await tenantContext.Database.MigrateAsync();
+                if (tenantContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
+                {
+                    await tenantContext.Database.MigrateAsync();
+                }
             }
             catch (Exception ex)
             {
@@ -65,8 +68,11 @@ namespace Beng.Specta.Compta.Server
                 var store = scopeServices.GetRequiredService<IMultiTenantStore<TenantInfo>>();
                 foreach(var tenant in await store.GetAllAsync())
                 {
-                    await using var db = new AppDbContext(tenant);
-                    await db.Database.MigrateAsync();
+                    await using var dbContext = new AppDbContext(tenant);
+                    if (dbContext.Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
+                    {
+                        await dbContext.Database.MigrateAsync();
+                    }
                 }
             }
             catch (Exception ex)

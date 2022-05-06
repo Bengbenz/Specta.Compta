@@ -2,7 +2,7 @@
 @inject AppAuthenticationStateProvider AuthService
 @inject HttpWebApiClient WebApiClient
 @inject NavigationManager NavigationManager
-@inject IJSRuntime JSRuntime 
+@inject IJSRuntime JsRuntime 
 @inject ILogger<LoginForm> Logger
 
 <EditForm EditContext="@_editContext" OnSubmit="LoginUser">
@@ -30,7 +30,7 @@
 {
     [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
 
-    private SignInUserInfoDTO _userInfo { get; set; } = new SignInUserInfoDTO();
+    private SignInUserInfoDto _userInfo { get; set; } = new SignInUserInfoDto();
     private ServerSideValidator ServerSideValidator { get; set; }
     private EditContext _editContext;
 
@@ -55,8 +55,8 @@
                     AuthService.Login();
                     Logger.LogDebug($"{GetType().Name}: User Logged");
                     NavigationManager.NavigateTo("/");
-                    JSRuntime.LaunchToast("success", $"Welcome {_userInfo.Email}");
-                    _userInfo = new SignInUserInfoDTO();
+                    JsRuntime.LaunchToast("success", $"Welcome {_userInfo.Email}");
+                    _userInfo = new SignInUserInfoDto();
                 })
                 .PostAsync(_userInfo);
         }
@@ -70,9 +70,9 @@
     {
         var result = false;
         await WebApiClient.CreateRequest("api/account/details")
-            .OnBadRequest<Dictionary<string, List<string>>>(errors =>
+            .OnNotFound(() =>
             {
-                ServerSideValidator.DisplayErrors(errors, true);
+                ServerSideValidator.DisplayError(nameof(_userInfo.Email), "Invalid credentials");
                 result = false;
             })
             .OnOK(() => result = true)

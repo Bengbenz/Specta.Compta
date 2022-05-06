@@ -33,6 +33,17 @@
         if (shouldLog) Logger.LogDebug($"{GetType().Name} - DisplayErrors: {string.Join(" | ", errors.Select(x  => ToTitleCase(x.Key) + ": " + string.Join(",", x.Value)))}");
         EditContext.NotifyValidationStateChanged();
     }
+    
+    public void DisplayError(string errorKey, string errorDescription, bool shouldLog = false)
+    {
+        if (string.IsNullOrWhiteSpace(errorKey)) throw new ArgumentNullException(nameof(errorKey));
+        if (string.IsNullOrWhiteSpace(errorDescription)) throw new ArgumentNullException(nameof(errorDescription));
+        var errors = new Dictionary<string, List<string>>
+        {
+            { errorKey, new List<string>{ errorDescription } }
+        };
+        DisplayErrors(errors, shouldLog);
+    }
 
     private string ToTitleCase(string key) => CultureInfo.InvariantCulture.TextInfo.ToTitleCase(key);
 }

@@ -9,8 +9,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Beng.Specta.Compta.UnitTests\Beng.Specta.Compta.UnitTests.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
-  </ItemGroup>
 </Project>

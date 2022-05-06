@@ -9,7 +9,6 @@ using Beng.Specta.Compta.Core.DTOs;
 using Beng.Specta.Compta.Core.DTOs.Auth;
 using Beng.Specta.Compta.IntegrationTests.Data;
 using Beng.Specta.Compta.Server;
-
 using Newtonsoft.Json;
 
 using Xunit;
@@ -26,7 +25,7 @@ namespace Beng.Specta.Compta.FunctionalTests.Controllers
         }
 
         [Fact]
-        public async Task Details_ReturnsLoggedOutUser()
+        public async Task Details_Returns_LoggedOutUser()
         {
             // Arrange
 
@@ -36,7 +35,7 @@ namespace Beng.Specta.Compta.FunctionalTests.Controllers
             // Assert
             response.EnsureSuccessStatusCode();
             var responseAsString = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<UserInfoDTO>(responseAsString);
+            var result = JsonConvert.DeserializeObject<UserInfoDto>(responseAsString);
 
             Assert.NotNull(result);
             Assert.False(result.IsAuthenticated);
@@ -44,7 +43,7 @@ namespace Beng.Specta.Compta.FunctionalTests.Controllers
         }
 
         [Fact]
-        public async Task Details_ReturnNotFound()
+        public async Task Details_With_UnknownEmail_Returns_NotFound()
         {
             // Arrange
 
@@ -55,46 +54,33 @@ namespace Beng.Specta.Compta.FunctionalTests.Controllers
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
-        [Fact(Skip="To fix later, fix UserManager service")]
-        public async Task Details_GetUserInfoByEmail()
+        [Fact]
+        public async Task Details_With_KnownEmail_Returns_UserInfo()
         {
             // Arrange
-            var registerModel = new RegisterUserInfoDTO
-            {
-                UserName = "Kevin01",
-                Email = "Kevin@g1.",
-                NewPassword = "Kevin@g1."
-            };
-            //await RegisterUserAsync(registerModel);
+            var registerModel = await RegisterUserAsync("Kevin01", true);
 
             // Act
-            var response = await _client.GetAsync(new Uri("api/account/details/Kevin@g1.com", UriKind.Relative));
+            var response = await _client.GetAsync(new Uri($"api/account/details/{registerModel.Email}", UriKind.Relative));
 
             // Assert
             response.EnsureSuccessStatusCode();
             var responseAsString = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(responseAsString);
+            var result = JsonConvert.DeserializeObject<UserInfoDto>(responseAsString);
             Assert.NotNull(result);
-            Assert.NotEmpty(result);
-            Assert.True(result.ContainsKey("email"));
+            Assert.Equal(registerModel.UserName, result.UserName);
+            Assert.Equal(registerModel.Email, result.Email);
         }
 
-        [Fact(Skip="To fix later, fix UserManager service")]
-        public async Task SignIn_ReturnsLoggedUser()
+        [Fact]
+        public async Task SignIn_With_KnownCredentials_Returns_LoggedUser()
         {
             // Arrange
-            var registerModel = new RegisterUserInfoDTO
-            {
-                UserName = "SuperAdmin",
-                Email = "Super@g1.com",
-                NewPassword = "Super@g1.com"
-            };
-            //await RegisterUserAsync(registerModel);
-
-            var loginModel = new SignInUserInfoDTO
+            var registerModel =  await RegisterUserAsync("SuperAdmin", true);
+            var loginModel = new SignInUserInfoDto
             {
                 Email = registerModel.Email,
-                Password = registerModel.NewPassword
+                Password = registerModel.Password
             };
             
             // Act
@@ -103,25 +89,19 @@ namespace Beng.Specta.Compta.FunctionalTests.Controllers
             // Assert
             response.EnsureSuccessStatusCode();
             var responseAsString = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<UserInfoDTO>(responseAsString);
+            var result = JsonConvert.DeserializeObject<UserInfoDto>(responseAsString);
 
             Assert.NotNull(result);
-            Assert.False(result.IsAuthenticated);
-            Assert.Empty(result.UserName);
+            Assert.True(result.IsAuthenticated);
+            Assert.Equal(registerModel.UserName, result.UserName);
+            Assert.Equal(registerModel.Email, result.Email);
         }
 
         [Fact]
-        public async Task Register_ReturnRegisterUser()
+        public async Task Register_Returns_RegisterUser()
         {
             // Arrange
-            var model = new RegisterUserInfoDTO
-            {
-                UserName = "Leo46",
-                Email = "Leo46@g1.com",
-                NewPassword = "Leo46@g1.com",
-                ConfirmPassword = "Leo46@g1.com",
-                AgreeWithTerms = true
-            };
+            var model = await RegisterUserAsync("Leo45");
 
             // Act
             var response = await _client.PostAsJsonAsync("api/account/register", model);
@@ -129,20 +109,49 @@ namespace Beng.Specta.Compta.FunctionalTests.Controllers
             // Assert
             response.EnsureSuccessStatusCode();
             string responseAsString = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<UserInfoDTO>(responseAsString);
+            var result = JsonConvert.DeserializeObject<UserInfoDto>(responseAsString);
 
             Assert.NotNull(result);
             Assert.False(result.IsAuthenticated);
             Assert.Equal(model.UserName, result.UserName);
             Assert.Equal(model.Email, result.Email);
         }
+        
+        [Fact]
+        public async Task Register_SameUserTwice_Returns_BadRequest()
+        {
+            // Arrange
+            var model = await RegisterUserAsync("Leo46", true);
 
-        // private async Task RegisterUserAsync(RegisterUserInfoDTO model)
-        // {
-        //     var identity = new IdentityUser { UserName = model.UserName, Email = model.Email };
-        //     var result = await _userManager.CreateAsync(identity, model.NewPassword);
-        //
-        //     Assert.True(result.Succeeded);
-        // }
+            // Act
+            var response = await _client.PostAsJsonAsync("api/account/register", model);
+            
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            string responseAsString = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(responseAsString);
+
+            Assert.NotNull(result);
+            Assert.NotEmpty(result);
+        }
+
+        private async Task<RegisterUserInfoDto> RegisterUserAsync(string userName, bool shouldPersist = false)
+        {
+            var model = new RegisterUserInfoDto
+            {
+                UserName = userName,
+                Email = $"{userName}@g1.com",
+                Password = "Leo46@g1.com",
+                ConfirmPassword = "Leo46@g1.com",
+                AgreeWithTerms = true
+            };
+            if (!shouldPersist)
+            {
+                return model;
+            }
+            var response = await _client.PostAsJsonAsync("api/account/register", model);
+            response.EnsureSuccessStatusCode();
+            return model;
+        }
     }
 }
