@@ -29,22 +29,22 @@ namespace Beng.Specta.Compta.Server.Auth.Services
             }
 
             user = new IdentityUser { UserName = email, Email = email };
-            IdentityResult result = await userManager.CreateAsync(user, password); 
-            if (!result.Succeeded)
+            IdentityResult result = await userManager.CreateAsync(user, password);
+            if (result.Succeeded)
             {
-                var errorDescriptions = string.Join("\n", result.Errors.Select(x => x.Description));
-                throw new InvalidOperationException(
-                    $"Tried to add user {email}, but failed. Errors:\n {errorDescriptions}");
+                return user;
             }
+            var errorDescriptions = string.Join("\n", result.Errors.Select(x => x.Description));
+            throw new InvalidOperationException(
+                $"Tried to add user {email}, but failed. Errors:\n {errorDescriptions}");
 
-            return user;
         }
 
-        public static IDictionary<string, List<string>> GetFormatedErrors(this IdentityResult identityResult)
+        public static IDictionary<string, List<string>> GetFormattedErrors(this IdentityResult identityResult)
         {
             // see https://github.com/aspnet/AspNetCore/blob/bfec2c14be1e65f7dd361a43950d4c848ad0cd35/src/Identity/Extensions.Core/src/IdentityErrorDescriber.cs
-            // for diffrent error codes
-            var keyMapping = new Dictionary<string, string>()
+            // for different error codes
+            var keyMapping = new Dictionary<string, string>
             {
                 {"DefaultError","Name" },
                 {"ConcurrencyFailure","Concurrency" },
@@ -73,7 +73,7 @@ namespace Beng.Specta.Compta.Server.Auth.Services
                 {"UserAlreadyInRole","Role" },
                 {"UserNotInRole","Role" }
             };
-            var formatedErrors = identityResult.Errors
+            var formattedErrors = identityResult.Errors
                 .Select(e =>
                 {
                     var key = keyMapping.TryGetValue(e.Code, out var value) ? value : "Name";
@@ -82,7 +82,7 @@ namespace Beng.Specta.Compta.Server.Auth.Services
                 ).ToLookup(e => e.Key, e => e.Description)
                 .ToDictionary(l => l.Key, l => l.ToList());
 
-            return formatedErrors;
+            return formattedErrors;
         }
     }
 }

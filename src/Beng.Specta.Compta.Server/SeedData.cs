@@ -21,26 +21,35 @@ namespace Beng.Specta.Compta.Server
         public static async Task PopulateAppDatabaseAsync(IServiceProvider serviceProvider, ILogger logger)
         {
             var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-            var defaultTenant = await AddDefaultTenantInfoAsync(serviceProvider, configuration, logger);
+            var defaultTenant = await TryAddDefaultTenantInfoAsync(serviceProvider, configuration, logger);
             // await AddSuperAdminAsync(scopeServices, configuration, defaultTenant);
         }
 
-        private static async Task<TenantInfo> AddDefaultTenantInfoAsync(
+        private static async Task<TenantInfo> TryAddDefaultTenantInfoAsync(
             IServiceProvider serviceProvider,
             IConfiguration configuration,
             ILogger logger)
         {
+            
             var configSection = configuration.GetSection("DefaultTenant");
-            TenantInfo defaultTenant = new()
+            var defaultTenantId = configSection.GetValue<string>("Id");
+            
+            var scopeServices = serviceProvider.CreateScope().ServiceProvider;
+            var store = scopeServices.GetRequiredService<IMultiTenantStore<TenantInfo>>();
+            var defaultTenant = await store.TryGetAsync(defaultTenantId);
+            if (defaultTenant is not null)
             {
-                Id = configSection.GetValue<string>("Id"),
+                return defaultTenant;
+            }
+            
+            defaultTenant = new TenantInfo
+            {
+                Id = defaultTenantId,
                 Identifier = configSection.GetValue<string>("Identifier"),
                 Name = configSection.GetValue<string>("Name"),
                 ConnectionString = configSection.GetValue<string>("ConnectionString")
             };
             
-            var scopeServices = serviceProvider.CreateScope().ServiceProvider;
-            var store = scopeServices.GetRequiredService<IMultiTenantStore<TenantInfo>>();
             try
             {
                 await store.TryAddAsync(defaultTenant);

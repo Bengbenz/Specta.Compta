@@ -8,21 +8,21 @@ using Beng.Specta.Compta.Core.DTOs;
 
 namespace Beng.Specta.Compta.Server.Objects
 {
-    public static class DTOsExtension
+    public static class DtosExtension
     {
-        public static UserInfoDTO ToDTO(this IdentityUser user, ClaimsPrincipal principalClaims)
+        public static UserInfoDto ToDto(this IdentityUser user, ClaimsPrincipal principalClaims)
         {
             if (user == null) throw new ArgumentNullException(nameof(user));
             if (principalClaims == null) throw new ArgumentNullException(nameof(principalClaims));
 
-            return new UserInfoDTO
+            return new UserInfoDto
             {
                 UserId = user.Id,
                 UserName = user.UserName,
                 Email = user.Email,
                 HasPassword = !string.IsNullOrEmpty(user.PasswordHash),
                 // Title = user.Title
-                IsAuthenticated = principalClaims.Identity.IsAuthenticated,
+                IsAuthenticated = principalClaims.Identity!.IsAuthenticated,
                 // RoleNames = 
                 // PackedPermissions = 
                 // IsAdmin = user.Roles.Contains(ApplicationUser.AdminRole),

@@ -2,7 +2,7 @@
 
 namespace Beng.Specta.Compta.Core.DTOs.Auth
 {
-    public class SignInUserInfoDTO : UserInfoDTO
+    public class SignInUserInfoDto : UserInfoDto
     {
         [Required]
         [DataType(DataType.Password)]

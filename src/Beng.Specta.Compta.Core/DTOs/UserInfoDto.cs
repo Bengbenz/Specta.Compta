@@ -1,11 +1,10 @@
-﻿using System.Text;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Beng.Specta.Compta.Core.DTOs
 {
     [Serializable]
-    public class UserInfoDTO
+    public class UserInfoDto
     {
         public string UserId { get; set; } = string.Empty;
 

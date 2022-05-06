@@ -11,7 +11,7 @@
         await WebApiClient.CreateRequest("/api/account/signout")
             .OnOK(() => {
                 AuthService.Logout();
-                Logger.LogInformation("You have successfuly logged off.");
+                Logger.LogInformation("You have successfully logged off.");
                 NavigationManager.NavigateTo("/login");
             })
             .PostAsync();
