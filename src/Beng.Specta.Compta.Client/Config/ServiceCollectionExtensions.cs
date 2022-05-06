@@ -23,9 +23,6 @@ namespace Beng.Specta.Compta.Client.Config
             
             AddWebApiHttpClient(serviceCollection);
 
-            // Register Syncfusion license
-            AddSyncfusionBlazorServices(serviceCollection);
-
             // Add auth services
             AddAuthenticationServices(serviceCollection);
 
@@ -60,10 +57,14 @@ namespace Beng.Specta.Compta.Client.Config
                 s.GetRequiredService<AppAuthenticationStateProvider>());
         }
 
-        private static void AddSyncfusionBlazorServices(IServiceCollection serviceCollection)
+        public static IServiceCollection AddSyncfusionBlazorServices(this IServiceCollection serviceCollection)
         {
-            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MjI5MTE3QDMxMzgyZTMxMmUzMGNOb3ZpemFZUE9udjJiQXZwWWt4QWdBVWJOTlduYmFiRVVXMGxvUVNFV289");
+            // Register Syncfusion license
+            var licenseKey = "NjI1MzY4QDMyMzAyZTMxMmUzMFY3Sm9ieE1KU3hYcFk0bmE4S0FzWDNBeTZpblg1VGhBM2hldUlQYXJXRjg9";
+            Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(licenseKey);
             serviceCollection.AddSyncfusionBlazor();
+
+            return serviceCollection;
         }
     }
 }

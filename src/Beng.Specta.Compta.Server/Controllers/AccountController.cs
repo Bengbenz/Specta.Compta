@@ -22,7 +22,7 @@ namespace Beng.Specta.Compta.Server.Controllers
     [Authorize]
     public class AccountController : BaseApiController
     {
-        private static readonly UserInfoDTO LoggoutUser = new UserInfoDTO();
+        private static readonly UserInfoDto LoggoutUser = new UserInfoDto();
         private readonly IAuthorizationRepository _repository;
         private readonly IEmailSender _emailSender;
         private readonly UserManager<IdentityUser> _userManager;
@@ -45,21 +45,16 @@ namespace Beng.Specta.Compta.Server.Controllers
         public async Task<IActionResult> Details()
         {
             IdentityUser identity = await _userManager.GetUserAsync(User);
-
-            ActionResult actionResult;
+            
             if (identity == null)
             {
                 Logger.LogInformation($"Can't get a logged user.");
-                actionResult = Ok(LoggoutUser);
+                return Ok(LoggoutUser);
             }
-            else
-            {
-                var userInfo = identity.ToDTO(User);
-                Logger.LogInformation($"Get a logged user : {userInfo}");
-                actionResult = Ok(userInfo);
-            }
-
-            return actionResult;
+            
+            var userInfo = identity.ToDto(User);
+            Logger.LogInformation($"Get a logged user : {userInfo}");
+            return Ok(userInfo);
         }
 
         [HttpGet("{email}"), AllowAnonymous]
@@ -67,26 +62,20 @@ namespace Beng.Specta.Compta.Server.Controllers
         {
             IdentityUser user = await _userManager.FindByEmailAsync(email);
 
-            ActionResult actionResult;
             if (user == null)
             {
-                Logger.LogError($"Can't get user '{email}'.");
-                ModelState.AddModelError(nameof(email), $"Any account with this email doesn't exist. Please register before.");
-                actionResult = NotFound(ModelState);
+                Logger.LogWarning($"Can't get user '{email}'.");
+                ModelState.AddModelError(nameof(email), $"Invalid credential.");
+                return NotFound(ModelState);
             }
-            else
-            {
-                ModelState.AddModelError(nameof(email), $"An account with this email already exists. Please log in.");
-                Logger.LogInformation($"Find user by email: '{email}'.");
-                actionResult = Ok(ModelState);
-            }
-            
-            return actionResult;
+
+            Logger.LogInformation($"Find user by email: '{email}'.");
+            return Ok(user.ToDto(User));
         }
 
         [HttpPost, AllowAnonymous]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> SignIn([FromBody] SignInUserInfoDTO model)
+        public async Task<IActionResult> SignIn([FromBody] SignInUserInfoDto model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
 
@@ -95,7 +84,7 @@ namespace Beng.Specta.Compta.Server.Controllers
             if (result.Succeeded)
             {
                 Logger.LogInformation($"User '{model.Email}' successfully log in.");
-                return Ok();
+                return Ok(user.ToDto(User));
             }
             if (result.RequiresTwoFactor)
             {
@@ -123,12 +112,12 @@ namespace Beng.Specta.Compta.Server.Controllers
 
         [HttpPost, AllowAnonymous]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register([FromBody] RegisterUserInfoDTO model)
+        public async Task<IActionResult> Register([FromBody] RegisterUserInfoDto model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
 
             var user = new IdentityUser { UserName = model.UserName, Email = model.Email };
-            var result = await _userManager.CreateAsync(user, model.NewPassword);
+            var result = await _userManager.CreateAsync(user, model.Password);
 
             ActionResult actionResult;
             if (!result.Succeeded)
@@ -136,8 +125,7 @@ namespace Beng.Specta.Compta.Server.Controllers
                 var errorDescriptions = result.Errors.Select(x => x.Description);
                 Logger.LogError($"Tried to register user '{model.Email}', but failed. Errors:\n {string.Join("; ", errorDescriptions)}");
 
-                ModelState.AddModelErrors(result.GetFormatedErrors());
-                actionResult = BadRequest(ModelState);
+                actionResult = BadRequest(result.GetFormattedErrors());
             }
             else
             {
@@ -149,7 +137,7 @@ namespace Beng.Specta.Compta.Server.Controllers
         }
 
         [HttpPost, AllowAnonymous]
-        public async Task<IActionResult> ForgotPassword([FromBody] UserInfoDTO model)
+        public async Task<IActionResult> ForgotPassword([FromBody] UserInfoDto model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
 
@@ -175,7 +163,7 @@ namespace Beng.Specta.Compta.Server.Controllers
         }
 
         [HttpPost, AllowAnonymous]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO model)
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
 

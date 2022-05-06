@@ -220,16 +220,16 @@ function updateSidebarState (mobileWidth, dotnetHelper) {
 
 function disableBlazorElement ()
 {
-    var el = document.getElementById("blazor-license-warning");
-    if (el)
-    {
-        el.style = "display: none";
-        console.log("blazor disabled");
-    }
-    else
-    {
-        console.log("blazor not found");
-    }
+    // var el = document.getElementById("blazor-license-warning");
+    // if (el)
+    // {
+    //     el.style = "display: none";
+    //     console.log("blazor disabled");
+    // }
+    // else
+    // {
+    //     console.log("blazor not found");
+    // }
 }
 
 function initPopper (anchor,
