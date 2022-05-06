@@ -4,7 +4,7 @@ namespace Beng.Specta.Compta.Client.State
 {
     public class SpinnerState
 	{
-		public bool IsVisible { get; set; }
+		public bool IsVisible { get; private set; }
 
 		public event Action OnChange;
 

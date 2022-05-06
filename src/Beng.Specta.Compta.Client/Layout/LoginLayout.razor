@@ -1,25 +1,27 @@
 @inherits LayoutComponentBase
 @inject ThemeState ThemeState
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JsRuntime
 
 <CascadingValue Value="ContextTheme">
     <PageLoader>
-        <div class="auth-layout row align-content--center" style="@ComputedStyle">
-            <div class="flex xs12 pa-3 flex-center">
-                <div class="d-flex justify--center">
-                    <VaCard class="auth-layout__card">
-                        <BodyContent>
-                            <div class="flex pa-3 flex-center" >
-                                <NavLink class="py-5 flex-center" href="/">
-                                    <VaIconApp />
-                                </NavLink>
-                            </div>
-                            @Body
-                        </BodyContent>
-                    </VaCard>
+        <AutoLoadingSpinner>
+            <div class="auth-layout row align-content--center" style="@ComputedStyle">
+                <div class="flex xs12 pa-3 flex-center">
+                    <div class="d-flex justify--center">
+                        <VaCard class="auth-layout__card">
+                            <BodyContent>
+                                <div class="flex pa-3 flex-center">
+                                    <NavLink class="py-5 flex-center" href="/">
+                                        <VaIconApp/>
+                                    </NavLink>
+                                </div>
+                                @Body
+                            </BodyContent>
+                        </VaCard>
+                    </div>
                 </div>
             </div>
-        </div>
+        </AutoLoadingSpinner>
     </PageLoader>
 </CascadingValue>
 
@@ -35,6 +37,6 @@
             
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await JSRuntime.DisableElement();
+        await JsRuntime.DisableElement();
     }
 }
