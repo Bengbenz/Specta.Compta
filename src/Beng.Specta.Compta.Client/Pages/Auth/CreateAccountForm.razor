@@ -1,7 +1,7 @@
 @using Beng.Specta.Compta.Core.DTOs.Auth
 @inject HttpWebApiClient WebApiClient
 @inject NavigationManager NavigationManager
-@inject IJSRuntime JSRuntime 
+@inject IJSRuntime JsRuntime 
 @inject ILogger<LoginForm> Logger
 
 <EditForm EditContext="@_editContext" OnSubmit="CreateNewAccount">
@@ -15,7 +15,7 @@
     <VaInput @bind-Value="_userInfo.UserName"
              Label="Nom" />
 
-    <VaInput @bind-Value="_userInfo.NewPassword"
+    <VaInput @bind-Value="_userInfo.Password"
              Type="@VaInputType.Password"
              Label="Mot de passe" />
 
@@ -38,7 +38,7 @@
 {
     [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
 
-    private RegisterUserInfoDTO _userInfo { get; set; } = new RegisterUserInfoDTO();
+    private RegisterUserInfoDto _userInfo = new RegisterUserInfoDto();
     private ServerSideValidator ServerSideValidator { get; set; }
     private EditContext _editContext;
 
@@ -60,9 +60,9 @@
                 })
                 .OnOK(() =>
                 {
-                    JSRuntime.LaunchToast("success", "Your account created. Let your admin validate it, then you'll can login.");
+                    JsRuntime.LaunchToast("success", "Your account created. Let your admin validate it, then you'll can login.");
                     Logger.LogDebug($"{GetType().Name}: User registred. Redirection to /login");
-                    _userInfo = new RegisterUserInfoDTO();
+                    _userInfo = new RegisterUserInfoDto();
                     NavigationManager.NavigateTo("/login", true);
                     
                 })
@@ -78,11 +78,11 @@
     {
         var result = false;
         await WebApiClient.CreateRequest("api/account/details")
-            .OnBadRequest(() => result = true)
+            .OnNotFound(() => result = true)
             .OnOK<Dictionary<string, List<string>>>(errors =>
             {
                 // user with this email found, user is already exist
-                ServerSideValidator.DisplayErrors(errors, true);
+                ServerSideValidator.DisplayError(nameof(_userInfo.UserName), $"Can't create user with this username {_userInfo.UserName}.");
                 result = false;
             })
             .GetAsync(_userInfo.Email);
