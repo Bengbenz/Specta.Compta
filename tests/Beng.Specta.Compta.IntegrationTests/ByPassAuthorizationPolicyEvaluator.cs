@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Http;
 
-namespace Beng.Specta.Compta.FunctionalTests
+namespace Beng.Specta.Compta.IntegrationTests
 {
     public sealed class ByPassAuthorizationPolicyEvaluator : IPolicyEvaluator
     {

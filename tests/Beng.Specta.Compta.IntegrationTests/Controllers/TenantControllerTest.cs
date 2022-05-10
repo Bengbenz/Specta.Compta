@@ -3,21 +3,20 @@ using System.Net.Http;
 using System.Threading.Tasks;
 
 using Beng.Specta.Compta.Core.DTOs;
-using Beng.Specta.Compta.Server;
 
 using Newtonsoft.Json;
 
 using Xunit;
 
-namespace Beng.Specta.Compta.FunctionalTests.Controllers
+namespace Beng.Specta.Compta.IntegrationTests.Controllers
 {
-    public class TenantControllerTest : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class TenantControllerTest : IClassFixture<IntegrationTestingWebApplicationFactory>
     {
         private readonly HttpClient _client;
 
-        public TenantControllerTest(CustomWebApplicationFactory<Startup> factory)
+        public TenantControllerTest(IntegrationTestingWebApplicationFactory factory)
         {
-            _client = factory?.CreateClient();
+            _client = factory.CreateClient();
         }
 
         [Fact]

@@ -10,15 +10,15 @@ using Newtonsoft.Json;
 
 using Xunit;
 
-namespace Beng.Specta.Compta.FunctionalTests.Controllers
+namespace Beng.Specta.Compta.IntegrationTests.Controllers
 {
-    public class ProjectControllerTest : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class ProjectControllerTest : IClassFixture<IntegrationTestingWebApplicationFactory>
     {
         private readonly HttpClient _client;
 
-        public ProjectControllerTest(CustomWebApplicationFactory<Startup> factory)
+        public ProjectControllerTest(IntegrationTestingWebApplicationFactory factory)
         {
-            _client = factory?.CreateClientWithoutAuthorization();
+            _client = factory.CreateClientWithFakeAuthorization();
         }
 
         [Fact]

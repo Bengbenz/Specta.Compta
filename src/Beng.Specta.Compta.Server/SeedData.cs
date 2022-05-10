@@ -56,7 +56,7 @@ namespace Beng.Specta.Compta.Server
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"An error occurred seeding the App DBs. Error: {ex.Message}");
+                logger.LogError(ex, $"An error occurred seeding the App DBs:\n{ex.Message}");
             }
 
             return defaultTenant;

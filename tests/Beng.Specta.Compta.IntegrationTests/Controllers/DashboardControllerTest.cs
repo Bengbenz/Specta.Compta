@@ -2,19 +2,17 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 
-using Beng.Specta.Compta.Server;
-
 using Xunit;
 
-namespace Beng.Specta.Compta.FunctionalTests.Controllers
+namespace Beng.Specta.Compta.IntegrationTests.Controllers
 {
-    public class DashboardControllerTest : IClassFixture<CustomWebApplicationFactory<Startup>>
+    public class DashboardControllerTest : IClassFixture<IntegrationTestingWebApplicationFactory>
     {
         private readonly HttpClient _client;
 
-        public DashboardControllerTest(CustomWebApplicationFactory<Startup> factory)
+        public DashboardControllerTest(IntegrationTestingWebApplicationFactory factory)
         {
-            _client = factory?.CreateClient();
+            _client = factory.CreateClient();
         }
 
         [Fact]
