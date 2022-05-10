@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Beng.Specta.Compta.Infrastructure.Data;
 using Beng.Specta.Compta.Core.Entities;
 
-namespace Beng.Specta.Compta.FunctionalTests
+namespace Beng.Specta.Compta.IntegrationTests
 {
     public static class SeedTestData
     {

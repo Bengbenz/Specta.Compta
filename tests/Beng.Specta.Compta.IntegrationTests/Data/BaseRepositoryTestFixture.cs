@@ -13,9 +13,9 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
     {
         protected AppDbContext AppDbContext { get; private set; }
 
-        // protected AppDbContext TennantDbContext { get; private set; }
+        // protected AppDbContext TenantDbContext { get; private set; }
 
-        protected static DbContextOptions<AppDbContext> CreateNewContextOptions()
+        private static DbContextOptions<AppDbContext> CreateNewContextOptions()
         {
             // Create a fresh service provider, and therefore a fresh
             // InMemory database instance.

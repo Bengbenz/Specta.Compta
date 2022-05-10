@@ -30,7 +30,7 @@ variables:
 
 steps:
 - task: UseDotNet@2
-  displayName: 'Install .NET Core SDK'
+  displayName: 'Install .NET SDK'
   inputs:
     version: 6.x
 
@@ -69,7 +69,7 @@ steps:
   inputs:
     command: custom
     custom: tool
-    arguments: 'install -g dotnet-reportgenerator-globaltool --version 5.1.4'
+    arguments: 'install -g dotnet-reportgenerator-globaltool --version 5.1.6'
 
 - script: 'reportgenerator -reports:tests/**/coverage.cobertura.xml -targetdir:CodeCoverage -assemblyfilters:"-xunit*;-*Tests*" -reporttypes:"Cobertura;HtmlInline_AzurePipelines;Badges"' #TeamCitySummary, HtmlChart
   displayName: 'Codecoverage Report'
