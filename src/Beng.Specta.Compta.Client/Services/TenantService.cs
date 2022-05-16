@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Logging;
 
-using Beng.Specta.Compta.Core.DTOs;
+using Beng.Specta.Compta.Core.Dtos;
 
 namespace Beng.Specta.Compta.Client.Services
 {

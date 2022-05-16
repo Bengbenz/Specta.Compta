@@ -4,7 +4,7 @@ using System.Security.Claims;
 
 using Microsoft.AspNetCore.Identity;
 
-using Beng.Specta.Compta.Core.DTOs;
+using Beng.Specta.Compta.Core.Dtos;
 
 namespace Beng.Specta.Compta.Server.Objects
 {

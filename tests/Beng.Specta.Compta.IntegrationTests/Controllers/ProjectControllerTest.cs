@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-
-using Beng.Specta.Compta.Core.DTOs;
-using Beng.Specta.Compta.Server;
+﻿using Beng.Specta.Compta.Core.Dtos;
 
 using Newtonsoft.Json;
 

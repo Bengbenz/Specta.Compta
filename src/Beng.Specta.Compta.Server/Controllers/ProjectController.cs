@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-using Beng.Specta.Compta.Core.DTOs;
+using Beng.Specta.Compta.Core.Dtos;
 using Beng.Specta.Compta.Core.Entities;
-using Beng.Specta.Compta.Core.Objects.Auth;
-using Beng.Specta.Compta.Server.Auth.Policies;
+using Beng.Specta.Compta.Core.Objects.Identities;
+using Beng.Specta.Compta.Server.Identities.Policies;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
 
 namespace Beng.Specta.Compta.Server.Controllers

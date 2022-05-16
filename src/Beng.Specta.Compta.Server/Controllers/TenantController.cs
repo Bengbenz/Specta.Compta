@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-using Beng.Specta.Compta.Core.DTOs;
+using Beng.Specta.Compta.Core.Dtos;
 
 using Finbuckle.MultiTenant;
 
@@ -18,7 +18,7 @@ namespace Beng.Specta.Compta.Server.Controllers
         [HttpGet]
         public ActionResult<string> Info()
         {
-            var assembly = typeof(Startup).Assembly;
+            var assembly = typeof(Program).Assembly;
 
             var creationDate = System.IO.File.GetCreationTime(assembly.Location);
             var version = FileVersionInfo.GetVersionInfo(assembly.Location).ProductVersion;

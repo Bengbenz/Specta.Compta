@@ -70,4 +70,9 @@ public class BrowserFixtureOptions
     /// Gets or sets the Slow Motion param
     /// </summary>
     public int SlowMo { get; set; }
+    
+    /// <summary>
+    /// Gets or sets the Maximum time in milliseconds
+    /// </summary>
+    public float TimeoutAsMilliseconds { get; init; }
 }

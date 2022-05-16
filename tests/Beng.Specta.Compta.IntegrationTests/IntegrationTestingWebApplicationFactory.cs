@@ -1,16 +1,12 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net;
 using System.Net.Sockets;
 using Microsoft.AspNetCore.Authorization.Policy;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
 
 using Beng.Specta.Compta.Core.Interfaces;
 using Beng.Specta.Compta.Infrastructure.Data;
-using Beng.Specta.Compta.Infrastructure.Data.Repositories;
+using Beng.Specta.Compta.Infrastructure.Repositories;
 using Beng.Specta.Compta.Server;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
 using Beng.Specta.Compta.UnitTests;
@@ -19,7 +15,7 @@ using Beng.Specta.Compta.UnitTests.Helpers;
 namespace Beng.Specta.Compta.IntegrationTests
 {
     /// <inheritdoc />
-    public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Startup>
+    public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Program>
     {
         public string BaseUrl { get; } = $"https://finprod:{GetRandomUnusedPort()}";
         
@@ -36,8 +32,6 @@ namespace Beng.Specta.Compta.IntegrationTests
                 services.AddScoped<IDomainEventDispatcher, NoOpDomainEventDispatcher>();
                 services.AddScoped<IRepository, EfRepository>();
                 services.AddScoped<IAuthorizationRepository, AuthorizationRepository>();
-                
-                services.BuildServiceProvider();
             });
         }
 

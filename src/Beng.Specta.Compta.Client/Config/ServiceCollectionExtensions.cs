@@ -2,7 +2,7 @@ using System;
 using System.Net.Http;
 using Beng.Specta.Compta.Client.Layout.State;
 using Beng.Specta.Compta.Client.Services;
-using Beng.Specta.Compta.Client.Services.Auth;
+using Beng.Specta.Compta.Client.Services.Identities;
 using Beng.Specta.Compta.Client.State;
 
 using Microsoft.AspNetCore.Components;

@@ -1,44 +1,50 @@
-﻿using System;
-using System.Threading.Tasks;
-using Beng.Specta.Compta.Core.Objects.Auth;
+﻿using Beng.Specta.Compta.Core.Interfaces;
+using Beng.Specta.Compta.Core.Objects.Identities;
 using Beng.Specta.Compta.Infrastructure.Data;
-using Beng.Specta.Compta.Infrastructure.Data.Repositories;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-
-using Beng.Specta.Compta.Server.Auth.Services;
+using Beng.Specta.Compta.Infrastructure.Repositories;
+using Beng.Specta.Compta.Server.Identities.Services;
 
 using Finbuckle.MultiTenant;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Beng.Specta.Compta.Server
 {
     public static class SeedData
     {
         private const string SuperAdminRoleName = "SuperAdmin";
+
+        private static int _seedCounter = -1;
         
         public static async Task PopulateAppDatabaseAsync(IServiceProvider serviceProvider, ILogger logger)
         {
+            // Web app starts twice due to the default requests from browser are '/' and '/favicon.png'
+            _seedCounter++;
+            if (_seedCounter > 0)
+            {
+                logger.LogWarning($"Database is already seeded. {_seedCounter} times");
+                return;
+            }
             var configuration = serviceProvider.GetRequiredService<IConfiguration>();
-            var defaultTenant = await TryAddDefaultTenantInfoAsync(serviceProvider, configuration, logger);
-            // await AddSuperAdminAsync(scopeServices, configuration, defaultTenant);
+            var tenantInfo = await TryAddDefaultTenantInfoAsync(serviceProvider, configuration);
+            await AddSuperAdminAsync(tenantInfo, serviceProvider, configuration);
         }
 
-        private static async Task<TenantInfo> TryAddDefaultTenantInfoAsync(
+        private static async Task<ITenantInfo> TryAddDefaultTenantInfoAsync(
             IServiceProvider serviceProvider,
-            IConfiguration configuration,
-            ILogger logger)
+            IConfiguration configuration)
         {
-            
             var configSection = configuration.GetSection("DefaultTenant");
             var defaultTenantId = configSection.GetValue<string>("Id");
             
-            var scopeServices = serviceProvider.CreateScope().ServiceProvider;
-            var store = scopeServices.GetRequiredService<IMultiTenantStore<TenantInfo>>();
-            var defaultTenant = await store.TryGetAsync(defaultTenantId);
+            var scopeServiceProvider = serviceProvider.CreateScope().ServiceProvider;
+            var tenantStore = scopeServiceProvider.GetRequiredService<IMultiTenantStore<TenantInfo>>();
+            var logger = serviceProvider.GetRequiredService<ILogger<IMultiTenantStore<TenantInfo>>>();
+            TenantInfo? defaultTenant = await tenantStore.TryGetAsync(defaultTenantId);
             if (defaultTenant is not null)
             {
+                logger.LogInformation("The default tenant is already exist.");
                 return defaultTenant;
             }
             
@@ -52,7 +58,8 @@ namespace Beng.Specta.Compta.Server
             
             try
             {
-                await store.TryAddAsync(defaultTenant);
+                await tenantStore.TryAddAsync(defaultTenant);
+                logger.LogInformation("The default tenant is successfully seeded.");
             }
             catch (Exception ex)
             {
@@ -67,18 +74,20 @@ namespace Beng.Specta.Compta.Server
         /// It gets the SuperAdmin's email and password from the "SuperAdmin" section of the appsettings.json file
         /// NOTE: for security reasons I only allows one user with the RoleName of <see cref="SuperAdminRoleName"/> 
         /// </summary>
-        private static async Task AddSuperAdminAsync(IServiceProvider serviceProvider,
-            IConfiguration configuration,
-            TenantInfo tenant)
+        private static async Task AddSuperAdminAsync(
+            ITenantInfo tenant,
+            IServiceProvider serviceProvider,
+            IConfiguration configuration)
         {
-            if (tenant is null) throw new ArgumentNullException(nameof(tenant));
+            ArgumentNullException.ThrowIfNull(tenant);
 
-            await using var appContext = new AppDbContext(tenant);
-            var repoLogger = serviceProvider.GetRequiredService<ILogger<AuthorizationRepository>>();
-            var authorizationRepository = new AuthorizationRepository(appContext, repoLogger);
+            var scopeServiceProvider = serviceProvider.CreateScope().ServiceProvider;
+            await using var appDbContext = new AppDbContext(tenant, scopeServiceProvider.GetRequiredService<DbContextOptions<AppDbContext>>());
+            var authorizationRepository = new AuthorizationRepository(appDbContext, scopeServiceProvider.GetRequiredService<ILogger<IAuthorizationRepository>>());
             if (authorizationRepository.IsAnyUsersWithRole(SuperAdminRoleName))
             {
-                //For security reasons there can only be one user with the SuperAdminRoleName
+                //For security reasons there can only be one user with the SuperAdminRoleName,
+                // So, you delete user, think to delete also the Role (UserToRoles)
                 return;
             }
 
@@ -91,16 +100,35 @@ namespace Beng.Specta.Compta.Server
             var userEmail = superSection["Email"];
             var userPassword = superSection["Password"];
 
-            var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
-            IdentityUser superUser = await userManager.AddNewUserAsync(userEmail, userPassword);
-            
-            var authService = new AuthUsersService(authorizationRepository);
-            await authService.AddOrUpdateRoleToPermissionsAsync(
-                SuperAdminRoleName,
-                "SuperAdmin Role",
-                Permission.AccessAll);
+            var logger = scopeServiceProvider.GetRequiredService<ILogger<UserManager<IdentityUser>>>();
+            try
+            {
+                var userManager = new UserManager<IdentityUser>(
+                    new UserOnlyStore<IdentityUser>(appDbContext),
+                    null,
+                    new PasswordHasher<IdentityUser>(), 
+                    new List<IUserValidator<IdentityUser>> { new UserValidator<IdentityUser>()},
+                    new List<IPasswordValidator<IdentityUser>> { new PasswordValidator<IdentityUser>()},
+                    new UpperInvariantLookupNormalizer(),
+                    null,
+                    scopeServiceProvider,
+                    logger);
+                IdentityUser superUser = await userManager.AddNewUserAsync(userEmail, userPassword);
+                
+                var identityService = new IdentityService(authorizationRepository);
+                await identityService.AddOrUpdateRoleToPermissionsAsync(
+                    SuperAdminRoleName,
+                    "SuperAdmin Role",
+                    Permission.AccessAll);
 
-            await authService.AddRoleToUserAsync(superUser.Id, SuperAdminRoleName);
+                await identityService.AddRoleToUserAsync(superUser.Id, SuperAdminRoleName);
+                logger.LogInformation("The default super admin is successfully seeded.");
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"Seed counter:{_seedCounter}. An error occurred seeding the Super Admin:\n{ex.Message}");
+                throw;
+            }
         }
     }
 }
