@@ -5,8 +5,8 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-using Beng.Specta.Compta.Core.DTOs;
-using Beng.Specta.Compta.Core.DTOs.Auth;
+using Beng.Specta.Compta.Core.Dtos;
+using Beng.Specta.Compta.Core.Dtos.Identities;
 using Beng.Specta.Compta.IntegrationTests.Data;
 using Newtonsoft.Json;
 
@@ -37,7 +37,7 @@ namespace Beng.Specta.Compta.IntegrationTests.Controllers
             var result = JsonConvert.DeserializeObject<UserInfoDto>(responseAsString);
 
             Assert.NotNull(result);
-            Assert.False(result.IsAuthenticated);
+            Assert.False(result!.IsAuthenticated);
             Assert.Empty(result.UserName);
         }
 
@@ -47,7 +47,7 @@ namespace Beng.Specta.Compta.IntegrationTests.Controllers
             // Arrange
 
             // Act
-            var response = await _client.GetAsync(new Uri("api/account/details/Super@g1.com", UriKind.Relative));
+            var response = await _client.GetAsync(new Uri("api/account/details/Great@g1.com", UriKind.Relative));
 
             // Assert
             Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
@@ -67,7 +67,7 @@ namespace Beng.Specta.Compta.IntegrationTests.Controllers
             var responseAsString = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<UserInfoDto>(responseAsString);
             Assert.NotNull(result);
-            Assert.Equal(registerModel.UserName, result.UserName);
+            Assert.Equal(registerModel.UserName, result!.UserName);
             Assert.Equal(registerModel.Email, result.Email);
         }
 
@@ -91,7 +91,7 @@ namespace Beng.Specta.Compta.IntegrationTests.Controllers
             var result = JsonConvert.DeserializeObject<UserInfoDto>(responseAsString);
 
             Assert.NotNull(result);
-            Assert.True(result.IsAuthenticated);
+            Assert.True(result!.IsAuthenticated);
             Assert.Equal(registerModel.UserName, result.UserName);
             Assert.Equal(registerModel.Email, result.Email);
         }
@@ -111,7 +111,7 @@ namespace Beng.Specta.Compta.IntegrationTests.Controllers
             var result = JsonConvert.DeserializeObject<UserInfoDto>(responseAsString);
 
             Assert.NotNull(result);
-            Assert.False(result.IsAuthenticated);
+            Assert.False(result!.IsAuthenticated);
             Assert.Equal(model.UserName, result.UserName);
             Assert.Equal(model.Email, result.Email);
         }

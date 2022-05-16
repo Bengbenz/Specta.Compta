@@ -21,7 +21,7 @@ namespace Beng.Specta.Compta.Core.Entities
         [Required]
         public string Name { get; set; }
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Required]
         public DateTime StartDate { get; set; }

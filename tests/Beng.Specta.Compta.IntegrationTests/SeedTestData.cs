@@ -1,8 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
 
 using Beng.Specta.Compta.Infrastructure.Data;
 using Beng.Specta.Compta.Core.Entities;

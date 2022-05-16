@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-using Beng.Specta.Compta.Core.Entities.Auth;
+using Beng.Specta.Compta.Core.Entities.Identities;
 
 namespace Beng.Specta.Compta.Infrastructure.Data.Config
 {

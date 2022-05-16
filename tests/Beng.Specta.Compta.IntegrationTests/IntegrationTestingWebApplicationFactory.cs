@@ -1,43 +1,47 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net;
 using System.Net.Sockets;
 using Microsoft.AspNetCore.Authorization.Policy;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
 
 using Beng.Specta.Compta.Core.Interfaces;
 using Beng.Specta.Compta.Infrastructure.Data;
-using Beng.Specta.Compta.Infrastructure.Data.Repositories;
+using Beng.Specta.Compta.Infrastructure.Repositories;
 using Beng.Specta.Compta.Server;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
 using Beng.Specta.Compta.UnitTests;
 using Beng.Specta.Compta.UnitTests.Helpers;
+using Xunit;
 
 namespace Beng.Specta.Compta.IntegrationTests
 {
     /// <inheritdoc />
-    public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Startup>
+    public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
-        public string BaseUrl { get; } = $"https://finprod:{GetRandomUnusedPort()}";
+        private const string AppConnectionStringForTest = "Beng.Specta.ComptaStore.Test";
+        private const string TenantConnectionStringForTest = "Beng.Specta.TenantStore.Test";
         
+        public readonly string BaseUrl = $"https://localhost:{GetRandomUnusedPort()}";
+        
+        public virtual async Task InitializeAsync()
+        {
+        }
+
+        public Task DisposeAsync() => Task.CompletedTask;
+
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            if (builder == null) throw new ArgumentNullException(nameof(builder));
+            ArgumentNullException.ThrowIfNull(builder);
 
             builder.UseUrls(BaseUrl);
             builder.ConfigureServices(services =>
             {
-                services.SwapDbContext<AppDbContext>("Beng.Specta.ComptaStore.Test");
-                services.SwapDbContext<TenantStoreDbContext>("Beng.Specta.TenantStore.Test");
+                services.SwapDbContext<AppDbContext>(AppConnectionStringForTest);
+                services.SwapDbContext<TenantStoreDbContext>(TenantConnectionStringForTest);
 
                 services.AddScoped<IDomainEventDispatcher, NoOpDomainEventDispatcher>();
                 services.AddScoped<IRepository, EfRepository>();
                 services.AddScoped<IAuthorizationRepository, AuthorizationRepository>();
-                
-                services.BuildServiceProvider();
             });
         }
 
