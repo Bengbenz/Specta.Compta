@@ -1,10 +1,6 @@
-using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.IO;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using Beng.Specta.Compta.IntegrationTests;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
@@ -16,14 +12,26 @@ namespace Beng.Specta.Compta.FunctionalTests;
 /// <inheritdoc />
 public sealed class FunctionalTestingWebApplicationFactory : IntegrationTestingWebApplicationFactory
 {
-    private ITestOutputHelper _outputHelper;
+    private ITestOutputHelper? _outputHelper;
+    private ITestOutputHelper OutputHelper => _outputHelper ?? throw new InvalidOperationException($"The {nameof(OutputHelper)} is not setted. call {nameof(WithTestOutputHelper)} before.");
 
     private BrowserFixtureOptions _options = new()
     {
-        Headless = false,
-        SlowMo = 1000,
-        ShouldCaptureTrace = true
+        Headless = true,
+        SlowMo = 100,
+        ShouldCaptureTrace = true,
+        TimeoutAsMilliseconds = 300000
     };
+
+    public FunctionalTestingWebApplicationFactory()
+    {
+    }
+    
+    public override async Task InitializeAsync()
+    {
+        await TryInstallBrowsers();
+        await base.InitializeAsync();
+    }
     
     protected override IHost CreateHost(IHostBuilder builder)
     {
@@ -32,22 +40,20 @@ public sealed class FunctionalTestingWebApplicationFactory : IntegrationTestingW
     
         // configure and start the actual host.
         builder.ConfigureWebHost(webHostBuilder => webHostBuilder.UseKestrel());
-    
-        var host = builder.Build();
-        host.Start();
-    
+        base.CreateHost(builder);
+        
         return dummyHost;
     }
-
+    
     public FunctionalTestingWebApplicationFactory WithTestOutputHelper(
-        [NotNull] ITestOutputHelper outputHelper)
+        ITestOutputHelper outputHelper)
     {
         _outputHelper = outputHelper ?? throw new ArgumentException(nameof(outputHelper));
         return this;
     }
     
     public FunctionalTestingWebApplicationFactory WithFixtureOptions(
-        [NotNull] BrowserFixtureOptions fixtureOptions)
+        BrowserFixtureOptions fixtureOptions)
     {
         _options = fixtureOptions ?? throw new ArgumentException(nameof(fixtureOptions));
         return this;
@@ -55,40 +61,33 @@ public sealed class FunctionalTestingWebApplicationFactory : IntegrationTestingW
     
     public FunctionalTestingWebApplicationFactory WithFixtureOptions(
         string browserType,
-        string browserChannel)
+        string? browserChannel)
     {
         _options.BrowserType = browserType;
         _options.BrowserChannel = browserChannel;
-        return this;
-    }
-
-    public FunctionalTestingWebApplicationFactory CreateDefaultClient()
-    {
-        CreateClient();
+        _options.Headless = !(browserChannel is not null && browserChannel.Equals("msedge"));
+        
         return this;
     }
 
     public async Task WithPageAsync(
         Func<IPage, Task> action,
-        [CallerMemberName] string testName = null)
+        [CallerMemberName] string? testName = null)
     {
-        if (_outputHelper is null) throw new ArgumentException(nameof(_outputHelper));
-        
         if (!string.IsNullOrWhiteSpace(_options.TestName))
         {
             testName = _options.TestName;
         }
-
-        TryInstallBrowsers();
         
         // Create a new browser of the specified type
         using IPlaywright playwright = await Playwright.CreateAsync();
 
         await using IBrowser browser = await CreateBrowserAsync(playwright);
         // Create a new context for the test
-        BrowserNewContextOptions options = CreateContextOptions();
+        BrowserNewContextOptions contextOptions = CreateContextOptions();
 
-        await using IBrowserContext context = await browser.NewContextAsync(options);
+        await using IBrowserContext context = await browser.NewContextAsync(contextOptions);
+        context.SetDefaultTimeout(_options.TimeoutAsMilliseconds);
 
         // Enable generating a trace, if enabled, to use with https://trace.playwright.dev
         if (_options.ShouldCaptureTrace)
@@ -106,8 +105,8 @@ public sealed class FunctionalTestingWebApplicationFactory : IntegrationTestingW
         IPage page = await context.NewPageAsync();
 
         // Capture output from the browser to the test logs
-        page.Console += (_, e) => _outputHelper.WriteLine(e.Text);
-        page.PageError += (_, e) => _outputHelper.WriteLine(e);
+        page.Console += (_, e) => OutputHelper.WriteLine(e.Text);
+        page.PageError += (_, e) => OutputHelper.WriteLine(e);
 
         try
         {
@@ -117,7 +116,7 @@ public sealed class FunctionalTestingWebApplicationFactory : IntegrationTestingW
         catch (Exception)
         {
             // Try and capture a screenshot at the point the test failed
-            await TryCaptureScreenshotAsync(page, testName);
+            await TryCaptureScreenshotAsync(page, testName!);
 
             throw;
         }
@@ -125,7 +124,7 @@ public sealed class FunctionalTestingWebApplicationFactory : IntegrationTestingW
         {
             if (_options.ShouldCaptureTrace)
             {
-                string traceName = GenerateFileName(testName, ".zip");
+                string traceName = GenerateFileName(testName!, ".zip");
                 string path = Path.Combine("traces", traceName);
 
                 await context.Tracing.StopAsync(new TracingStopOptions
@@ -134,11 +133,11 @@ public sealed class FunctionalTestingWebApplicationFactory : IntegrationTestingW
                 });
             }
 
-            await TryCaptureVideoAsync(page, testName);
+            await TryCaptureVideoAsync(page, testName!);
         }
     }
 
-    private static void TryInstallBrowsers()
+    private static Task TryInstallBrowsers()
     {
         // Try to install browsers
         var exitCode = Program.Main(new[] {"install"});
@@ -146,6 +145,8 @@ public sealed class FunctionalTestingWebApplicationFactory : IntegrationTestingW
         {
             throw new InvalidOperationException($"Playwright exited with code {exitCode}.");
         }
+
+        return Task.CompletedTask;
     }
 
     private BrowserNewContextOptions CreateContextOptions()
@@ -154,7 +155,8 @@ public sealed class FunctionalTestingWebApplicationFactory : IntegrationTestingW
         {
             Locale = "en-GB",
             TimezoneId = "Europe/Paris",
-            IgnoreHTTPSErrors = true
+            IgnoreHTTPSErrors = true,
+            
         };
 
         if (_options.ShouldCaptureVideo)
@@ -182,7 +184,6 @@ public sealed class FunctionalTestingWebApplicationFactory : IntegrationTestingW
         }
 
         IBrowserType browserType = playwright[_options.BrowserType];
-
         return await browserType.LaunchAsync(options);
     }
     
@@ -220,11 +221,11 @@ public sealed class FunctionalTestingWebApplicationFactory : IntegrationTestingW
                 Path = path
             });
 
-            _outputHelper.WriteLine($"Screenshot saved to {path}.");
+            OutputHelper.WriteLine($"Screenshot saved to {path}.");
         }
         catch (Exception ex)
         {
-            _outputHelper.WriteLine("Failed to capture screenshot: " + ex);
+            OutputHelper.WriteLine("Failed to capture screenshot: " + ex);
         }
     }
 
@@ -245,11 +246,11 @@ public sealed class FunctionalTestingWebApplicationFactory : IntegrationTestingW
             await page.CloseAsync();
             await page.Video!.SaveAsAsync(path);
 
-            _outputHelper.WriteLine($"Video saved to {path}.");
+            OutputHelper.WriteLine($"Video saved to {path}.");
         }
         catch (Exception ex)
         {
-            _outputHelper.WriteLine("Failed to capture video: " + ex);
+            OutputHelper.WriteLine("Failed to capture video: " + ex);
         }
     }
 }

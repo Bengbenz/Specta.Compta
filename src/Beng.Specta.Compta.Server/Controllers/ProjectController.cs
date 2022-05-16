@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
-using Beng.Specta.Compta.Core.DTOs;
+using Beng.Specta.Compta.Core.Dtos;
 using Beng.Specta.Compta.Core.Entities;
-using Beng.Specta.Compta.Core.Objects.Auth;
-using Beng.Specta.Compta.Server.Auth.Policies;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
 
 namespace Beng.Specta.Compta.Server.Controllers
