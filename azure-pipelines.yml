@@ -24,16 +24,36 @@ pr:
 
 pool:
   vmImage: 'ubuntu-latest'
+  container: mcr.microsoft.com/playwright:v1.22.0-focal
 
 variables:
   buildConfiguration: 'Release'
+  reportCodeCoverageToolVersion: '5.1.6'
+  codeCoverageParams: '/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
+  netVersion: 'net6.0'
+  unbuntuVersion: '22.04'
 
 steps:
+- script: |
+    'sudo apt-get update'
+    'sudo apt-get install -y wget apt-transport-https software-properties-common'
+    'wget -q https://packages.microsoft.com/config/ubuntu/$(unbuntuVersion)/packages-microsoft-prod.deb'
+    'sudo dpkg -i packages-microsoft-prod.deb'
+    'sudo apt-get update'
+    'sudo apt-get install -y powershell'
+  displayName: 'Prepare Linux: Install apt dependencies'
+  continueOnError: true
+  
+- script: 'sudo /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16'
+  displayName: 'Start Xvfb'
+  continueOnError: true
+    
 - task: UseDotNet@2
-  displayName: 'Install .NET Core SDK'
+  displayName: 'Install .NET SDK'
   inputs:
+    packageType: 'sdk'
     version: 6.x
-
+    
 # do this before your build tasks
 - task: DotNetCoreCLI@2
   displayName: Restore
@@ -52,25 +72,63 @@ steps:
   inputs:
     #command: build #by default DotNetCoreCLI command is build. Not need to mention it.
     projects: '**/*.csproj'
-    arguments: '--configuration $(BuildConfiguration)'
-
+    arguments: '--configuration $(BuildConfiguration) --no-restore' 
+    
+# Install required browsers
+- task: PowerShell@2
+  displayName: 'Install playwright browsers'
+  inputs:
+    targetType: 'filePath'
+    filePath: 'tests/Beng.Specta.Compta.IntegrationTests/bin/$(BuildConfiguration)/$(netVersion)/playwright.ps1'
+    arguments: 'install'
+  
 # Run all tests with (Tonerdo/Coverlet) "/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura" to generate the code coverage file
 - task: DotNetCoreCLI@2
-  displayName: 'Run Test'
+  displayName: 'Run Unit tests'
   inputs:
     command: test
-    arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
-    projects: 'tests/**/*.csproj'
+    arguments: '--configuration $(BuildConfiguration) $(CodeCoverageParams)'
+    projects: tests/Beng.Specta.Compta.UnitTests/*.csproj
     nobuild: true
 
-# Palmedia.ReportGenerator task
+- task: DotNetCoreCLI@2
+  displayName: 'Run Integration tests'
+  inputs:
+    command: test
+    arguments: '--configuration $(BuildConfiguration) $(CodeCoverageParams)'
+    projects: tests/Beng.Specta.Compta.IntegrationTests/*.csproj
+    nobuild: true
+  
+# Run functional tests
+- script: 'dotnet test tests/Beng.Specta.Compta.FunctionalTests/ --no-build --logger trx --results-directory $(Agent.TempDirectory) --configuration $(BuildConfiguration) $(CodeCoverageParams)'
+  displayName: 'Run Functionnal tests'
+  continueOnError: true
+  
+# Publish functionalTests test report 
+- task: PublishTestResults@2
+  displayName: 'Publish tests report'
+  inputs:
+    testRunner: VSTest
+    testResultsFiles: '$(Agent.TempDirectory)/*.trx'
+    failTaskOnFailedTests: false
+    
+# Publish test attachments (screenshot and videos)  
+- task: CopyFiles@2
+  displayName: 'Publish tests attachments'
+  inputs:
+    sourceFolder: '$(Build.SourcesDirectory)'
+    contents: '**/?(*0.png|*1.png|*2.png|*3.png|*4.png|*5.png|*6.png|*7.png|*8.png|*9.png|*.webm)'
+    targetFolder: '$(Build.ArtifactStagingDirectory)'
+  
+# Palmedia.ReportGenerator install task
 - task: DotNetCoreCLI@2
   displayName: 'Install ReportGenerator tool'
   inputs:
     command: custom
     custom: tool
-    arguments: 'install -g dotnet-reportgenerator-globaltool --version 5.1.4'
-
+    arguments: 'install -g dotnet-reportgenerator-globaltool --version $(ReportCodeCoverageToolVersion)'
+  
+# Generate codecoverage report task
 - script: 'reportgenerator -reports:tests/**/coverage.cobertura.xml -targetdir:CodeCoverage -assemblyfilters:"-xunit*;-*Tests*" -reporttypes:"Cobertura;HtmlInline_AzurePipelines;Badges"' #TeamCitySummary, HtmlChart
   displayName: 'Codecoverage Report'
 

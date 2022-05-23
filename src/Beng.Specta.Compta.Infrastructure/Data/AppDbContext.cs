@@ -4,12 +4,11 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 using Ardalis.EFCore.Extensions;
 
 using Beng.Specta.Compta.Core.Entities;
-using Beng.Specta.Compta.Core.Entities.Auth;
+using Beng.Specta.Compta.Core.Entities.Identities;
 using Beng.Specta.Compta.SharedKernel;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
 
@@ -21,20 +20,15 @@ namespace Beng.Specta.Compta.Infrastructure.Data
     {
         private readonly IDomainEventDispatcher _dispatcher;
 
-        public AppDbContext(TenantInfo tenantInfo) : base(tenantInfo)
-        {
-        }
-        
         public AppDbContext(
-            TenantInfo tenantInfo,
-            DbContextOptions<AppDbContext> options) : base(tenantInfo, options)
+            ITenantInfo tenantInfo) : base(tenantInfo)
         {
         }
 
         public AppDbContext(
-            TenantInfo tenantInfo,
+            ITenantInfo tenantInfo,
             DbContextOptions<AppDbContext> options,
-            IDomainEventDispatcher dispatcher) : this(tenantInfo, options)
+            IDomainEventDispatcher dispatcher = null) : base(tenantInfo, options)
         {
             _dispatcher = dispatcher;
         }
@@ -65,7 +59,7 @@ namespace Beng.Specta.Compta.Infrastructure.Data
             modelBuilder.ApplyAllConfigurationsFromCurrentAssembly();
         }
 
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             int result = await base.SaveChangesAsync(cancellationToken);
 

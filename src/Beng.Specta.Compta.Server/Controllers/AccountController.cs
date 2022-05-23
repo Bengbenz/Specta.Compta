@@ -1,20 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
-using Beng.Specta.Compta.Core.DTOs;
-using Beng.Specta.Compta.Core.DTOs.Auth;
+using Beng.Specta.Compta.Core.Dtos;
+using Beng.Specta.Compta.Core.Dtos.Identities;
 using Beng.Specta.Compta.Core.Interfaces;
 using Beng.Specta.Compta.Infrastructure.Services;
-using Beng.Specta.Compta.Server.Auth.Services;
+using Beng.Specta.Compta.Server.Identities.Services;
 using Beng.Specta.Compta.Server.Objects;
 
 namespace Beng.Specta.Compta.Server.Controllers
@@ -22,7 +17,7 @@ namespace Beng.Specta.Compta.Server.Controllers
     [Authorize]
     public class AccountController : BaseApiController
     {
-        private static readonly UserInfoDto LoggoutUser = new UserInfoDto();
+        private static readonly UserInfoDto LoggoutUser = new();
         private readonly IAuthorizationRepository _repository;
         private readonly IEmailSender _emailSender;
         private readonly UserManager<IdentityUser> _userManager;
@@ -46,7 +41,7 @@ namespace Beng.Specta.Compta.Server.Controllers
         {
             IdentityUser identity = await _userManager.GetUserAsync(User);
             
-            if (identity == null)
+            if (identity is null)
             {
                 Logger.LogInformation($"Can't get a logged user.");
                 return Ok(LoggoutUser);
@@ -62,7 +57,7 @@ namespace Beng.Specta.Compta.Server.Controllers
         {
             IdentityUser user = await _userManager.FindByEmailAsync(email);
 
-            if (user == null)
+            if (user is null)
             {
                 Logger.LogWarning($"Can't get user '{email}'.");
                 ModelState.AddModelError(nameof(email), $"Invalid credential.");
@@ -77,7 +72,7 @@ namespace Beng.Specta.Compta.Server.Controllers
         //[ValidateAntiForgeryToken]
         public async Task<IActionResult> SignIn([FromBody] SignInUserInfoDto model)
         {
-            if (model == null) throw new ArgumentNullException(nameof(model));
+            if (model is null) throw new ArgumentNullException(nameof(model));
 
             var user = await _userManager.FindByEmailAsync(model.Email);
             var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: false);
@@ -114,10 +109,10 @@ namespace Beng.Specta.Compta.Server.Controllers
         //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Register([FromBody] RegisterUserInfoDto model)
         {
-            if (model == null) throw new ArgumentNullException(nameof(model));
+            if (model is null) throw new ArgumentNullException(nameof(model));
 
             var user = new IdentityUser { UserName = model.UserName, Email = model.Email };
-            var result = await _userManager.CreateAsync(user, model.Password);
+            IdentityResult result = await _userManager.CreateAsync(user, model.Password);
 
             ActionResult actionResult;
             if (!result.Succeeded)
@@ -139,11 +134,11 @@ namespace Beng.Specta.Compta.Server.Controllers
         [HttpPost, AllowAnonymous]
         public async Task<IActionResult> ForgotPassword([FromBody] UserInfoDto model)
         {
-            if (model == null) throw new ArgumentNullException(nameof(model));
+            if (model is null) throw new ArgumentNullException(nameof(model));
 
             ActionResult actionResult;
             var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+            if (user is null || !await _userManager.IsEmailConfirmedAsync(user))
             {
                 // Don't reveal that the user does not exist or is not confirmed
                 ModelState.AddModelError(nameof(model.Email), "Invalid account.");
@@ -165,13 +160,13 @@ namespace Beng.Specta.Compta.Server.Controllers
         [HttpPost, AllowAnonymous]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
         {
-            if (model == null) throw new ArgumentNullException(nameof(model));
+            if (model is null) throw new ArgumentNullException(nameof(model));
 
             ActionResult actionResult;
             model.Code = WebUtility.UrlDecode(model.Code);
 
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user == null)
+            IdentityUser user = await _userManager.FindByEmailAsync(model.Email);
+            if (user is null)
             {
                 // Don't reveal that the user does not exist
                 ModelState.AddModelError(nameof(model.Email), "Invalid link.");
