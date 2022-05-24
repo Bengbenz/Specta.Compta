@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 
 using Beng.Specta.Compta.Infrastructure.Data;
-using Beng.Specta.Compta.Infrastructure.Data.Repositories;
+using Beng.Specta.Compta.Infrastructure.Repositories;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
 using Finbuckle.MultiTenant;
 using Moq;
@@ -13,9 +13,9 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
     {
         protected AppDbContext AppDbContext { get; private set; }
 
-        // protected AppDbContext TennantDbContext { get; private set; }
+        // protected AppDbContext TenantDbContext { get; private set; }
 
-        protected static DbContextOptions<AppDbContext> CreateNewContextOptions()
+        private static DbContextOptions<AppDbContext> CreateNewContextOptions()
         {
             // Create a fresh service provider, and therefore a fresh
             // InMemory database instance.
@@ -37,7 +37,7 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
             var mockDispatcher = new Mock<IDomainEventDispatcher>();
             
             AppDbContext = new AppDbContext(BuildDefaultTenantInfo(), CreateNewContextOptions(), mockDispatcher.Object);
-            return new EfRepository(AppDbContext);
+            return new EfRepository(AppDbContext, null);
         }
 
         private TenantInfo BuildDefaultTenantInfo()
@@ -55,7 +55,7 @@ namespace Beng.Specta.Compta.IntegrationTests.Data
             var mockDispatcher = new Mock<IDomainEventDispatcher>();
             
             AppDbContext = new AppDbContext(BuildDefaultTenantInfo(), CreateNewContextOptions(), mockDispatcher.Object);
-            return new AuthorizationRepository(AppDbContext);
+            return new AuthorizationRepository(AppDbContext, null);
         }
     }
 }

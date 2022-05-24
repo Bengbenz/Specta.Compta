@@ -1,13 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace Beng.Specta.Compta.SharedKernel.Interfaces
+﻿namespace Beng.Specta.Compta.SharedKernel.Interfaces
 {
     public interface IRepository
     {
-        Task<T> GetByIdAsync<T>(long id) where T : BaseEntity;
+        Task<T?> GetByIdAsync<T>(long id) where T : BaseEntity;
 
-        Task<ICollection<T>> ListAsync<T>() where T : class;
+        Task<IReadOnlyCollection<T>> ListAsync<T>() where T : class;
 
         Task AddAsync<T>(params T[] entities) where T : class;
 

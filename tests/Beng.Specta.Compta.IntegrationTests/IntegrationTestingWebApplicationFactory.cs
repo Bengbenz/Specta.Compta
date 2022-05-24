@@ -1,0 +1,80 @@
+﻿using System.Net;
+using System.Net.Sockets;
+using Microsoft.AspNetCore.Authorization.Policy;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
+
+using Beng.Specta.Compta.Core.Interfaces;
+using Beng.Specta.Compta.Infrastructure.Data;
+using Beng.Specta.Compta.Infrastructure.Repositories;
+using Beng.Specta.Compta.Server;
+using Beng.Specta.Compta.SharedKernel.Interfaces;
+using Beng.Specta.Compta.UnitTests;
+using Beng.Specta.Compta.UnitTests.Helpers;
+using Xunit;
+
+namespace Beng.Specta.Compta.IntegrationTests
+{
+    /// <inheritdoc />
+    public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
+    {
+        private const string AppConnectionStringForTest = "Beng.Specta.ComptaStore.Test";
+        private const string TenantConnectionStringForTest = "Beng.Specta.TenantStore.Test";
+        
+        public readonly string BaseUrl = $"https://localhost:{GetRandomUnusedPort()}";
+        
+        public virtual async Task InitializeAsync()
+        {
+        }
+
+        public Task DisposeAsync() => Task.CompletedTask;
+
+        protected override void ConfigureWebHost(IWebHostBuilder builder)
+        {
+            ArgumentNullException.ThrowIfNull(builder);
+
+            builder.UseUrls(BaseUrl);
+            builder.ConfigureServices(services =>
+            {
+                services.SwapDbContext<AppDbContext>(AppConnectionStringForTest);
+                services.SwapDbContext<TenantStoreDbContext>(TenantConnectionStringForTest);
+
+                services.AddScoped<IDomainEventDispatcher, NoOpDomainEventDispatcher>();
+                services.AddScoped<IRepository, EfRepository>();
+                services.AddScoped<IAuthorizationRepository, AuthorizationRepository>();
+            });
+        }
+
+        public HttpClient CreateClientWithFakeAuthorization()
+        {
+            return WithWebHostBuilder(builder =>
+                {
+                    builder.ConfigureTestServices(services =>
+                        services.AddSingleton<IPolicyEvaluator, ByPassAuthorizationPolicyEvaluator>());
+                })
+                .CreateClient(new WebApplicationFactoryClientOptions
+                {
+                    AllowAutoRedirect = false
+                });
+        }
+
+        public IntegrationTestingWebApplicationFactory AddTestService(Action<IServiceCollection> configureTestServices)
+        {
+            WithWebHostBuilder(builder =>
+            {
+                builder.ConfigureTestServices(configureTestServices);
+            });
+
+            return this;
+        }
+        
+        private static int GetRandomUnusedPort()
+        {
+            var listener = new TcpListener(IPAddress.Any, 0);
+            listener.Start();
+            var port = ((IPEndPoint)listener.LocalEndpoint).Port;
+            listener.Stop();
+            return port;
+        }
+    }
+}

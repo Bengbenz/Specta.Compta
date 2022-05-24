@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Beng.Specta.Compta.Core.Interfaces;
 using Beng.Specta.Compta.Infrastructure.Data;
-using Beng.Specta.Compta.Infrastructure.Data.Repositories;
+using Beng.Specta.Compta.Infrastructure.Repositories;
 using Beng.Specta.Compta.Infrastructure.DomainEvents;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
 using Beng.Specta.Compta.Infrastructure.Services;
@@ -13,8 +13,6 @@ namespace Beng.Specta.Compta.Infrastructure.Config
 {
     public static class ServiceCollectionExtensions
 	{
-        private static IConfiguration _configuration;
-        
         public static IServiceCollection AddAppDbContext(this IServiceCollection services)
 		{
             // App store : Per-tenant Data Store
@@ -25,15 +23,11 @@ namespace Beng.Specta.Compta.Infrastructure.Config
 
 		public static IServiceCollection AddMultiTenantInfra(this IServiceCollection services)
 		{
-			// Build the intermediate service provider
-			var serviceProvider = services.BuildServiceProvider();
-			_configuration = serviceProvider.GetRequiredService<IConfiguration>();
-			
 			// Allows accessing HttpContext in Blazor
             // services.AddHttpContextAccessor() Already done in AddMultiTenant()
 			services.AddMultiTenant<TenantInfo>()
-					.WithMultiTenantStore()
 					.WithMultiTenantStrategy()
+					.WithMultiTenantStore()
 					.WithPerTenantAuthentication();
 					
 			return services;
@@ -55,7 +49,8 @@ namespace Beng.Specta.Compta.Infrastructure.Config
 		private static FinbuckleMultiTenantBuilder<TenantInfo> WithMultiTenantStrategy(this FinbuckleMultiTenantBuilder<TenantInfo> builder)
 		{
 			// Build the intermediate service provider
-			var defaultTenantConfig = _configuration.GetSection("DefaultTenant");
+			var configuration = builder.Services.BuildServiceProvider().GetRequiredService<IConfiguration>();;
+			var defaultTenantConfig = configuration.GetSection("DefaultTenant");
 			return builder
 						  // A template pattern can be specified with the overloaded version. The default pattern is "__tenant__.*"
 						  // For example, a request to "https://contoso.example.com/abc123" would use "contoso" as the identifier when resolving the tenant.
