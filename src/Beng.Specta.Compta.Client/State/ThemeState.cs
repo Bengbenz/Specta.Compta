@@ -1,42 +1,39 @@
-using System;
-
 using Beng.Specta.Compta.ComponentLibrary.Common;
 
-namespace Beng.Specta.Compta.Client.State
+namespace Beng.Specta.Compta.Client.State;
+
+public class ThemeState
 {
-    public class ThemeState
+    private string[] BackgroundImages { get; } =
     {
-        private string[] BackgroundImages { get; } =
-        {
-            "pexels-photo.jpg",
-            "pexels-photo-39811.jpeg",
-            "pexels-photo-235615.jpeg",
-            "pexels-photo-247431.jpeg",
-            //"pexels-photo-247478.jpeg",
-            "pexels-photo-257840.jpeg",
-            "pexels-photo-459059.jpeg",
-            //"fall-autumn-red-season.jpg",
-            "profile-bg.jpg",
-            "woodland-road-falling-leaf-natural-38537.jpeg"
-        };
+        "pexels-photo.jpg",
+        "pexels-photo-39811.jpeg",
+        "pexels-photo-235615.jpeg",
+        "pexels-photo-247431.jpeg",
+        //"pexels-photo-247478.jpeg",
+        "pexels-photo-257840.jpeg",
+        "pexels-photo-459059.jpeg",
+        //"fall-autumn-red-season.jpg",
+        "profile-bg.jpg",
+        "woodland-road-falling-leaf-natural-38537.jpeg"
+    };
 
-        public string AuthBackgroundImage { get; } = $"imgs/profile-bg.jpg";
+    public const string AuthBackgroundImage = "imgs/profile-bg.jpg";
 
-        public bool IsInvertedColor { get; set; } = true;
+    public bool IsInvertedColor { get; set; } = true;
 
-        public event Action OnChange;
+    public event Action? OnChange;
 
-        public ThemeDictionary SelectedTheme =>
-            IsInvertedColor ? ThemeDictionary.CORPORATE : ThemeDictionary.DEFAULT;
+    public ThemeDictionary SelectedTheme =>
+        IsInvertedColor ? ThemeDictionary.Corporate : ThemeDictionary.Default;
 
-        public void ToggleInverted()
-        {
-            IsInvertedColor = !IsInvertedColor;
-            NotifyStateChanged();
-        }
-
-        public string GetRandomBackgroundImage() => $"imgs/{BackgroundImages[new Random().Next(BackgroundImages.Length)]}";
-
-        private void NotifyStateChanged() => OnChange?.Invoke();
+    public void ToggleInverted()
+    {
+        IsInvertedColor = !IsInvertedColor;
+        NotifyStateChanged();
     }
+
+    public string GetRandomBackgroundImage() => $"imgs/{BackgroundImages[new Random().Next(BackgroundImages.Length)]}";
+
+    private void NotifyStateChanged() => OnChange?.Invoke();
 }

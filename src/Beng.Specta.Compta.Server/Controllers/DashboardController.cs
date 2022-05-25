@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Beng.Specta.Compta.Server.Controllers
+namespace Beng.Specta.Compta.Server.Controllers;
+
+public class DashboardController : Controller
 {
-    public class DashboardController : Controller
+    public IActionResult Index()
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        return View();
     }
 }

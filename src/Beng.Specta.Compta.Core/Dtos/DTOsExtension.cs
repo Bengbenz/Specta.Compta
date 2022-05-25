@@ -1,24 +1,21 @@
-﻿using System;
+﻿using Beng.Specta.Compta.Core.Entities;
 
-using Beng.Specta.Compta.Core.Entities;
+namespace Beng.Specta.Compta.Core.Dtos;
 
-namespace Beng.Specta.Compta.Core.Dtos
+public static class DTOsExtension
 {
-    public static class DTOsExtension
+    public static ProjectDto ToDto(this Project item)
     {
-        public static ProjectDTO ToDTO(this Project item)
-        {
-            if (item == null) throw new ArgumentNullException(nameof(item));
+        ArgumentNullException.ThrowIfNull(item);
 
-            return new ProjectDTO
-            {
-                Id = item.Id,
-                Code = item.Code,
-                Name = item.Name,
-                Description = item.Description,
-                StartDate = item.StartDate,
-                Duration = item.Duration
-            };
-        }
+        return new ProjectDto
+        {
+            Id = item.Id,
+            Code = item.Code,
+            Name = item.Name,
+            Description = item.Description,
+            StartDate = item.StartDate,
+            Duration = item.Duration
+        };
     }
 }

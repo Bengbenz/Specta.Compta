@@ -19,18 +19,19 @@
 
 @code
 {
-    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
-    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
-    [Parameter] public string Class { get; set; }
-    [Parameter] public string Value { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object>? AdditionalAttributes { get; set; }
+    [CascadingParameter] public ThemeDictionary? ContextTheme { get; set; }
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public string? Value { get; set; }
     [Parameter] public string Color { get; set; } = ThemeDictionary.PrimaryKey;
-    [Parameter] public string ToggleColor { get; set; }
+    [Parameter] public string? ToggleColor { get; set; }
     [Parameter] public bool IsDisabled { get; set; }
     [Parameter] public bool IsFlat { get; set; }
     [Parameter] public bool IsOutline { get; set; }
     [Parameter] public bool IsSmall { get; set; }
     [Parameter] public bool IsLarge { get; set; }
-    [Parameter] public IReadOnlyList<OptionType> Options { get; set; }
+
+    [Parameter] public IReadOnlyList<OptionType> Options { get; set; } = new List<OptionType>();
     [Parameter] public EventCallback OnToggleValue { get; set; }
 
     private string ComputedClass =>
@@ -38,10 +39,10 @@
             .AddClass(Class, !string.IsNullOrWhiteSpace(Class))
             .Build();
 
-    private string ButtonColor(string buttonValue) =>
+    private string ButtonColor(string? buttonValue) =>
         buttonValue == Value && !string.IsNullOrWhiteSpace(ToggleColor) ? ToggleColor : Color;
 
-    private StyleType ButtonStyle(string buttonValue)
+    private StyleType ButtonStyle(string? buttonValue)
     {
         var buttonStyle = new StyleType();
         if (buttonValue != Value)
@@ -51,25 +52,25 @@
 
         if (IsOutline || IsFlat)
         {
-            buttonStyle.BackgroundColor = ContextTheme[(!string.IsNullOrWhiteSpace(ToggleColor)) ? ToggleColor : Color];
+            buttonStyle.BackgroundColor = ContextTheme![(!string.IsNullOrWhiteSpace(ToggleColor)) ? ToggleColor : Color];
             buttonStyle.Color = "#ffffff";
         }
         else
         {
-            buttonStyle.BackgroundColor = ContextTheme[Color].GetGradientBackground();
+            buttonStyle.BackgroundColor = ContextTheme![Color].GetGradientBackground();
             buttonStyle.Filter = "brightness(85%)";
         }
         return buttonStyle;
     }
 
-    private string ButtonClass(string buttonValue) => (buttonValue == Value) ? "va-button--active" : string.Empty;
+    private string ButtonClass(string? buttonValue) => (buttonValue == Value) ? "va-button--active" : string.Empty;
 
     private void ToggleValue(OptionType option)
     {
         if (option.Value != Value)
         {
             Value = option.Value;
-            option.OnSelectedItemHandler.Invoke();
+            option.OnSelectedItemHandler?.Invoke();
         }
     }
 }

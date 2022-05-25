@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -37,13 +34,14 @@ namespace Beng.Specta.Compta.UnitTests.Helpers
         /// <param name="implementationFactory">The implementation factory for the specified type.</param>
         public static void SwapTransient<TService>(
             this IServiceCollection services,
-            Func<IServiceProvider, TService> implementationFactory)
+            Func<IServiceProvider, TService?> implementationFactory)
         {
-            if (services == null) throw new ArgumentNullException(nameof(services));
+            ArgumentNullException.ThrowIfNull(services);
+            ArgumentNullException.ThrowIfNull(implementationFactory);
 
             RemoveService<TService>(services, ServiceLifetime.Transient);
 
-            services.AddTransient(typeof(TService), sp => implementationFactory(sp));
+            services.AddTransient(typeof(TService), sp => implementationFactory(sp)!);
         }
 
         /// <summary>
@@ -56,7 +54,7 @@ namespace Beng.Specta.Compta.UnitTests.Helpers
             this IServiceCollection services) 
             where TImplementation : class, TService
         {
-            if (services == null) throw new ArgumentNullException(nameof(services));
+            ArgumentNullException.ThrowIfNull(services);
 
             RemoveService<TService>(services, ServiceLifetime.Transient);
 

@@ -10,7 +10,7 @@ namespace Beng.Specta.Compta.UnitTests.Helpers
 
         public ProjectBuilder()
         {
-            _project = new Project();
+            _project = new Project(string.Empty, string.Empty);
         }
 
         public ProjectBuilder SetId(long id)
@@ -51,10 +51,8 @@ namespace Beng.Specta.Compta.UnitTests.Helpers
 
         public ProjectBuilder WithDefaultValues()
         {
-            _project = new Project
+            _project = new Project("Test", "Test Item")
             {
-                Code="Test",
-                Name = "Test Item",
                 Description = "Test Description",
                 StartDate = DateTime.UtcNow
             };

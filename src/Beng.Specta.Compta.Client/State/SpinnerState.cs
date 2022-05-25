@@ -1,19 +1,16 @@
-using System;
+namespace Beng.Specta.Compta.Client.State;
 
-namespace Beng.Specta.Compta.Client.State
+public class SpinnerState
 {
-    public class SpinnerState
+	public bool IsVisible { get; private set; }
+
+	public event Action? OnChange;
+
+	public void ToggleSpinner()
 	{
-		public bool IsVisible { get; private set; }
+		IsVisible = !IsVisible;
+		NotifyStateChanged();
+	}
 
-		public event Action OnChange;
-
-		public void ToggleSpinner()
-		{
-			IsVisible = !IsVisible;
-			NotifyStateChanged();
-		}
-
-		private void NotifyStateChanged() => OnChange?.Invoke();
-    }
+	private void NotifyStateChanged() => OnChange?.Invoke();
 }
