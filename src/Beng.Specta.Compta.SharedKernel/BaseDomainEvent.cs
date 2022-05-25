@@ -1,9 +1,6 @@
-﻿using System;
+﻿namespace Beng.Specta.Compta.SharedKernel;
 
-namespace Beng.Specta.Compta.SharedKernel
+public abstract class BaseDomainEvent
 {
-    public abstract class BaseDomainEvent
-    {
-        public DateTime DateOccurred { get; protected set; } = DateTime.UtcNow;
-    }
+    public DateTime DateOccurred { get; protected set; } = DateTime.UtcNow;
 }

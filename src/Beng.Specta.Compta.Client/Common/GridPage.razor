@@ -41,7 +41,7 @@
         </div>
     }
         <SfGrid @ref="Grid"
-            TValue="ProjectDTO"
+            TValue="ProjectDto"
             IsVisible="@(Items.Count > 0)"
             Toolbar="@Tools"
             ContextMenuItems="@ContextMenuItems"
@@ -84,7 +84,7 @@
 
     private IList<TItem> Items { get; set; }
 
-    private SfGrid<ProjectDTO> Grid;
+    private SfGrid<ProjectDto> Grid;
 
     private string ImageForEmpty => (Items?.Count == 0) ? ThemeState.GetRandomBackgroundImage() : string.Empty;
     private string[] Tools = new string[] { "Add", "Edit", "Delete", "Update", "Cancel", "ExcelExport", "ColumnChooser", "Search" }; //"Add", "Edit", "Delete", "Update", "Delete", "ExcelExport", "ColumnChooser", "Search"
@@ -107,7 +107,7 @@
         var addData = default(TItem);
         Items.Add(addData);
         //StateHasChanged();
-        await Grid.AddRecord(addData as ProjectDTO);
+        await Grid.AddRecord(addData as ProjectDto);
     }
 
     protected override async Task OnInitializedAsync()
