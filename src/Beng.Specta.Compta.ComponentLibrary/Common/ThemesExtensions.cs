@@ -1,5 +1,3 @@
-using System;
-
 namespace Beng.Specta.Compta.ComponentLibrary.Common
 {
     public static class ThemesExtensions
@@ -8,15 +6,14 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
         private static string ColorThemeDefault => ThemeDictionary.PrimaryKey;
 
         // Default color value
-        private static string ColorDefault => "#000000";
+        private const string ColorDefault = "#000000";
 
         // This allows a multitude of defaults.
         // theme color => color => theme default => hard default
         // customColor : Selected Color key or value
-        public static string ComputeColor(this ThemeDictionary themeStore, string customColor = "")
+        public static string ComputeColor(this ThemeDictionary themeStore, string? customColor = null)
         {
-            if (themeStore == null) throw new ArgumentNullException(nameof(themeStore));
-
+            ArgumentNullException.ThrowIfNull(themeStore);
 
             if (!string.IsNullOrWhiteSpace(customColor)
                 && themeStore.TryGetValue(customColor, out var color))

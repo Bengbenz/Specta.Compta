@@ -68,7 +68,7 @@ namespace Beng.Specta.Compta.Infrastructure.Config
 
 		public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
 		{
-            services.AddScoped<IRepository, EfRepository>()
+            services.AddScoped<IRepository, GenericRepository>()
 					.AddScoped<IAuthorizationRepository, AuthorizationRepository>()
 					.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
 

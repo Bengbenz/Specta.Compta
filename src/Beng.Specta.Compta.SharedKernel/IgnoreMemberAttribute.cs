@@ -1,10 +1,7 @@
-﻿using System;
+﻿namespace Beng.Specta.Compta.SharedKernel;
 
-namespace Beng.Specta.Compta.SharedKernel
+// source: https://github.com/jhewlett/ValueObject
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+public class IgnoreMemberAttribute : Attribute
 {
-    // source: https://github.com/jhewlett/ValueObject
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-    public class IgnoreMemberAttribute : Attribute
-    {
-    }
 }

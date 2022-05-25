@@ -28,10 +28,10 @@
 
 @code{
     
-    protected async Task<IList<ProjectDTO>> LoadItems()
+    protected async Task<IList<ProjectDto>> LoadItems()
     {
         //await Task.Delay(3000);
         
-        return await Task.Run(() => new List<ProjectDTO>());//GetProjects();
+        return await Task.Run(() => new List<ProjectDto>());//GetProjects();
     }
 }
