@@ -1,13 +1,12 @@
 ﻿using Beng.Specta.Compta.Core.Entities;
 
-namespace Beng.Specta.Compta.Infrastructure.Data.Config
+namespace Beng.Specta.Compta.Infrastructure.Data.Config;
+
+public sealed class ProjectConfiguration : BaseEntityConfiguration<Project>
 {
-    public class ProjectConfiguration : BaseEntityConfiguration<Project>
+    protected override void Configure()
     {
-        protected override void Configure()
-        {
-            Builder.HasIndex(p => p.Code)
-                   .IsUnique();
-        }
+        Builder.HasIndex(p => p.Code)
+            .IsUnique();
     }
 }

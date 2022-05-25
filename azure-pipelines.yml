@@ -28,17 +28,15 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
-  reportCodeCoverageToolVersion: '5.1.6'
+  #reportCodeCoverageToolVersion: '5.1.6'
   codeCoverageParams: '/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
   netVersion: 'net6.0'
-  unbuntuVersion: '22.04'
+  disable.coverage.autogenerate: 'true'
+  codecoveragehistory.directory: '$(Build.ArtifactStagingDirectory)/CodeCoverage/history'
+  codecoveragehistory.feedName: 'FinProd_Universal_Feed'
+  codecoveragehistory.packageName: 'bengbenz-specta-compta-codecoverage-history-$(Build.SourceBranchName)'
 
-steps:
-# Start x-server daemon for E2E tests on linux
-- script: 'sudo /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16'
-  displayName: 'Start Xvfb'
-  continueOnError: true
-    
+steps:    
 - task: UseDotNet@2
   displayName: 'Install .NET SDK'
   inputs:
@@ -51,13 +49,7 @@ steps:
   inputs:
     command: restore
     projects: '**/*.csproj'
-    #feedsToUse: config
-    #nugetConfigPath: NuGet.config    # Relative to root of the repository
-    #externalFeedCredentials: <Name of the NuGet service connection>
 
-#- script: dotnet build --configuration $(BuildConfiguration)
-#  displayName: 'Dotnet build $(BuildConfiguration)'
-# ou
 - task: DotNetCoreCLI@2
   displayName: 'Build --Configuration: $(BuildConfiguration)'
   inputs:
@@ -72,60 +64,105 @@ steps:
     targetType: 'filePath'
     filePath: 'tests/Beng.Specta.Compta.IntegrationTests/bin/$(BuildConfiguration)/$(netVersion)/playwright.ps1'
     arguments: 'install'
-
-# Run all tests with (Tonerdo/Coverlet) "/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura" to generate the code coverage file
+  
+# Start x-server daemon for E2E tests on linux
+- script: 'sudo /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16'
+  displayName: 'Start Xvfb'
+  continueOnError: true
+  
 - task: DotNetCoreCLI@2
   displayName: 'Run Unit tests'
   inputs:
     command: test
-    arguments: '--configuration $(BuildConfiguration) $(CodeCoverageParams) --no-build'
+    arguments: '--configuration $(BuildConfiguration) $(CodeCoverageParams)'
     projects: tests/Beng.Specta.Compta.UnitTests/*.csproj
-
+    nobuild: true
+    
+# Run all tests with (Tonerdo/Coverlet) "/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura" to generate the code coverage file
 - task: DotNetCoreCLI@2
   displayName: 'Run Integration tests'
+  continueOnError: true
   inputs:
     command: test
-    arguments: '--configuration $(BuildConfiguration) $(CodeCoverageParams) --no-build'
+    arguments: '--configuration $(BuildConfiguration) $(CodeCoverageParams)'
     projects: tests/Beng.Specta.Compta.IntegrationTests/*.csproj
+    nobuild: true
     
 # Run functional tests
 - task: DotNetCoreCLI@2
   displayName: 'Run Functionnal tests'
+  continueOnError: true
   inputs:
     command: test
-    arguments: '--configuration $(BuildConfiguration) $(CodeCoverageParams) --no-build'
+    arguments: '--configuration $(BuildConfiguration) $(CodeCoverageParams)'
     projects: tests/Beng.Specta.Compta.FunctionalTests/*.csproj
-    continueOnError: true
- 
+    nobuild: true
+    
 # Publish test attachments (screenshot and videos)  
 - task: CopyFiles@2
   displayName: 'Publish tests attachments'
+  condition: 'failed()'
   inputs:
     sourceFolder: tests/Beng.Specta.Compta.FunctionalTests/bin/$(BuildConfiguration)/$(netVersion)/
     contents: '(screenshots|videos|traces)/?(*0.png|*1.png|*2.png|*3.png|*4.png|*5.png|*6.png|*7.png|*8.png|*9.png|*.webm|*.zip)'
     targetFolder: '$(Build.ArtifactStagingDirectory)'
   
 # Palmedia.ReportGenerator install task
-- task: DotNetCoreCLI@2
-  displayName: 'Install ReportGenerator tool'
-  inputs:
-    command: custom
-    custom: tool
-    arguments: 'install -g dotnet-reportgenerator-globaltool --version $(ReportCodeCoverageToolVersion)'
-  
-# Generate codecoverage report task
-- script: 'reportgenerator -reports:tests/**/coverage.cobertura.xml -targetdir:CodeCoverage -assemblyfilters:"-xunit*;-*Tests*" -reporttypes:"Cobertura;HtmlInline_AzurePipelines;Badges"' #TeamCitySummary, HtmlChart
-  displayName: 'Codecoverage Report'
+#- task: DotNetCoreCLI@2
+#  displayName: 'Install ReportGenerator tool'
+#  inputs:
+#    command: custom
+#    custom: tool
+#    arguments: 'install -g dotnet-reportgenerator-globaltool --version $(ReportCodeCoverageToolVersion)'
 
-# Publish the code coverage result (summary and web site)
+# Generate report and handle history download & publish in universal package feed
+- task: UniversalPackages@0
+  displayName: 'Get Previous Codecoverage history'
+  continueOnError: true
+  inputs:
+    command: 'download'
+    downloadDirectory: '$(codecoveragehistory.directory)'
+    feedsToUse: 'internal'
+    vstsFeed: '$(codecoveragehistory.feedName)'
+    vstsFeedPackage: '$(codecoveragehistory.packageName)'
+    vstsPackageVersion: '*'
+    verbosity: 'Information'
+    
+# Generate codecoverage report task (without extension from marketplace)
+#- script: 'reportgenerator -reports:tests/**/coverage.cobertura.xml -targetdir:CodeCoverage -assemblyfilters:"-xunit*;-*Tests*" -reporttypes:"HtmlInline_AzurePipelines;Cobertura;Badges"' #TeamCitySummary, HtmlChart
+#  displayName: 'Codecoverage Report'
+- task: reportgenerator@5
+  displayName: 'Codecoverage Report'
+  inputs:
+    reports: 'tests/**/coverage.cobertura.xml'
+    targetdir: 'report/CodeCoverage'
+    historydir: '$(codecoveragehistory.directory)'
+    title: 'Merged code coverage for $(codecoveragehistory.packageName)'
+    assemblyfilters: '-xunit*;-*Tests*'
+    
+- task: UniversalPackages@0
+  displayName: 'Publish Codecoverage history'
+  continueOnError: true
+  inputs:
+    command: 'publish'
+    publishDirectory: '$(codecoveragehistory.directory)'
+    feedsToUsePublish: 'internal'
+    vstsFeedPublish: '$(codecoveragehistory.feedName)'
+    vstsFeedPackagePublish: '$(codecoveragehistory.packageName)'
+    versionOption: 'patch'
+    packagePublishDescription: 'Code Coverage History for repository $(Build.Repository.Name) on branch $(Build.SourceBranchName)'
+    verbosity: 'Information'
+
+# Publish the code coverage result (summary and web site) (Without handling history, only when previous is failed)
 # The summary allows to view the coverage percentage in the summary tab
-# The web site allows to view which lines are covered directly in Azure Pipeline
+## The web site allows to view which lines are covered directly in Azure Pipeline
 - task: PublishCodeCoverageResults@1
-  displayName: 'Publish Codecoverage'
+  displayName: 'Publish Codecoverage summary'
+  condition: 'failed()'
   inputs:
     codeCoverageTool: Cobertura
-    summaryFileLocation: 'CodeCoverage/Cobertura.xml'
-    reportDirectory: 'CodeCoverage'
+    summaryFileLocation: 'report/CodeCoverage/Cobertura.xml'
+    reportDirectory: 'report/CodeCoverage'
 
 # Publish App output
 - task: DotNetCoreCLI@2

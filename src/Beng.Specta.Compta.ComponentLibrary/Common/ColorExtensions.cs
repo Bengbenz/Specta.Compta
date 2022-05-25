@@ -1,10 +1,9 @@
-using System;
 using System.Text.RegularExpressions;
 
-namespace Beng.Specta.Compta.ComponentLibrary.Common
+namespace Beng.Specta.Compta.ComponentLibrary.Common;
+
+public static class ColorExtensions
 {
-  public static class ColorExtensions
-  {
     private static RgbType HexToRgb(this string hexIn, double opacity)
     {
         string hex = hexIn.Trim();
@@ -13,22 +12,19 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
         var regex = new Regex("^#?(([0-9a-zA-Z]{3}){1,3})$");
         Match match = regex.Match(hex);
 
-        if(match != null)
+        rgb.Opacity = opacity;
+        hex = match.Value.Trim('#');
+        if (hex.Length == 6)
         {
-            rgb.Opacity = opacity;
-            hex = match.Value.Trim('#');
-            if (hex.Length == 6)
-            {
-                rgb.Red = Convert.ToInt32(hex.Substring(0, 2), 16);
-                rgb.Green = Convert.ToInt32(hex.Substring(2, 2), 16);
-                rgb.Blue = Convert.ToInt32(hex.Substring(4, 2), 16);
-            }
-            else if (hex.Length == 3)
-            {
-                rgb.Red = Convert.ToInt32(hex.Substring(0, 1) + hex.Substring(0, 1), 16);
-                rgb.Green = Convert.ToInt32(hex.Substring(1, 1) + hex.Substring(1, 1), 16);
-                rgb.Blue = Convert.ToInt32(hex.Substring(2, 1) + hex.Substring(2, 1), 16);
-            }
+            rgb.Red = Convert.ToInt32(hex.Substring(0, 2), 16);
+            rgb.Green = Convert.ToInt32(hex.Substring(2, 2), 16);
+            rgb.Blue = Convert.ToInt32(hex.Substring(4, 2), 16);
+        }
+        else if (hex.Length == 3)
+        {
+            rgb.Red = Convert.ToInt32(hex.Substring(0, 1) + hex.Substring(0, 1), 16);
+            rgb.Green = Convert.ToInt32(hex.Substring(1, 1) + hex.Substring(1, 1), 16);
+            rgb.Blue = Convert.ToInt32(hex.Substring(2, 1) + hex.Substring(2, 1), 16);
         }
 
         return rgb;
@@ -56,8 +52,8 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
         };
 
         hls.Saturation = delta == 0 ? 0 : delta / (1 - Math.Abs(2 * hls.Lightness - 1));
-        hls.Saturation = Convert.ToDouble(String.Format("{0:0.0}", hls.Saturation * 100));
-        hls.Lightness = Convert.ToDouble(String.Format("{0:0.0}", hls.Lightness * 100));
+        hls.Saturation = Convert.ToDouble($"{hls.Saturation * 100:0.0}");
+        hls.Lightness = Convert.ToDouble($"{hls.Lightness * 100:0.0}");
         hls.Round();
 
         return hls;
@@ -71,11 +67,11 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
         { 
             hue = 0;
         }
-        else if (cmax == rgb.Red)
+        else if (Math.Abs(cmax - rgb.Red) < Double.Epsilon)
         { 
             hue = ((rgb.Green - rgb.Blue) / delta) % 6;
         }
-        else if (cmax == rgb.Green)
+        else if (Math.Abs(cmax - rgb.Green) < Double.Epsilon)
         {
             hue = ((rgb.Blue - rgb.Red) / delta) + 2;
         }
@@ -110,28 +106,28 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
 
     public static string GetBoxShadowColor(this string color)
     {
-        if (color == null) throw new ArgumentNullException(nameof(color));
+        ArgumentNullException.ThrowIfNull(color);
 
         return color.HexToRgb(0.6).ToString();
     }
 
     public static string GetHoverColor(this string color)
     {
-        if (color == null) throw new ArgumentNullException(nameof(color));
+        ArgumentNullException.ThrowIfNull(color);
 
         return color.HexToRgb(0.2).ToString();
     }
 
     public static string GetFocusColor(this string color)
     {
-        if (color == null) throw new ArgumentNullException(nameof(color));
+        ArgumentNullException.ThrowIfNull(color);
 
         return color.HexToRgb(0.3).ToString();
     }
 
     public static (string, string) GetGradientColor(this string color)
     {
-        if (color == null) throw new ArgumentNullException(nameof(color));
+        ArgumentNullException.ThrowIfNull(color);
 
         HslType first = color.HexToHsl();
         HslType second = color.HexToHsl();
@@ -219,5 +215,4 @@ namespace Beng.Specta.Compta.ComponentLibrary.Common
 
         return color;
     }
-  }
 }

@@ -4,9 +4,9 @@
 
 @code{
 
-    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public string Color { get; set; } = ThemeDictionary.PrimaryKey; // GetParentColor
-    [Parameter] public string Class { get; set; }
+    [Parameter] public string? Class { get; set; }
     [Parameter] public bool IsSmall { get; set; }
     [Parameter] public bool IsLarge { get; set; }
 

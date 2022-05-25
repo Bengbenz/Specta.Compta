@@ -1,31 +1,30 @@
 using System.ComponentModel;
 
-namespace Beng.Specta.Compta.ComponentLibrary.Common
+namespace Beng.Specta.Compta.ComponentLibrary.Common;
+
+public enum ButtonType
 {
-    public enum ButtonType
-    {
-        [Description("a")]
-        Link,
+    [Description("a")]
+    Link,
 
-        [Description("nav-link")]
-        NavLink,
+    [Description("nav-link")]
+    NavLink,
 
-        [Description("button")]
-        Button,
+    [Description("button")]
+    Button,
 
-        [Description("input")]
-        Input,
+    [Description("input")]
+    Input,
 
-        [Description("submit")]
-        Submit,
+    [Description("submit")]
+    Submit,
 
-        [Description("reset")]
-        Reset,
+    [Description("reset")]
+    Reset,
 
-        [Description("checkbox")]
-        Checkbox,
+    [Description("checkbox")]
+    Checkbox,
 
-        [Description("radio")]
-        Radio
-    }
+    [Description("radio")]
+    Radio
 }

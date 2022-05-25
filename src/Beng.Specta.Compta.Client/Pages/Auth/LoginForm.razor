@@ -8,16 +8,16 @@
 <EditForm EditContext="@_editContext" OnSubmit="LoginUser">
     <DataAnnotationsValidator />
     <ServerSideValidator @ref="ServerSideValidator" />
-    <VaInput @bind-Value="_userInfo.Email"
+    <VaInput @bind-Value="UserInfo.Email"
       Type="@VaInputType.Email"
       Label="Email" />
 
-    <VaInput @bind-Value="_userInfo.Password"
+    <VaInput @bind-Value="UserInfo.Password"
       Type="@VaInputType.Password"
       Label="Mot de passe" />
 
     <div class="auth-layout__options d-flex align--center justify--space-between">
-        <VaCheckBox @bind-Value="_userInfo.RememberMe" class="mb-0" Label="Se souvenir de moi ?"/>
+        <VaCheckBox @bind-Value="UserInfo.RememberMe" class="mb-0" Label="Se souvenir de moi ?"/>
         <NavLink class="ml-1 link" style="@LinkStyle" href="/forgot-password">Mot de passe oublié ?</NavLink>
     </div>
 
@@ -28,20 +28,20 @@
 
 @code
 {
-    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [CascadingParameter] public ThemeDictionary? ContextTheme { get; set; }
 
-    private SignInUserInfoDto _userInfo { get; set; } = new SignInUserInfoDto();
-    private ServerSideValidator ServerSideValidator { get; set; }
-    private EditContext _editContext;
+    private SignInUserInfoDto UserInfo { get; set; } = new();
+    private ServerSideValidator? ServerSideValidator { get; set; }
+    private EditContext? _editContext;
 
     private string LinkStyle =>
         StyleBuilder.Empty()
-            .AddStyle("color", ContextTheme[ThemeDictionary.PrimaryKey], ContextTheme.IsInverted)
+            .AddStyle("color", ContextTheme![ThemeDictionary.PrimaryKey], ContextTheme.IsInverted)
             .Build();
 
     private async Task LoginUser()
     {
-        var isValid = _editContext.Validate() && await ServerValidate();
+        var isValid = _editContext!.Validate() && await ServerValidate();
         if (isValid)
         {
             await WebApiClient.CreateRequest("api/account/signin")
@@ -55,10 +55,10 @@
                     AuthService.Login();
                     Logger.LogDebug($"{GetType().Name}: User Logged");
                     NavigationManager.NavigateTo("/");
-                    JsRuntime.LaunchToast("success", $"Welcome {_userInfo.Email}");
-                    _userInfo = new SignInUserInfoDto();
+                    JsRuntime.LaunchToast("success", $"Welcome {UserInfo.Email}");
+                    UserInfo = new SignInUserInfoDto();
                 })
-                .PostAsync(_userInfo);
+                .PostAsync(UserInfo);
         }
         else
         {
@@ -72,17 +72,17 @@
         await WebApiClient.CreateRequest("api/account/details")
             .OnNotFound(() =>
             {
-                ServerSideValidator.DisplayError(nameof(_userInfo.Email), "Invalid credentials");
+                ServerSideValidator.DisplayError(nameof(UserInfo.Email), "Invalid credentials");
                 result = false;
             })
             .OnOK(() => result = true)
-            .GetAsync(_userInfo.Email);
+            .GetAsync(UserInfo.Email);
 
         return result;
     }
 
     protected override void OnInitialized()
     {
-        _editContext = new EditContext(_userInfo);
+        _editContext = new EditContext(UserInfo);
     }
 }

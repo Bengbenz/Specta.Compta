@@ -1,52 +1,51 @@
 using System.ComponentModel;
 
-namespace Beng.Specta.Compta.ComponentLibrary.Common
+namespace Beng.Specta.Compta.ComponentLibrary.Common;
+
+public enum PositionType
 {
-    public enum PositionType
-    {
-        [Description("top")]
-        Top,
+    [Description("top")]
+    Top,
 
-        [Description("top-start")]
-        TopStart,
+    [Description("top-start")]
+    TopStart,
 
-        [Description("top-end")]
-        TopEnd,
+    [Description("top-end")]
+    TopEnd,
 
-        [Description("right")]
-        Right,
+    [Description("right")]
+    Right,
         
-        [Description("right-start")]
-        RightStart,
+    [Description("right-start")]
+    RightStart,
 
-        [Description("right-end")]
-        RightEnd,
+    [Description("right-end")]
+    RightEnd,
 
-        [Description("bottom")]
-        Bottom,
+    [Description("bottom")]
+    Bottom,
 
-        [Description("bottom-start")]
-        BottomStart,
+    [Description("bottom-start")]
+    BottomStart,
 
-        [Description("bottom-end")]
-        BottomEnd,
+    [Description("bottom-end")]
+    BottomEnd,
 
-        [Description("left")]
-        Left,
+    [Description("left")]
+    Left,
 
-        [Description("left-start")]
-        LeftStart,
+    [Description("left-start")]
+    LeftStart,
 
-        [Description("left-end")]
-        LeftEnd,
+    [Description("left-end")]
+    LeftEnd,
 
-        [Description("auto")]
-        Auto,
+    [Description("auto")]
+    Auto,
 
-        [Description("auto-start")]
-        AutoStart,
+    [Description("auto-start")]
+    AutoStart,
 
-        [Description("auto-end")]
-        AutoEnd,
-    }
+    [Description("auto-end")]
+    AutoEnd,
 }
