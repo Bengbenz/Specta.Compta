@@ -164,18 +164,18 @@
 
 @code{
 
-    [Parameter] public IEnumerable<FieldType> Fields { get; set; }
-    [Parameter] public IDictionary<string, string> Data { get; set; }
+    [Parameter] public IEnumerable<FieldType> Fields { get; set; } = new List<FieldType>();
+    [Parameter] public IDictionary<string, string> Data { get; set; } = new Dictionary<string, string>();
     [Parameter] public int PerPage { get; set; } = 10;
     [Parameter] public int InitialPage { get; set; } = 1;
     [Parameter] public int DataTotal { get; set; }
-    [Parameter] public int MinRows { get; set; } = 0;
-    [Parameter] public string PaginationPath { get; set; }
+    [Parameter] public int MinRows { get; set; }
+    [Parameter] public string? PaginationPath { get; set; }
     [Parameter] public string DataPath { get; set; } = "data";
-    [Parameter] public string TableHeight { get; set; }
-    [Parameter] public string RowClass { get; set; }
-    [Parameter] public string DetailRowComponent { get; set; }
-    [Parameter] public string DetailRowTransition { get; set; }
+    [Parameter] public string? TableHeight { get; set; }
+    [Parameter] public string? RowClass { get; set; }
+    [Parameter] public string? DetailRowComponent { get; set; }
+    [Parameter] public string? DetailRowTransition { get; set; }
     [Parameter] public string TrackBy { get; set; } = "id";
     [Parameter] public string ApiUrl { get; set; } = string.Empty;
     [Parameter] public string NoDataTemplate { get; set; } = "No Data Available";
@@ -183,9 +183,9 @@
     [Parameter] public bool IsLoadedOnStart { get; set; }
     [Parameter] public bool IsSilent { get; set; }
     //[Parameter] public Func<Task<IList<TItem>>> DataManager { get; set; }
-    [Parameter] public IDictionary<string, string> Styles { get; set; }
+    [Parameter] public IDictionary<string, string> Styles { get; set; } = new Dictionary<string, string>();
 
-    public IDictionary<string, string> Css { get; set; } = new Dictionary
+    public IDictionary<string, string> Css { get; set; } = new Dictionary<string, string>
     {
         { "TableClass",  "ui blue selectable celled stackable attached table" },
         { "LoadingClass", "loading" },
@@ -200,7 +200,7 @@
     };
 
     public IDictionary<string, string> DataTable { get; set; }
-    public IList<FieldType> TableFields { get; set; }
+    public IEnumerable<FieldType> TableFields { get; set; }
     private bool IsFixedHeader => !string.IsNullOrWhiteSpace(TableHeight);
     private bool IsIn (string str, params string[] arr) => arr.Contains(str);
     
@@ -285,7 +285,7 @@
 
     public void NormalizeFields()
     {
-        if (Fields == null) throw new ArgumentNullException($"You need to provide {nameof(Fields)} prop.");
+        if (Fields is null) throw new ArgumentNullException($"You need to provide {nameof(Fields)} prop.");
 
         TableFields = Fields;
     }

@@ -48,18 +48,18 @@
 
 @code{
 
-    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
-    [Parameter] public string Title { get; set; }
-    [Parameter] public string Icon { get; set; }
-    [Parameter] public string Tooltip { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; } = null!;
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? Icon { get; set; }
+    [Parameter] public string? Tooltip { get; set; }
     [Parameter] public bool IsActive { get; set; }
     [Parameter] public bool IsExpanded { get; set; }
     [Parameter] public bool IsMinimized { get; set; }
-    [Parameter] public RenderFragment<TSubMenuItem> SubMenuItemTemplate { get; set; }
-    [Parameter] public Func<Task<IReadOnlyCollection<TSubMenuItem>>> Loader { get; set; }
+    [Parameter] public RenderFragment<TSubMenuItem> SubMenuItemTemplate { get; set; } = null!;
+    [Parameter] public Func<Task<IReadOnlyCollection<TSubMenuItem>>> Loader { get; set; } = null!;
     [Parameter] public EventCallback OnExpand { get; set; }
 
-    private IReadOnlyCollection<TSubMenuItem> SubMenuItems { get; set; }
+    private IReadOnlyCollection<TSubMenuItem> SubMenuItems { get; set; } = null!;
     private bool IsHovered { get; set; }
 
     private string IconRight => IsExpanded ? "fa fa-angle-up" : "fa fa-angle-down";

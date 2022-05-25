@@ -13,8 +13,8 @@
         <VaButton icon="fa fa-refresh" @onclick="GetFundingItems" />
     </Actions>
     <BodyContent>
-        <VaNotification BadgeText="Error" Color="@ThemeDictionary.DangerKey" IsVisible="@(ErrorDetails != null)" class="mb-4">@ErrorDetails</VaNotification>
-        @if (FundingItems == null)
+        <VaNotification BadgeText="Error" Color="@ThemeDictionary.DangerKey" IsVisible="@(!string.IsNullOrEmpty(_errorDetails))" class="mb-4">@_errorDetails</VaNotification>
+        @if (!FundingItems.Any())
         {
             <h1>Loading...</h1>
         }
@@ -46,10 +46,10 @@
 
 @code{
 
-    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; } = null!;
 
-    private string ErrorDetails;
-    private IList<ContractStep> FundingItems { get; set; }
+    private string _errorDetails = string.Empty;
+    private IList<ContractStep> FundingItems { get; set; } = new List<ContractStep>();
 
     bool IsOpen4 { get; set; }
 
@@ -67,7 +67,7 @@
 
     public void ActionFailure(Syncfusion.Blazor.Grids.FailureEventArgs args)
     {
-        ErrorDetails = $"Exception: {args}";
+        _errorDetails = $"Exception: {args}";
         StateHasChanged();
     }
 

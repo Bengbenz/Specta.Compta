@@ -36,11 +36,11 @@
 
 @code
 {
-    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; } = null!;
 
-    private RegisterUserInfoDto _userInfo = new RegisterUserInfoDto();
-    private ServerSideValidator ServerSideValidator { get; set; }
-    private EditContext _editContext;
+    private RegisterUserInfoDto _userInfo = new();
+    private ServerSideValidator ServerSideValidator { get; set; } = null!;
+    private EditContext _editContext = null!;
 
     private string LinkStyle =>
         StyleBuilder.Empty()

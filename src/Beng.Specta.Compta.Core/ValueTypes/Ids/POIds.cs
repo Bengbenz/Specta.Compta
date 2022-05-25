@@ -2,7 +2,7 @@
 
 namespace Beng.Specta.Compta.Core.ValueTypes.Ids
 {
-    public class BaseLongPOId : BasePOId<long>
+    public class BaseLongPOId : BasePoId<long>
     {
         public BaseLongPOId(long value) : base(value)
         {

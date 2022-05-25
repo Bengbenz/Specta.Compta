@@ -7,9 +7,9 @@
 
 @code{
 
-    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
-    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
-    [Parameter] public string Class { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; } = null!;
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; } = null!;
+    [Parameter] public string? Class { get; set; }
     [Parameter] public bool IsVisible { get; set; } = true;
     [Parameter] public string Name { get; set; } = string.Empty;
     [Parameter] public bool IsSmall { get; set; }
@@ -19,7 +19,7 @@
     [Parameter] public string Size { get; set; } = string.Empty;
     [Parameter] public string Style { get; set; } = string.Empty;
     [Parameter] public string Color { get; set; } = string.Empty;
-    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
 
     private string IconStyle =>
         StyleBuilder.Empty()

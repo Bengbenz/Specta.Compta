@@ -28,15 +28,15 @@
 
 @code{
 
-    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
-    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
-    [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; }
-    [Parameter] public string Class { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; } = null!;
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; } = null!;
+    [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
+    [Parameter] public string? Class { get; set; }
     
-    private string Label { get; set; }
+    private string? Label { get; set; }
     private bool IsExpanded { get; set; } = false;
     private string AnchorIconClass => IsExpanded ? "fa fa-angle-up" : "fa fa-angle-down";
-    private string HoveredItem { get; set; }
+    private string? HoveredItem { get; set; }
 
     private string ComputedClass =>
         CssBuilder.Default("profile-dropdown")
@@ -52,7 +52,7 @@
             .AddStyle("color", $"{ContextTheme[ThemeDictionary.PrimaryKey]} !important", code == HoveredItem)
             .Build();
 
-    private void HoverHandler(string code = null) => HoveredItem = code;
+    private void HoverHandler(string? code = null) => HoveredItem = code;
 
     private IReadOnlyCollection<OptionType> Options { get; } = new List<OptionType>
     {

@@ -1,4 +1,4 @@
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JsRuntime
 @inject ILogger<VaDropdown> Logger
 @implements IDisposable
 
@@ -33,10 +33,10 @@
 
 @code{
 
-    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
-    [Parameter] public string Class { get; set; }
-    [Parameter] public string Color { get; set; }
-    [Parameter] public string Icon { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; } = null!;
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public string? Color { get; set; }
+    [Parameter] public string? Icon { get; set; }
     [Parameter] public string Offset { get; set; } = "0, 8"; // default distance of popper with the reference element
     [Parameter] public bool IsCloseOnClickOutside { get; set; } = true;
     [Parameter] public bool IsCloseOnAnchorClick { get; set; } = true;
@@ -51,14 +51,14 @@
     [Parameter] public int HoverOverTimeout { get; set; } = 200;
     [Parameter] public TriggerType Trigger { get; set; } = TriggerType.Click;
     [Parameter] public PositionType Position { get; set; } = PositionType.Bottom;
-    [Parameter] public RenderFragment Anchor { get; set; }
-    [Parameter] public RenderFragment Content { get; set; }
+    [Parameter] public RenderFragment? Anchor { get; set; }
+    [Parameter] public RenderFragment? Content { get; set; }
     [Parameter] public EventCallback OnExpand { get; set; }
 
     private ElementReference AnchorWidthRef { get; set; }
     private ElementReference AnchorRef { get; set; }
     private ElementReference ContentRef { get; set; }
-    private string AnchorWidth { get; set; }
+    private string? AnchorWidth { get; set; }
     private bool IsClicked { get; set; }
     private bool IsMouseHovered { get; set; }
     private bool IsContentVisible
@@ -93,8 +93,8 @@
             .Build();
 
     private string AnchorWidthContainerStyle =>
-        StyleBuilder.Default("width", AnchorWidth.ToPixelValue())
-            .AddStyle("max-width", AnchorWidth.ToPixelValue())
+        StyleBuilder.Default("width", AnchorWidth?.ToPixelValue())
+            .AddStyle("max-width", AnchorWidth?.ToPixelValue())
             .Build();
 
     private void OnMouseOver()
@@ -135,7 +135,7 @@
     }
 
     private async Task UpdateAnchorWidthAsync() =>
-        AnchorWidth = await JSRuntime.HandlePopperInstanceAsync(
+        AnchorWidth = await JsRuntime.HandlePopperInstanceAsync(
                                 AnchorRef,
                                 ContentRef,
                                 AnchorWidthRef,
@@ -170,7 +170,7 @@
     {
         if (firstRender)
         {
-            await JSRuntime.RegisterClickOutsideAsync(AnchorRef, ContentRef, DotNetObjectReference.Create(this));
+            await JsRuntime.RegisterClickOutsideAsync(AnchorRef, ContentRef, DotNetObjectReference.Create(this));
         }
             
         await UpdateAnchorWidthAsync();
@@ -178,7 +178,7 @@
 
     public void Dispose()
     {
-        JSRuntime.UnregisterClickOutsideAsync(AnchorRef, ContentRef, DotNetObjectReference.Create(this));
-        JSRuntime.RemovePopper();
+        JsRuntime.UnregisterClickOutsideAsync(AnchorRef, ContentRef, DotNetObjectReference.Create(this));
+        JsRuntime.RemovePopper();
     }
 }

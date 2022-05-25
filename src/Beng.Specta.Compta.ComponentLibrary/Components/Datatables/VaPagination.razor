@@ -55,18 +55,18 @@
 
 @code{
 
-    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; } = null!;
     [Parameter] public bool IsLoading { get; set; }
-    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
     [Parameter] public bool IsSmall { get; set; }
     [Parameter] public bool IsLarge { get; set; }
     [Parameter] public bool IsDisabled { get; set; }
     [Parameter] public bool IsBoundaryLinks { get; set; } = true;
     [Parameter] public bool IsDirectionLinks { get; set; } = true;
-    [Parameter] public string Class { get; set; }
+    [Parameter] public string? Class { get; set; }
     [Parameter] public string Color { get; set; } = ThemeDictionary.PrimaryKey;
-    [Parameter] public string Icon { get; set; }
-    [Parameter] public string IconRight { get; set; }
+    [Parameter] public string? Icon { get; set; }
+    [Parameter] public string? IconRight { get; set; }
     [Parameter] public int Pages { get; set; }
     [Parameter] public int VisiblePages { get; set; } = 5;
     [Parameter] public int Value { get; set; }

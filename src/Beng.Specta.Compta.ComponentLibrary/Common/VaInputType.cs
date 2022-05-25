@@ -1,64 +1,63 @@
 using System.ComponentModel;
 
-namespace Beng.Specta.Compta.ComponentLibrary.Common
+namespace Beng.Specta.Compta.ComponentLibrary.Common;
+
+public enum VaInputType
 {
-    public enum VaInputType
-    {
-        [Description("checkbox")]
-        Checkbox,
+    [Description("checkbox")]
+    Checkbox,
         
-        [Description("color")]
-        Color,
+    [Description("color")]
+    Color,
 
-        [Description("date")]
-        Date,
+    [Description("date")]
+    Date,
 
-        [Description("datetime-local")]
-        DateTimeLocal,
+    [Description("datetime-local")]
+    DateTimeLocal,
 
-        [Description("email")]
-        Email,
+    [Description("email")]
+    Email,
 
-        [Description("file")]
-        File,
+    [Description("file")]
+    File,
 
-        [Description("month")]
-        Month,
+    [Description("month")]
+    Month,
 
-        [Description("number")]
-        Number,
+    [Description("number")]
+    Number,
 
-        [Description("password")]
-        Password,
+    [Description("password")]
+    Password,
 
-        [Description("radio")]
-        Radio,
+    [Description("radio")]
+    Radio,
 
-        [Description("range")]
-        Range,
+    [Description("range")]
+    Range,
 
-        [Description("search")]
-        Search,
+    [Description("search")]
+    Search,
 
-        [Description("select")]
-        Select,
+    [Description("select")]
+    Select,
 
-        [Description("tel")]
-        Tel,
+    [Description("tel")]
+    Tel,
 
-        [Description("text")]
-        Text,
+    [Description("text")]
+    Text,
         
-        [Description("textarea")]
-        TextArea,
+    [Description("textarea")]
+    TextArea,
 
-        [Description("time")]
-        Time,
+    [Description("time")]
+    Time,
 
-        [Description("url")]
-        Url,
+    [Description("url")]
+    Url,
 
-        [Description("week")]
-        Week
-    }
+    [Description("week")]
+    Week
 }

@@ -6,7 +6,7 @@
         <div class="language-dropdown__content pl-4 pr-4 pt-2 pb-2">
         @foreach(var option in Options)
         {
-            <div @key="option.Value" class="@OptionClass(option.Value)" style="@OptionStyle(option.Value)"
+            <div @key="option.Value" class="@OptionClass(option.Value!)" style="@OptionStyle(option.Value)"
                 @onclick="@(() => SetLanguage(option.Value))"
                 @onmouseover="@(() => HoverHandler(option.Value))"
                 @onmouseout="@(() => HoverHandler())" >
@@ -23,12 +23,12 @@
 
 @code{
    
-    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
-    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
-    [Parameter] public string Class { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; } = null!;
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; } = null!;
+    [Parameter] public string? Class { get; set; }
     
     private string CurrentLanguage { get; set; } = "fr";
-    private string HoveredItem { get; set; }
+    private string? HoveredItem { get; set; }
 
     private string FlagIconClass(string code) => $"flag-icon-{code}";
 
@@ -59,7 +59,7 @@
 
     private void SetLanguage (string code) => CurrentLanguage = code; // Vue.i18n.set(locale)
     
-    private void HoverHandler(string code = null) => HoveredItem = code;
+    private void HoverHandler(string? code = null) => HoveredItem = code;
 
     private IReadOnlyList<OptionType> Options { get; } = new List<OptionType>
     {

@@ -1,5 +1,3 @@
-@using Beng.Specta.Compta.ComponentLibrary.Components.Buttons
-
 <div class="@ComputedClass">
   @if (!IsSplit)
   {
@@ -60,13 +58,13 @@
 
 @code{
 
-    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
-    [Parameter] public string Class { get; set; }
-    [Parameter] public string Color { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; } = null!;
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public string? Color { get; set; }
     [Parameter] public string Icon { get; set; } = "fa fa-angle-down";
     [Parameter] public string IconOpened { get; set; } = "fa fa-angle-up";
-    [Parameter] public string Label { get; set; }
-    [Parameter] public string SplitTo { get; set; }
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? SplitTo { get; set; }
     [Parameter] public bool IsFlat { get; set; }
     [Parameter] public bool IsOutline { get; set; }
     [Parameter] public bool IsSmall { get; set; }
@@ -76,7 +74,7 @@
     [Parameter] public bool IsDisableButton { get; set; }
     [Parameter] public bool IsDisableDropdown { get; set; }
     [Parameter] public PositionType Position { get; set; } = PositionType.Bottom;
-    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
 
     private bool IsExpanded { get; set; }
 

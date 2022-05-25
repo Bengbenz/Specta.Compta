@@ -1,13 +1,13 @@
 <div class="@ComputedClass" @attributes="AdditionalAttributes">
     <div class="va-input-wrapper__control">
         <div class="va-input-wrapper__slot">
-          @if (Prepend != null)
+          @if (Prepend is not null)
           {
             <div class="va-input-wrapper__prepend-inner">
                 @Prepend
             </div>
           }
-          @if (Content != null)
+          @if (Content is not null)
           {
             <div class="va-input-wrapper__content">
                 @Content
@@ -18,7 +18,7 @@
                 </div>
             </div>
           }
-          @if (Append != null)
+          @if (Append is not null)
           {
             <div class="va-input-wrapper__append-inner">
                 @Append
@@ -30,17 +30,17 @@
 
 @code{
 
-    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
-    [Parameter] public RenderFragment Prepend { get; set; }
-    [Parameter] public RenderFragment Content { get; set; }
-    [Parameter] public RenderFragment Append { get; set; }
-    [Parameter] public string Class { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; } = null!;
+    [Parameter] public RenderFragment? Prepend { get; set; }
+    [Parameter] public RenderFragment? Content { get; set; }
+    [Parameter] public RenderFragment? Append { get; set; }
+    [Parameter] public string? Class { get; set; }
     [Parameter] public bool IsDisabled { get; set; }
     [Parameter] public bool IsError { get; set; }
     [Parameter] public bool IsSuccess { get; set; }
     [Parameter] public int ErrorCount { get; set; }
-    [Parameter] public IEnumerable<string> Messages { get; set; }
-    [Parameter] public IEnumerable<string> ErrorMessages { get; set; }
+    [Parameter] public IEnumerable<string> Messages { get; set; } = new List<string>();
+    [Parameter] public IEnumerable<string> ErrorMessages { get; set; } = new List<string>();
 
     private IEnumerable<string> ComputedMessages => IsError ? ErrorMessages : Messages;
     

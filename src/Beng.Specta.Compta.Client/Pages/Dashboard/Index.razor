@@ -22,11 +22,11 @@
 
 @code{
 
-    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; } = null!;
 
-    protected async Task<IList<ProjectDTO>> LoadItems()
+    protected async Task<IList<ProjectDto>> LoadItems()
     {
-        return await Task.Run(() => new List<ProjectDTO>());//GetProjects();
+        return await Task.Run(() => new List<ProjectDto>());//GetProjects();
     }
 
     private void NavigateToProject()
