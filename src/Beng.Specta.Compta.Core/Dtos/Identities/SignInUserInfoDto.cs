@@ -6,7 +6,7 @@ namespace Beng.Specta.Compta.Core.Dtos.Identities
     {
         [Required]
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public string Password { get; set; } = null!;
 
         public bool RememberMe { get; set; }
     }

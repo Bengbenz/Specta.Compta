@@ -1,7 +1,6 @@
 @page "/funding-plan"
 @using Beng.Specta.Compta.Core.Entities.Funding
 @using Beng.Specta.Compta.Core.ValueTypes.Funding
-@using Beng.Specta.Compta.Core.ValueTypes.Ids
 @inject ILogger<FundingPlan> Logger
 @inject HttpClient HttpClient
 
@@ -14,8 +13,8 @@
         <VaButton icon="fa fa-refresh" @onclick="GetFundingItems" />
     </Actions>
     <BodyContent>
-        <VaNotification BadgeText="Error" Color="@ThemeDictionary.DangerKey" IsVisible="@(ErrorDetails != null)" class="mb-4">@ErrorDetails</VaNotification>
-        @if (FundingItems == null)
+        <VaNotification BadgeText="Error" Color="@ThemeDictionary.DangerKey" IsVisible="@(_errorDetails != null)" class="mb-4">@_errorDetails</VaNotification>
+        @if (!FundingItems.Any())
         {
             <h1>Loading...</h1>
         }
@@ -42,7 +41,7 @@
                             <GridAggregateColumn Field=@nameof(ContractStep.IsComplete) Type="AggregateType.TrueCount">
                                 <GroupCaptionTemplate>
                                     @{
-                                        var aggregate = (context as AggregateTemplateContext);
+                                        var aggregate = (AggregateTemplateContext)context;
                                         <div>
                                             <p><b>@aggregate.TrueCount</b> Facturé(s)</p>
                                         </div>
@@ -74,13 +73,13 @@
                         <Template>
                             @{
                                 <div>
-                                    <p>@((context as ContractStep).AmountHT)</p>
+                                    <p>@(((ContractStep)context).AmountHT)</p>
                                 </div>
                             }
                         </Template>
                         <EditTemplate>
                             <div>
-                                <SfNumericTextBox ID="AmountHT" Value="@((context as ContractStep).AmountHT.Amount)" TValue="decimal?"></SfNumericTextBox>
+                                <SfNumericTextBox ID="AmountHT" Value="@(((ContractStep)context).AmountHT.Amount)" TValue="decimal?"></SfNumericTextBox>
                             </div>
                         </EditTemplate>
                     </GridColumn>
@@ -112,14 +111,16 @@
 
 @code{
 
-    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; } = null!;
 
-    private string ErrorDetails;
-    private IList<ContractStep> FundingItems { get; set; }
-    private IList<FundingContract> FundindGroups { get; set; }
+    private string _errorDetails = string.Empty;
+    private IList<ContractStep> FundingItems { get; set; } = new List<ContractStep>();
+    private IList<FundingContract> FundingGroups { get; set; }  = new List<FundingContract>();
 
-    private string[] Tools = new string[] { "Add", "Edit", "Delete", "Update", "Cancel", "ExcelExport", "ColumnChooser", "Search" }; //"Add", "Edit", "Delete", "Update", "Delete", "ExcelExport", "ColumnChooser", "Search"
-    private string[] ContextMenuItems = new string[] { "AutoFit", "AutoFitAll", "SortAscending", "SortDescending", "Copy", "Edit", "Delete", "Save", "Cancel" }; //"AutoFit", "AutoFitAll", "SortAscending", "SortDescending","Copy", "Edit", "Delete", "Save", "Cancel","PdfExport", "ExcelExport", "CsvExport", "FirstPage", "PrevPage","LastPage", "NextPage"
+    private string[] Tools = new string[] { "Add", "Edit", "Delete", "Update", "Cancel", "ExcelExport", "ColumnChooser", "Search" };
+    //"Add", "Edit", "Delete", "Update", "Delete", "ExcelExport", "ColumnChooser", "Search"
+    private string[] ContextMenuItems = new string[] { "AutoFit", "AutoFitAll", "SortAscending", "SortDescending", "Copy", "Edit", "Delete", "Save", "Cancel" };
+    //"AutoFit", "AutoFitAll", "SortAscending", "SortDescending","Copy", "Edit", "Delete", "Save", "Cancel","PdfExport", "ExcelExport", "CsvExport", "FirstPage", "PrevPage","LastPage", "NextPage"
     private string[] GroupedColumns = new string[] { "Organization.Name" };
 
     protected override async Task OnInitializedAsync()
@@ -130,7 +131,7 @@
 
     public void ActionFailure(Syncfusion.Blazor.Grids.FailureEventArgs args)
     {
-        ErrorDetails = $"Exception: {args}";
+        _errorDetails = $"Exception: {args}";
         StateHasChanged();
     }
 
@@ -157,7 +158,7 @@
             "CANAL+"
         };
         var states = new bool[] { true, false };
-        FundindGroups = groups.Select(x => new FundingContract(x)).ToList();
+        FundingGroups = groups.Select(x => new FundingContract(x)).ToList();
 
         long id = 0;
         FundingItems = Enumerable.Range(1, 75).Select(x => new ContractStep(titles[new Random().Next(titles.Length)],

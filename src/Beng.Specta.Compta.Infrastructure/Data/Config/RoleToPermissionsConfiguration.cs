@@ -2,14 +2,13 @@ using Microsoft.EntityFrameworkCore;
 
 using Beng.Specta.Compta.Core.Entities.Identities;
 
-namespace Beng.Specta.Compta.Infrastructure.Data.Config
+namespace Beng.Specta.Compta.Infrastructure.Data.Config;
+
+public sealed class RoleToPermissionsConfiguration : BaseEntityConfiguration<RoleToPermissions>
 {
-    public class RoleToPermissionsConfiguration : BaseEntityConfiguration<RoleToPermissions>
+    protected override void Configure()
     {
-        protected override void Configure()
-        {
-            Builder.Property("Permissions")
-                .HasColumnName("PermissionsInRole");
-        }
+        Builder.Property("Permissions")
+            .HasColumnName("PermissionsInRole");
     }
 }

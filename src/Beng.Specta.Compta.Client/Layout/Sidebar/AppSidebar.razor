@@ -43,7 +43,7 @@
 
 @code{
 
-    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; } = null!;
     [Parameter] public string Color { get; set; } = ThemeDictionary.SecondaryKey;
     
     private string ComputedStyle =>
@@ -56,7 +56,7 @@
             .AddClass("app-sidebar--minimized", LayoutState.IsMinimized)
             .Build();
 
-    private void UpdateActiveState(ModuleInfoVm menuItem = null, ModuleInfoVm groupItem = null) =>
+    private void UpdateActiveState(ModuleInfoVm? menuItem = null, ModuleInfoVm? groupItem = null) =>
         LayoutState.SetActiveItem(menuItem, groupItem);
 
     private void ToggleExpandMenu(ModuleInfoVm groupItem ) =>

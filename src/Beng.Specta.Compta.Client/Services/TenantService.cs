@@ -1,40 +1,34 @@
-using System.Net.Http;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
-
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Logging;
-
 using Beng.Specta.Compta.Core.Dtos;
 
-namespace Beng.Specta.Compta.Client.Services
+namespace Beng.Specta.Compta.Client.Services;
+
+public class TenantService
 {
-    public class TenantService
+    private readonly NavigationManager _navigationManager;
+    private readonly HttpClient _httpClient;
+    private readonly ILogger<TenantService> _logger;
+
+    private TenantInfoDto? _tenantInfo;
+
+    public TenantService (
+        NavigationManager navigationManager,
+        HttpClient httpClient,
+        ILogger<TenantService> logger)
     {
-        private readonly NavigationManager _navigationManager;
-        private readonly HttpClient _httpClient;
-        private readonly ILogger<TenantService> _logger;
+        _navigationManager = navigationManager;
+        _httpClient = httpClient;
+        _logger = logger;
+    }
 
-        private TenantInfoDTO _tenantInfo;
-
-        public TenantService (
-            NavigationManager navigationManager,
-            HttpClient httpClient,
-            ILogger<TenantService> logger)
+    public async Task<TenantInfoDto?> GetTenantInfoAsync()
+    {
+        if (_tenantInfo is null)
         {
-            _navigationManager = navigationManager;
-            _httpClient = httpClient;
-            _logger = logger;
+            _tenantInfo = await _httpClient.GetFromJsonAsync<TenantInfoDto>("api/tenant/currenttenant");
         }
 
-        public async Task<TenantInfoDTO> GetTenantInfoAsync()
-        {
-            if (_tenantInfo == null)
-            {
-                _tenantInfo = await _httpClient.GetFromJsonAsync<TenantInfoDTO>("api/tenant/currenttenant");
-            }
-
-            return _tenantInfo;
-        }
+        return _tenantInfo;
     }
 }

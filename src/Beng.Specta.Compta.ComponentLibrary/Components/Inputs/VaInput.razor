@@ -12,7 +12,7 @@
     @attributes="AdditionalAttributes">
     <Content>
         <div class="@ContainerClass" style="@ContainerStyle">
-            @if (IsSuccess || IsError || Prepend != null || (IsRemovable && HasContent))
+            @if (IsSuccess || IsError || Prepend is not null || (IsRemovable && HasContent))
             {
                 <div class="va-input__container__icon-wrapper va-input__container__icon-wrapper--start">
                     <VaIcon IsVisible="@IsSuccess"
@@ -62,7 +62,7 @@
                         @onblur="@(() => IsFocused = false)" />
                 }
             </div>
-            @if (IsSuccess || IsError || Append != null || (IsRemovable && HasContent))
+            @if (IsSuccess || IsError || Append is not null || (IsRemovable && HasContent))
             {
                 <div class="va-input__container__icon-wrapper va-input__container__icon-wrapper--end">
                     <VaIcon IsVisible="@IsSuccess"
@@ -94,13 +94,13 @@
 
 @code{
 
-    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
-    [Parameter] public RenderFragment Prepend { get; set; }
-    [Parameter] public RenderFragment Content { get; set; }
-    [Parameter] public RenderFragment Append { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; } = null!;
+    [Parameter] public RenderFragment? Prepend { get; set; }
+    [Parameter] public RenderFragment? Content { get; set; }
+    [Parameter] public RenderFragment? Append { get; set; }
     [Parameter] public string Color { get; set; } = ThemeDictionary.PrimaryKey;
-    [Parameter] public string Class { get; set; }
-    [Parameter] public string Autocomplete { get; set; }
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public string? Autocomplete { get; set; }
     [Parameter] public bool IsSuccess { get; set; }
     [Parameter] public bool IsDisabled { get; set; }
     [Parameter] public bool IsReadOnly { get; set; }
@@ -109,10 +109,10 @@
     [Parameter] public int? MinRows { get; set; }
     [Parameter] public int? MaxRows { get; set; }
     [Parameter] public IEnumerable<string> Messages { get; set; } = Enumerable.Empty<string>();
-    [Parameter] public string Label { get; set; }
-    [Parameter] public string PlaceHolder { get; set; }
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? PlaceHolder { get; set; }
     [Parameter] public VaInputType Type { get; set; } = VaInputType.Text;
-    [Parameter] public Expression<Func<object>> ValidationFor { get; set; }
+    [Parameter] public Expression<Func<object>>? ValidationFor { get; set; }
     
     private ElementReference TextArea { get; set; }
     private bool IsFocused { get; set; }
@@ -229,12 +229,12 @@
     }
 
     protected override bool TryParseValueFromString(
-        string value,
+        string? value,
         out string result,
         out string validationErrorMessage)
     {
-        result = value;
-        validationErrorMessage = null;
+        result = value!;
+        validationErrorMessage = string.Empty;
         return true;
     }
 }

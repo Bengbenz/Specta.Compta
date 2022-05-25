@@ -3,9 +3,9 @@
 
 @code {
 
-    private ValidationMessageStore _messageStore;
+    private ValidationMessageStore? _messageStore;
 
-    [CascadingParameter] private EditContext EditContext { get; set; }
+    [CascadingParameter] private EditContext? EditContext { get; set; }
 
     protected override void OnInitialized()
     {
@@ -21,23 +21,32 @@
         EditContext.OnFieldChanged += (s, e) => _messageStore.Clear(e.FieldIdentifier);
     }
 
-    public void DisplayErrors(IDictionary<string, List<string>> errors, bool shouldLog = false)
+    public void DisplayErrors(IDictionary<string, List<string>>? errors, bool shouldLog = false)
     {
-        if (errors == null) throw new ArgumentNullException(nameof(errors));
+        ArgumentNullException.ThrowIfNull(errors);
         
         foreach (var err in errors)
         {
-            _messageStore.Add(EditContext.Field(ToTitleCase(err.Key)), err.Value);
+            _messageStore!.Add(EditContext!.Field(ToTitleCase(err.Key)), err.Value);
         }
 
-        if (shouldLog) Logger.LogDebug($"{GetType().Name} - DisplayErrors: {string.Join(" | ", errors.Select(x  => ToTitleCase(x.Key) + ": " + string.Join(",", x.Value)))}");
-        EditContext.NotifyValidationStateChanged();
+        if (shouldLog)
+        {
+            Logger.LogDebug($"{GetType().Name} - DisplayErrors: {string.Join(" | ", errors.Select(x  => ToTitleCase(x.Key) + ": " + string.Join(",", x.Value)))}");
+        }
+        EditContext!.NotifyValidationStateChanged();
     }
     
     public void DisplayError(string errorKey, string errorDescription, bool shouldLog = false)
     {
-        if (string.IsNullOrWhiteSpace(errorKey)) throw new ArgumentNullException(nameof(errorKey));
-        if (string.IsNullOrWhiteSpace(errorDescription)) throw new ArgumentNullException(nameof(errorDescription));
+        if (string.IsNullOrWhiteSpace(errorKey))
+        {
+            throw new ArgumentNullException(nameof(errorKey));
+        }
+        if (string.IsNullOrWhiteSpace(errorDescription))
+        {
+            throw new ArgumentNullException(nameof(errorDescription));
+        }
         var errors = new Dictionary<string, List<string>>
         {
             { errorKey, new List<string>{ errorDescription } }

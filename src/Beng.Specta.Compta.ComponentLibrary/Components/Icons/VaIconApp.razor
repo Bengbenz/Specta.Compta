@@ -29,7 +29,7 @@
 
 @code{
 
-  [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+  [CascadingParameter] public ThemeDictionary ContextTheme { get; set; } = null!;
 
   private string ThemeGradientId => ContextTheme.IsInverted ? "CORPORATE" : "ORIGINAL";
   private string TextColor => ContextTheme.IsInverted ? "#6E85E8" : "#E4FF32";

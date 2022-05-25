@@ -15,9 +15,9 @@
                 @onclick="(() => option.MarkAsRead())"
                 @onmouseover="@(() => HoverHandler(option.Id))"
                 @onmouseout="@(() => HoverHandler())" >
-            @if(!string.IsNullOrWhiteSpace(option.Details.Avatar))
+            @if (!string.IsNullOrWhiteSpace(option.Details.Avatar))
             {
-                <img class="mr-2 notification-dropdown__item__avatar" src="@option.Details.Avatar"/>
+                <img class="mr-2 notification-dropdown__item__avatar" src="@option.Details.Avatar" alt=""/>
             }
                 <span class="ellipsis" style="max-width: 85%;">
                 @if(!string.IsNullOrWhiteSpace(option.Details.Name))
@@ -38,9 +38,9 @@
 
 @code{
 
-    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
-    [Parameter] public string Class { get; set; }
-    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; } = null!;
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; } = null!;
+    [Parameter] public string? Class { get; set; }
 
     private int HoveredItem { get; set; }
 
@@ -66,7 +66,7 @@
 
     private void HoverHandler(int id = 0) => HoveredItem = id;
 
-    private string IconColor => (ContextTheme.IsInverted) ? $"{ContextTheme[ThemeDictionary.GrayKey]}" : "white";
+    private string IconColor => ContextTheme.IsInverted ? $"{ContextTheme[ThemeDictionary.GrayKey]}" : "white";
     
     private bool AreAllRead => Notifications.All(x => !x.IsUnRead);
 
@@ -82,16 +82,16 @@
     private class Notification
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public DetailsData Details { get; set; }
         public bool IsUnRead { get; set; } = true;
 
         public void MarkAsRead() => IsUnRead = false;
     }
 
-    private class DetailsData
+    private struct DetailsData
     {
-        public string Name { get; set; }
-        public string Avatar { get; set; }
+        public string? Name { get; set; }
+        public string? Avatar { get; set; }
     }
 }

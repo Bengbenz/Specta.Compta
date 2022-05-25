@@ -1,4 +1,3 @@
-
 @inject TenantService TenantService
 @inject LayoutState LayoutState
 @inject ILogger<AppNavbar> Logger
@@ -19,7 +18,7 @@
             </a>
         </div>
         <div class="app-navbar__center lg5 md4">
-        @if(TenantInfo != null)
+        @if(TenantInfo is not null)
         { 
             <VaButton  class="app-navbar__button"
                       Icon="fa fa-github"
@@ -38,11 +37,11 @@
 
 @code{
 
-    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; } = null!;
 
-    private TenantInfoDTO TenantInfo { get; set; }
+    private TenantInfoDto? TenantInfo { get; set; }
 
-    private string ComputedColor => (ContextTheme.IsInverted) ? ContextTheme[ThemeDictionary.GrayKey] : "white";
+    private string ComputedColor => ContextTheme.IsInverted ? ContextTheme[ThemeDictionary.GrayKey] : "white";
 
     private string NavbarStyle =>
         StyleBuilder.Empty()
@@ -54,7 +53,7 @@
 
     private string ShapeStyle =>
         StyleBuilder.Empty()
-            .AddStyle("border-top-color", "transparent", !ContextTheme.IsGradient)
+            .AddStyle("border-top-color", "transparent", !ContextTheme!.IsGradient)
             .AddStyle("border-top-color", ContextTheme[ThemeDictionary.SecondaryKey]
                 .ColorShiftHsl(new HslType { Hue = -1, Saturation = -11, Lightness = 10 }).ToString(), ContextTheme.IsGradient)
             .Build();

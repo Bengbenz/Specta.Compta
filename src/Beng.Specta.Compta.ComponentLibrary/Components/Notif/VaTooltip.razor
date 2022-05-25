@@ -1,4 +1,4 @@
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JsRuntime
 
 <div class="va-tooltip" @ref="TargetRef">
     @ChildContent
@@ -29,19 +29,19 @@
 
 @code{
 
-    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
-    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; } = null!;
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; } = null!;
     [Parameter] public string Color { get; set; } = ThemeDictionary.GrayKey;
-    [Parameter] public string Title { get; set; }
-    [Parameter] public string Message { get; set; }
-    [Parameter] public string Icon { get; set; }
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? Message { get; set; }
+    [Parameter] public string? Icon { get; set; }
     [Parameter] public bool HasArrow { get; set; }
     [Parameter] public int Duration { get; set; } = 300;
     [Parameter] public int ShowDelay { get; set; } = 500;
     [Parameter] public int HideDelay { get; set; } = 100;
     [Parameter] public PositionType Position { get; set; } = PositionType.BottomEnd;
     [Parameter] public TriggerType Trigger { get; set; } = TriggerType.Mouseenter;
-    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
 
     private ElementReference TargetRef { get; set; }
     private ElementReference ContentRef { get; set; }
@@ -58,7 +58,7 @@
     {
         if (firstRender)
         {
-            await JSRuntime.ShowTippyTooltip(
+            await JsRuntime.ShowTippyTooltip(
                 TargetRef,
                 ContentRef,
                 Position,

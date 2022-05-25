@@ -13,8 +13,8 @@ else
 
 @code{
 
-    [Parameter] public TMenuItem TItem { get; set; }
-    [Parameter] public RenderFragment<TMenuItem> MenuItemTemplate { get; set; }
-    [Parameter] public string Tooltip { get; set; }
+    [Parameter] public TMenuItem TItem { get; set; } = default!;
+    [Parameter] public RenderFragment<TMenuItem> MenuItemTemplate { get; set; } = null!;
+    [Parameter] public string? Tooltip { get; set; }
     [Parameter] public bool IsMinimized { get; set; }
 }

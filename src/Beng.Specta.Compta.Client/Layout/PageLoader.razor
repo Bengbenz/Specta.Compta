@@ -20,10 +20,10 @@ else
 
 @code{
 
-    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; } = null!;
     [Parameter] public int AnimationDuration { get; set; } = 1500;
     [Parameter] public int Size { get; set; } = 264;
-    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
 
     private string Color => ContextTheme[ThemeDictionary.PrimaryKey];
     private bool IsMainContentVisible { get; set; }

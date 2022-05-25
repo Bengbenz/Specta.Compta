@@ -1,11 +1,8 @@
-using System.Threading.Tasks;
-
 using Beng.Specta.Compta.SharedKernel;
 
-namespace Beng.Specta.Compta.Infrastructure.DomainEvents
+namespace Beng.Specta.Compta.Infrastructure.DomainEvents;
+
+public abstract class DomainEventHandler
 {
-    public abstract class DomainEventHandler
-    {
-        public abstract Task Handle(BaseDomainEvent domainEvent);
-    }
+    public abstract Task Handle(BaseDomainEvent domainEvent);
 }

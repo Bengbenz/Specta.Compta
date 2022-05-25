@@ -11,8 +11,8 @@
 
 @code{
 
-  [Parameter] public string Color { get; set; }
-  [Parameter] public string Class { get; set; }
+  [Parameter] public string? Color { get; set; }
+  [Parameter] public string? Class { get; set; }
   [Parameter] public bool IsVisible { get; set; } = true;
 
   private string ComputedClass =>

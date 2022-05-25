@@ -14,7 +14,7 @@
 
 @code{
 
-    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
 
     // For request to server, show spinner for waiting to render
     private bool IsVisible => SpinnerState.IsVisible;

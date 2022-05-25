@@ -33,14 +33,14 @@
 
 @code{
 
-    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; }
-    [Parameter] public string Class { get; set; }
-    [Parameter] public string Color { get; set; }
-    [Parameter] public IDictionary<string, FieldType> Fields { get; set; }
-    [Parameter] public IDictionary<string, string> Data { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; } = null!;
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public string? Color { get; set; }
+    [Parameter] public IDictionary<string, FieldType> Fields { get; set; } = new Dictionary<string, FieldType>();
+    [Parameter] public IDictionary<string, string> Data { get; set; }  = new Dictionary<string, string>();
     [Parameter] public int PerPage { get; set; } = 6;
     [Parameter] public int VisiblePages { get; set; } = 4;
-    [Parameter] public int TotalPages { get; set; } = 0;
+    [Parameter] public int TotalPages { get; set; }
     [Parameter] public bool IsApiMode { get; set; }
     [Parameter] public bool IsClickable { get; set; }
     [Parameter] public bool IsHoverable { get; set; }
