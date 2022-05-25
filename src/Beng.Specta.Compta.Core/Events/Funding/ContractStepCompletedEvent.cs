@@ -1,16 +1,14 @@
-using System;
 using Beng.Specta.Compta.Core.Entities.Funding;
 using Beng.Specta.Compta.SharedKernel;
 
-namespace Beng.Specta.Compta.Core.Events.Funding
-{
-    public class ContractStepCompletedEvent : BaseDomainEvent
-    {
-        public ContractStep CompletedStep { get; set; }
+namespace Beng.Specta.Compta.Core.Events.Funding;
 
-        public ContractStepCompletedEvent(ContractStep completedItem)
-        {
-            CompletedStep = completedItem ?? throw new ArgumentNullException(nameof(completedItem));
-        }
+public sealed class ContractStepCompletedEvent : BaseDomainEvent
+{
+    public ContractStep CompletedStep { get; set; }
+
+    public ContractStepCompletedEvent(ContractStep completedItem)
+    {
+        CompletedStep = completedItem ?? throw new ArgumentNullException(nameof(completedItem));
     }
 }

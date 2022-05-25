@@ -1,32 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
 using Microsoft.AspNetCore.Identity;
+using Beng.Specta.Compta.Core.Dtos.Identities;
+using Beng.Specta.Compta.Core.Services.Identities;
 
-using Beng.Specta.Compta.Core.Dtos;
+namespace Beng.Specta.Compta.Server.Objects;
 
-namespace Beng.Specta.Compta.Server.Objects
+public static class DtosExtension
 {
-    public static class DtosExtension
+    public static UserInfoDto ToDto(this IdentityUser user, ClaimsPrincipal principalClaims)
     {
-        public static UserInfoDto ToDto(this IdentityUser user, ClaimsPrincipal principalClaims)
-        {
-            if (user == null) throw new ArgumentNullException(nameof(user));
-            if (principalClaims == null) throw new ArgumentNullException(nameof(principalClaims));
+        ArgumentNullException.ThrowIfNull(user);
+        ArgumentNullException.ThrowIfNull(principalClaims);
 
-            return new UserInfoDto
-            {
-                UserId = user.Id,
-                UserName = user.UserName,
-                Email = user.Email,
-                HasPassword = !string.IsNullOrEmpty(user.PasswordHash),
-                // Title = user.Title
-                IsAuthenticated = principalClaims.Identity!.IsAuthenticated,
-                // RoleNames = 
-                // PackedPermissions = 
-                // IsAdmin = user.Roles.Contains(ApplicationUser.AdminRole),
-            };
-        }
+        return new UserInfoDto
+        {
+            UserId = user.Id,
+            UserName = user.UserName,
+            Email = user.Email,
+            HasPassword = !string.IsNullOrEmpty(user.PasswordHash),
+            //Title = user.Title
+            IsAuthenticated = principalClaims.Identity!.IsAuthenticated,
+            // RoleNames = 
+            PackedPermissions = principalClaims.PermissionAsString()
+            // IsAdmin = user.Roles.Contains(ApplicationUser.AdminRole),
+        };
     }
 }

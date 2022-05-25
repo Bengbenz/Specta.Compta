@@ -8,7 +8,7 @@ public class BrowserFixtureOptions
     /// <summary>
     /// Gets or sets the browser type.
     /// </summary>
-    public string BrowserType { get; set; }
+    public string? BrowserType { get; set; }
 
     /// <summary>
     /// Gets or sets the optional browser channel.
@@ -18,7 +18,7 @@ public class BrowserFixtureOptions
     /// <summary>
     /// Gets or sets the optional build number.
     /// </summary>
-    public string Build { get; set; }
+    public string? Build { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether to capture traces.
@@ -39,27 +39,27 @@ public class BrowserFixtureOptions
     /// <summary>
     /// Gets or sets the optional operating system name.
     /// </summary>
-    public string OperatingSystem { get; set; }
+    public string? OperatingSystem { get; set; }
 
     /// <summary>
     /// Gets or sets the optional operating system version.
     /// </summary>
-    public string OperatingSystemVersion { get; set; }
+    public string? OperatingSystemVersion { get; set; }
 
     /// <summary>
     /// Gets or sets the optional Playwright version number.
     /// </summary>
-    public string PlaywrightVersion { get; set; }
+    public string? PlaywrightVersion { get; set; }
 
     /// <summary>
     /// Gets or sets the optional project name.
     /// </summary>
-    public string ProjectName { get; set; }
+    public string? ProjectName { get; set; }
 
     /// <summary>
     /// Gets or sets the optional test name.
     /// </summary>
-    public string TestName { get; set; }
+    public string? TestName { get; set; }
 
     /// <summary>
     /// Gets or sets the headless param

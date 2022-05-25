@@ -34,10 +34,10 @@
 
   @code{
 
-    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; }
-    [Parameter] public RenderFragment ChildContent { get; set; }
-    [Parameter] public string Class { get; set; }
-    [Parameter] public string Id { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; } = null!;
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public string? Id { get; set; }
     [Parameter] public string Color { get; set; } = ThemeDictionary.PrimaryKey;
     [Parameter] public string CheckedIcon { get; set; } = "ion ion-md-checkmark";
     [Parameter] public string IndeterminateIcon { get; set; } = "ion ion-md-remove";
@@ -45,14 +45,14 @@
     [Parameter] public bool IsDisabled { get; set; }
     [Parameter] public bool IsIndeterminated { get; set; }
     [Parameter] public IEnumerable<string> Messages { get; set; } = Enumerable.Empty<string>();
-    [Parameter] public string Label { get; set; }
-    [Parameter] public Expression<Func<object>> ValidationFor { get; set; }
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public Expression<Func<object>>? ValidationFor { get; set; }
 
     private bool IsKeyboardFocused { get; set; }    
     private bool HasMouseDown { get; set; }
     private bool IsChecked => CurrentValue;
     
-    private IList<string> ErrorMessages => ValidationFor != null
+    private IList<string> ErrorMessages => ValidationFor is not null
         ? EditContext.GetValidationMessages(ValidationFor).ToList()
         : EditContext.GetValidationMessages(FieldIdentifier).ToList();
 
@@ -107,7 +107,7 @@
 
     /// <inheritdoc />
     protected override bool TryParseValueFromString(
-        string value,
+        string? value,
         out bool result,
         out string validationErrorMessage) =>
     throw new NotImplementedException($"This component does not parse string inputs. Bind to the '{nameof(CurrentValue)}' property, not '{nameof(CurrentValueAsString)}'.");

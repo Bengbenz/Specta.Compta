@@ -30,8 +30,8 @@
 
     private IReadOnlyList<OptionType> ModelOptions => new List<OptionType>
     {
-        new OptionType { Label = ThemeDictionary.DEFAULT.Name, Value = ThemeDictionary.DEFAULT.Name, OnSelectedItemHandler = ThemeDictionary.OnToggle  },
-        new OptionType { Label = ThemeDictionary.CORPORATE.Name, Value = ThemeDictionary.CORPORATE.Name, OnSelectedItemHandler = ThemeDictionary.OnToggle },
+        new OptionType { Label = ThemeDictionary.Default.Name, Value = ThemeDictionary.Default.Name, OnSelectedItemHandler = ThemeDictionary.OnToggle  },
+        new OptionType { Label = ThemeDictionary.Corporate.Name, Value = ThemeDictionary.Corporate.Name, OnSelectedItemHandler = ThemeDictionary.OnToggle },
     };
 
     private string IconColor => (ContextTheme.IsInverted) ? ContextTheme[ThemeDictionary.GrayKey] : "white";

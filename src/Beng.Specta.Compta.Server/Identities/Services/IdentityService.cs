@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-
-using Beng.Specta.Compta.Core.Entities.Identities;
+﻿using Beng.Specta.Compta.Core.Entities.Identities;
 using Beng.Specta.Compta.Core.Interfaces;
 using Beng.Specta.Compta.Core.Objects.Identities;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
@@ -41,7 +36,7 @@ namespace Beng.Specta.Compta.Server.Identities.Services
             if (status.IsValid)
             {
                 //Note that CreateRoleWithPermissions will return a invalid status if the role is already present.
-                await _repository.AddAsync(status.Result);
+                await _repository.AddAsync(status.Result!);
             }
             else
             {
@@ -60,8 +55,8 @@ namespace Beng.Specta.Compta.Server.Identities.Services
             string description,
             IReadOnlyCollection<Permission> permissions)
         {
-            RoleToPermissions existingRole = await _repository.GetRoleToPermissionAsync(roleName);
-            if (existingRole == null)
+            RoleToPermissions? existingRole = await _repository.GetRoleToPermissionAsync(roleName);
+            if (existingRole is null)
             {
                 throw new KeyNotFoundException($"Could not find the role {roleName} to update.");
             }
@@ -80,7 +75,7 @@ namespace Beng.Specta.Compta.Server.Identities.Services
             if (status.IsValid)
             {
                 //we assume there is already a link to the role is the status wasn't valid
-                await _repository.AddAsync(status.Result);
+                await _repository.AddAsync(status.Result!);
             }
         }
     }
