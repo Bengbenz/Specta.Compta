@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using Microsoft.Playwright;
 
 namespace Beng.Specta.Compta.FunctionalTests;
@@ -19,23 +17,23 @@ public sealed class BrowsersTestData : IEnumerable<object[]>
     }
     public IEnumerator<object[]> GetEnumerator()
     {
-        yield return new[] { BrowserType.Chromium, null };
+        yield return new object[] { BrowserType.Chromium, null! };
 
         if (UseAllBrowserType || !OperatingSystem.IsWindows())
         {
-            yield return new[] { BrowserType.Chromium, "chrome" };
+            yield return new object[] { BrowserType.Chromium, "chrome" };
         }
 
         if (UseAllBrowserType || (!OperatingSystem.IsLinux() && !OperatingSystem.IsMacOS()))
         {
-            yield return new[] { BrowserType.Chromium, "msedge" };
+            yield return new object[] { BrowserType.Chromium, "msedge" };
         }
 
-        yield return new object[] { BrowserType.Firefox, null };
+        yield return new object[] { BrowserType.Firefox, null! };
 
         if (UseAllBrowserType || OperatingSystem.IsMacOS())
         {
-            yield return new object[] { BrowserType.Webkit, null };
+            yield return new object[] { BrowserType.Webkit, null! };
         }
     }
 

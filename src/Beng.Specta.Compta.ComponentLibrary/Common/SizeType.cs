@@ -1,25 +1,24 @@
 using System.ComponentModel;
 
-namespace Beng.Specta.Compta.ComponentLibrary.Common
+namespace Beng.Specta.Compta.ComponentLibrary.Common;
+
+public enum SizeType
 {
-    public enum SizeType
-    {
-        [Description("undefined")]
-        Undefined,
+    [Description("undefined")]
+    Undefined,
 
-        [Description("xs")]
-        ExtraSmall,
+    [Description("xs")]
+    ExtraSmall,
 
-        [Description("sm")]
-        Small,
+    [Description("sm")]
+    Small,
 
-        [Description("md")]
-        Medium,
+    [Description("md")]
+    Medium,
 
-        [Description("lg")]
-        Large,
+    [Description("lg")]
+    Large,
         
-        [Description("xl")]
-        ExtraLarge
-    }
+    [Description("xl")]
+    ExtraLarge
 }

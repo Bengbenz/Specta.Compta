@@ -18,16 +18,14 @@ namespace Beng.Specta.Compta.IntegrationTests
     /// <inheritdoc />
     public class IntegrationTestingWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
     {
-        private const string AppConnectionStringForTest = "Beng.Specta.ComptaStore.Test";
-        private const string TenantConnectionStringForTest = "Beng.Specta.TenantStore.Test";
+        private const string AppConnectionStringForTest = "Beng.Specta.ComptaStore.Integration.Test";
+        private const string TenantConnectionStringForTest = "Beng.Specta.TenantStore.Integration.Test";
         
         public readonly string BaseUrl = $"https://localhost:{GetRandomUnusedPort()}";
         
-        public virtual async Task InitializeAsync()
-        {
-        }
+        public virtual Task InitializeAsync() => Task.CompletedTask;
 
-        public Task DisposeAsync() => Task.CompletedTask;
+        public new Task DisposeAsync() => Task.CompletedTask;
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -40,7 +38,7 @@ namespace Beng.Specta.Compta.IntegrationTests
                 services.SwapDbContext<TenantStoreDbContext>(TenantConnectionStringForTest);
 
                 services.AddScoped<IDomainEventDispatcher, NoOpDomainEventDispatcher>();
-                services.AddScoped<IRepository, EfRepository>();
+                services.AddScoped<IRepository, GenericRepository>();
                 services.AddScoped<IAuthorizationRepository, AuthorizationRepository>();
             });
         }

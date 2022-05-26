@@ -189,7 +189,7 @@ public sealed class FunctionalTestingWebApplicationFactory : IntegrationTestingW
     
     private string GenerateFileName(string testName, string extension)
     {
-        string browserType = _options.BrowserType;
+        var browserType = _options.BrowserType;
 
         if (!string.IsNullOrEmpty(_options.BrowserChannel))
         {

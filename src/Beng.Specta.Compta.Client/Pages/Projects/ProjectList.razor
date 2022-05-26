@@ -5,7 +5,7 @@
 <div class="@MainClass">
     <VaCard IsVisible="@(Projects.Any())" class="flex xs12 md6 xl3">
         <BodyContent>
-            <SfListBox DataSource="@Projects" TValue="string[]" TItem="ProjectDTO">
+            <SfListBox DataSource="@Projects" TValue="string[]" TItem="ProjectDto">
                 <ListBoxFieldSettings Text="Name" Value="Id" />
                 <ListBoxSelectionSettings ShowCheckbox="true" />
             </SfListBox>
@@ -41,14 +41,14 @@
 
     private string[] SelectedValue = new string[] { "Hennessey Venom" };
 
-    protected async Task<IList<ProjectDTO>> LoadItems()
+    protected async Task<IList<ProjectDto>> LoadItems()
     {
         //await Task.Delay(3000);
         
-        return await Task.Run(() => new List<ProjectDTO>());//GetProjects();
+        return await Task.Run(() => new List<ProjectDto>());//GetProjects();
     }
 
-    private IList<ProjectDTO> Projects
+    private IList<ProjectDto> Projects
     {
         get
         {
@@ -64,7 +64,7 @@
             };
 
             long id = 0;
-            var projectDtos = Enumerable.Range(1, 5).Select(x => new ProjectDTO
+            var projectDtos = Enumerable.Range(1, 5).Select(x => new ProjectDto
             {
                 Id = ++id,
                 Code = groups[new Random().Next(groups.Length)].Substring(0, 2).Trim() + $"_{id}",
