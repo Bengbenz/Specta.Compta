@@ -6,7 +6,7 @@
     <PackageReference Update="Blazor.Extensions.Logging" Version="2.0.4" /> <!-- Logging extension for Blazor -->
     <PackageReference Update="Finbuckle.MultiTenant.AspNetCore" Version="6.7.2" />
     <PackageReference Update="Finbuckle.MultiTenant.EntityFrameworkCore" Version="6.7.2" />
-    <PackageReference Update="Microsoft.AspNetCore.Components.Authorization" Version="6.0.4" /> <!-- Authentication and authorization support for Blazor applications. -->
+    <PackageReference Update="Microsoft.AspNetCore.Components.Authorization" Version="6.0.5" /> <!-- Authentication and authorization support for Blazor applications. -->
     <PackageReference Update="Microsoft.AspNetCore.Components.Web" Version="6.0.4" /> <!-- Support for rendering ASP.NET Core components for browsers. Includes Microsoft.AspNetCore.Components -->
     <PackageReference Update="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.4" /> <!-- Support building SPAs with Blazor running under WebAssembly -->
     <PackageReference Update="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.4" />
