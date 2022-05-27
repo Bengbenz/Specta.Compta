@@ -7,7 +7,7 @@ namespace Beng.Specta.Compta.Server.Identities;
 /// <summary>
 /// This is the code that calculates what feature permissions a user has
 /// </summary>
-public class FeaturePermissionsBuilder
+public sealed class FeaturePermissionsBuilder
 {
     private readonly IAuthorizationRepository _repository;
 

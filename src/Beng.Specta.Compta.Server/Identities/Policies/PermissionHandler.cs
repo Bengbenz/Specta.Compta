@@ -6,7 +6,7 @@ using Beng.Specta.Compta.Core.Services.Identities;
 namespace Beng.Specta.Compta.Server.Identities.Policies;
 //thanks to https://www.jerriepelser.com/blog/creating-dynamic-authorization-policies-aspnet-core/
 
-public class PermissionHandler : AuthorizationHandler<PermissionRequirement>
+public sealed class PermissionHandler : AuthorizationHandler<PermissionRequirement>
 {
     protected override Task HandleRequirementAsync(
         AuthorizationHandlerContext context,
