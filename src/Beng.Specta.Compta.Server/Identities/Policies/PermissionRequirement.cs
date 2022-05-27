@@ -1,16 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
 
-using Microsoft.AspNetCore.Authorization;
+namespace Beng.Specta.Compta.Server.Identities.Policies;
 
-namespace Beng.Specta.Compta.Server.Identities.Policies
+public sealed class PermissionRequirement : IAuthorizationRequirement
 {
-    public class PermissionRequirement : IAuthorizationRequirement
+    public PermissionRequirement(string permissionName)
     {
-        public PermissionRequirement(string permissionName)
-        {
-            PermissionName = permissionName ?? throw new ArgumentNullException(nameof(permissionName));
-        }
-
-        public string PermissionName { get; }
+        PermissionName = permissionName ?? throw new ArgumentNullException(nameof(permissionName));
     }
+
+    public string PermissionName { get; }
 }
