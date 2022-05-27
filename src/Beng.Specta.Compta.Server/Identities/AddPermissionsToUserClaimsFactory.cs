@@ -11,7 +11,7 @@ namespace Beng.Specta.Compta.Server.Identities;
 /// - Adds Permissions to the user's claims.
 /// </summary>
 // Thanks to https://korzh.com/blogs/net-tricks/aspnet-identity-store-user-data-in-claims
-public class AddPermissionsToUserClaimsFactory : UserClaimsPrincipalFactory<IdentityUser>
+public sealed class AddPermissionsToUserClaimsFactory : UserClaimsPrincipalFactory<IdentityUser>
 {
     private readonly FeaturePermissionsBuilder _featurePermissionsBuilder;
 

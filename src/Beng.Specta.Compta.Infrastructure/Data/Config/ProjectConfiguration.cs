@@ -6,7 +6,9 @@ public sealed class ProjectConfiguration : BaseEntityConfiguration<Project>
 {
     protected override void Configure()
     {
-        Builder.HasIndex(p => p.Code)
-            .IsUnique();
+        // Id is a key
+        base.Configure();
+        Builder.HasIndex(p => p.Code).IsUnique();
+        Builder.HasIndex(p => p.Name).IsUnique();
     }
 }
