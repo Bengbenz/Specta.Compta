@@ -17,7 +17,7 @@ public class AppDesignTimeFactory : IDesignTimeDbContextFactory<AppDbContext>
     public AppDbContext CreateDbContext(string[] args)
     {
         // Get environment
-        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
 
         // Build config
         IConfiguration config = new ConfigurationBuilder()
@@ -30,7 +30,7 @@ public class AppDesignTimeFactory : IDesignTimeDbContextFactory<AppDbContext>
         IConfigurationSection configSection = config.GetSection("DefaultTenant");
         var tenantInfo = new TenantInfo
         {
-            Id = configSection.GetValue<string>("Id"),
+            Id = configSection.GetValue<string?>("Id"),
             Identifier = configSection.GetValue<string>("Identifier"),
             Name = configSection.GetValue<string>("Name"),
             ConnectionString = configSection.GetValue<string>("ConnectionString")

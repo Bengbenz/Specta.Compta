@@ -15,7 +15,7 @@ public class TenantStoreDesignTimeFactory : IDesignTimeDbContextFactory<TenantSt
     public TenantStoreDbContext CreateDbContext(string[] args)
     {
         // Get environment
-        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
 
         // Build config
         IConfiguration config = new ConfigurationBuilder()
