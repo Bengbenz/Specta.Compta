@@ -11,7 +11,7 @@ public class ThemeDictionary : Dictionary<string, string>
     public static readonly string GrayKey = "gray";
     public static readonly string DarkKey = "dark";
 
-    public static readonly ThemeDictionary Default = new ThemeDictionary(
+    public static readonly ThemeDictionary Default = new(
         name: "Original",
         primary: "#40e583",
         secondary: "#002c85",
@@ -25,7 +25,7 @@ public class ThemeDictionary : Dictionary<string, string>
         isGradient: true,
         SizeType.Large);
 
-    public static readonly ThemeDictionary Corporate = new ThemeDictionary(
+    public static readonly ThemeDictionary Corporate = new(
         name: "Corporate",
         primary: "#6c7fee",
         secondary: "#6e7ff1",

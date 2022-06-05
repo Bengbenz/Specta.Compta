@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Beng.Specta.Compta.Server.Filters;
 
-public class ValidateModelAttribute : ActionFilterAttribute
+public sealed class ValidateModelAttribute : ActionFilterAttribute
 {
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-        if (context == null) throw new ArgumentNullException(nameof(context));
+        ArgumentNullException.ThrowIfNull(context);
 
         if (!context.ModelState.IsValid)
         {

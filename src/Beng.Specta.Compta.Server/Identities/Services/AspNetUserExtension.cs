@@ -14,7 +14,7 @@ public static class AspNetUserExtension
         string email,
         string password)
     {
-        if (userManager is null) throw new ArgumentException(nameof(userManager));
+        ArgumentNullException.ThrowIfNull(userManager);
             
         IdentityUser user = await userManager.FindByEmailAsync(email);
         if (user is not null)

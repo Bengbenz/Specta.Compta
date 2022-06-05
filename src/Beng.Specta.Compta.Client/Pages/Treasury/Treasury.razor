@@ -12,7 +12,7 @@
     <Empty>
         Vous n'avez pas encore initier la Trésorerie pour le projet en cours.
     </Empty>
-    <Item Context="item">
+    <ItemTemplate Context="item">
         <div class="col">
             <h5>@item.Name</h5>
             Code:
@@ -23,12 +23,12 @@
         <div class="col">
             Durée: <strong>@item.Duration</strong>
         </div>
-    </Item>
+    </ItemTemplate>
 </GenericPage>
 
 @code{
     
-    protected async Task<IList<ProjectDto>> LoadItems()
+    protected async Task<IEnumerable<ProjectDto>> LoadItems()
     {
         //await Task.Delay(3000);
         

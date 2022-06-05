@@ -36,7 +36,7 @@ public sealed class IdentityService
         if (status.IsValid)
         {
             //Note that CreateRoleWithPermissions will return a invalid status if the role is already present.
-            await _repository.AddAsync(status.Result!);
+            await _repository.AddAsync(status.Result);
         }
         else
         {
@@ -75,7 +75,7 @@ public sealed class IdentityService
         if (status.IsValid)
         {
             //we assume there is already a link to the role is the status wasn't valid
-            await _repository.AddAsync(status.Result!);
+            await _repository.AddAsync(status.Result);
         }
     }
 }
