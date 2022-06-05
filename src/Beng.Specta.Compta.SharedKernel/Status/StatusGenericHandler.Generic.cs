@@ -12,7 +12,7 @@ public class StatusGenericHandler<T> : StatusGenericHandler, IStatusGeneric<T>
     /// <summary>
     /// This is the returned result
     /// </summary>
-    public T? Result => IsValid ? _result : default;
+    public T Result => (IsValid ? _result : default) ?? throw new InvalidOperationException($"The {nameof(Result)} is not valid. call {nameof(SetResult)} before.");
 
     /// <summary>
     /// This sets the result to be returned

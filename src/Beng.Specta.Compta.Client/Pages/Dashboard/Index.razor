@@ -1,6 +1,7 @@
 @page "/"
 @inject NavigationManager NavigationManager
 
+<!--
 <GenericPage Title="Dashboard"
              Loader="@LoadItems"
              Icon="vuestic-iconset vuestic-iconset-forms"
@@ -12,19 +13,20 @@
     <Empty>
         Aucun rapport disponible. Vous n'avez pas de projets disponibles.
     </Empty>
-    <Item Context="item">
+    <ItemTemplate Context="item">
         <div class="dashboard">
             <DashboardCharts />
             <DashboardInfoBlock />
         </div>
-    </Item>
+    </ItemTemplate>
 </GenericPage>
+-->
 
 @code{
 
     [CascadingParameter] public ThemeDictionary ContextTheme { get; set; } = null!;
 
-    protected async Task<IList<ProjectDto>> LoadItems()
+    protected async Task<IEnumerable<ProjectDto>> LoadItems()
     {
         return await Task.Run(() => new List<ProjectDto>());//GetProjects();
     }

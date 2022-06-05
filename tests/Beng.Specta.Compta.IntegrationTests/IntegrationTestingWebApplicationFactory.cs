@@ -11,6 +11,7 @@ using Beng.Specta.Compta.Server;
 using Beng.Specta.Compta.SharedKernel.Interfaces;
 using Beng.Specta.Compta.UnitTests;
 using Beng.Specta.Compta.UnitTests.Helpers;
+using Finbuckle.MultiTenant;
 using Xunit;
 
 namespace Beng.Specta.Compta.IntegrationTests
@@ -37,6 +38,7 @@ namespace Beng.Specta.Compta.IntegrationTests
                 services.SwapDbContext<AppDbContext>(AppConnectionStringForTest);
                 services.SwapDbContext<TenantStoreDbContext>(TenantConnectionStringForTest);
 
+                services.AddScoped(_ => BuildDefaultTenantInfo()); // Add a default Tenant for AppDbContext and repository
                 services.AddScoped<IDomainEventDispatcher, NoOpDomainEventDispatcher>();
                 services.AddScoped<IRepository, GenericRepository>();
                 services.AddScoped<IAuthorizationRepository, AuthorizationRepository>();
@@ -48,7 +50,9 @@ namespace Beng.Specta.Compta.IntegrationTests
             return WithWebHostBuilder(builder =>
                 {
                     builder.ConfigureTestServices(services =>
-                        services.AddSingleton<IPolicyEvaluator, ByPassAuthorizationPolicyEvaluator>());
+                    {
+                        services.AddSingleton<IPolicyEvaluator, ByPassAuthorizationPolicyEvaluator>();
+                    });
                 })
                 .CreateClient(new WebApplicationFactoryClientOptions
                 {
@@ -73,6 +77,16 @@ namespace Beng.Specta.Compta.IntegrationTests
             var port = ((IPEndPoint)listener.LocalEndpoint).Port;
             listener.Stop();
             return port;
+        }
+        
+        private static ITenantInfo BuildDefaultTenantInfo()
+        {
+            return new TenantInfo
+            {
+                Id = "finprod",
+                Identifier = "finprod",
+                ConnectionString = TenantConnectionStringForTest
+            };
         }
     }
 }

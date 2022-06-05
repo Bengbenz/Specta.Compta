@@ -21,11 +21,12 @@ public class ProjectController : BaseApiController
     }
 
     // GET: api/Project
-    [HttpGet]
+    [HttpGet, AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IReadOnlyCollection<ProjectDto>> List()
+    public async Task<IActionResult> List()
     {
-        return (await _repository.ListAsync<Project>()).Select(x => x.ToDto()).ToList();
+        var result = (await _repository.ListAsync<Project>()).Select(x => x.ToDto()).ToList();
+        return Ok(result);
     }
 
     // GET: api/Project

@@ -47,7 +47,7 @@ public class RepositoryTestingFactory : IAsyncLifetime
         {
             Id = "finprod",
             Identifier = "finprod",
-            ConnectionString = "Default_Connection_String",
+            ConnectionString = TenantConnectionStringForTest
         };
     }
 

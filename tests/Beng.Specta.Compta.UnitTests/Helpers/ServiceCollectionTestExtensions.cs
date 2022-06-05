@@ -7,7 +7,7 @@ namespace Beng.Specta.Compta.UnitTests.Helpers
     {
         public static void SwapDbContext<TDbContext>(this IServiceCollection services, string connectionString) where TDbContext : DbContext
         {
-            if (services == null) throw new ArgumentNullException(nameof(services));
+            ArgumentNullException.ThrowIfNull(services);
 
             // Remove the app's TDbContext registration.
             var serviceDescriptors = services.Where(

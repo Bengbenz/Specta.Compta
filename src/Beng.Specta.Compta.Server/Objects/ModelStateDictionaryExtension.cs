@@ -8,8 +8,8 @@ public static class ModelStateDictionaryExtension
         this ModelStateDictionary modelState,
         IDictionary<string, List<string>> errors)
     {
-        if (modelState == null) throw new ArgumentNullException(nameof(modelState));
-        if (errors == null) throw new ArgumentNullException(nameof(errors));
+        ArgumentNullException.ThrowIfNull(modelState);
+        ArgumentNullException.ThrowIfNull(errors);
 
         foreach (var error in errors)
         {

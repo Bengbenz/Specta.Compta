@@ -1,84 +1,59 @@
 @page "/projects"
 @inject ILogger<ProjectList> Logger
-@inject HttpClient HttpClient
+@inject HttpWebApiClient WebApiClient
 
-<div class="@MainClass">
-    <VaCard IsVisible="@(Projects.Any())" class="flex xs12 md6 xl3">
-        <BodyContent>
-            <SfListBox DataSource="@Projects" TValue="string[]" TItem="ProjectDto">
-                <ListBoxFieldSettings Text="Name" Value="Id" />
-                <ListBoxSelectionSettings ShowCheckbox="true" />
-            </SfListBox>
-        </BodyContent>
-    </VaCard>
-    <GenericPage Title="Projects"
-                    Loader="@LoadItems"
-                    Icon="vuestic-iconset vuestic-iconset-statistics"
-                    NewText="Initier un projet"
-                    class="@DetailsClass">
-        <Loading>
-            <h1>Loading...</h1>
-        </Loading>
-        <Empty>
-            Vous n'avez pas encore de projets en cours.
-        </Empty>
-        <Item Context="item">
-            <div class="col">
-                <h5>@item.Name</h5>
-                Code:
-                <strong>@item.Code</strong>;
-                Date de début:
-                <strong>£@item.StartDate</strong>
-            </div>
-            <div class="col">
-                Durée: <strong>@item.Duration</strong>
-            </div>
-        </Item>
-    </GenericPage>
-</div>
+<GenericPage Title="Projects"
+             Loader="@LoadProjects"
+             Items="@Projects"
+             Icon="vuestic-iconset vuestic-iconset-statistics"
+             NewText="Initier un projet"
+             ViewType="ViewType.AsCard"
+             AddAction="@ShowProjectForm">
+    <Loading>
+        <h1>Loading...</h1>
+    </Loading>
+    <Empty>
+        Vous n'avez pas encore de projets en cours.
+    </Empty>
+    <ItemTemplate Context="item">
+        <div class="flex xs12 sm6 lg4 xl3">
+            <VaCard stripe="danger" title="@item.Name">
+                <BodyContent>
+                    <div class="col">
+                        Date de début: <strong>@item.StartDate</strong>
+                    </div>
+                    <div class="col">
+                        Durée: <strong>@item.Duration</strong>
+                    </div>
+                    <VaSeparator />
+                    @item.Description
+                </BodyContent>
+            </VaCard>
+        </div>
+    </ItemTemplate>
+</GenericPage>
 
 @code{
 
-    private string[] _selectedValue = new string[] { "Hennessey Venom" };
+    private IEnumerable<ProjectDto> Projects { get; set; } = null!;
 
-    protected async Task<IList<ProjectDto>> LoadItems()
+    private async Task<IEnumerable<ProjectDto>> LoadProjects()
     {
-        //await Task.Delay(3000);
+        var result = new List<ProjectDto>();
+        await WebApiClient.CreateRequest("api/project/list")
+            .OnOK<ICollection<ProjectDto>>(r => result = r!.ToList())
+            .GetAsync();
+
+        return result;
+    }
+
+    private void ShowProjectForm()
+    {
         
-        return await Task.Run(() => new List<ProjectDto>());//GetProjects();
     }
-
-    private IList<ProjectDto> Projects
+    
+    protected override async Task OnInitializedAsync()
     {
-        get
-        {
-            var groups = new string[]
-            {
-            "ZZ",
-            "TT",
-            "Tchoupi",
-            "Kouroukour",
-            "Birao",
-            "Bangassou",
-            "Bambari"
-            };
-
-            long id = 0;
-            var projectDtos = Enumerable.Range(1, 5).Select(x => new ProjectDto
-            {
-                Id = ++id,
-                Code = groups[new Random().Next(groups.Length)].Substring(0, 2).Trim() + $"_{id}",
-                Name = groups[new Random().Next(groups.Length)],
-                StartDate = DateTime.Now.AddDays(id),
-                Duration = (int)id
-            }).ToList();
-
-            return projectDtos;
-        }
+        Projects = await LoadProjects();
     }
-
-    private string MainClass => Projects.Any() ? "row row-equal" : string.Empty;
-
-    private string DetailsClass => Projects.Any() ? "flex xs12 md6 xl9" : string.Empty;
-
 }

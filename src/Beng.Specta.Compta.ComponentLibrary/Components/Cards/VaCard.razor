@@ -1,9 +1,10 @@
+@using Syncfusion.Blazor.Charts.BulletChart.Internal
 @if (IsVisible)
 {
 <div class="@ComputedClass" style="@ComputedCardStyle" @attributes="@AdditionalAttributes">
     @if (!string.IsNullOrWhiteSpace(Stripe))
     {
-    <div class="va-card__stripe" style="@ComputedStripeStyle" />
+    <div class="va-card__stripe" style="@ComputedStripeStyle"></div>
     }
     @if (!string.IsNullOrWhiteSpace(Image))
     {
@@ -11,7 +12,7 @@
         <img src="@Image" alt="@ImageAlt">
         @if (IsOverlay)
         {
-            <div class="va-card__image-overlay" />
+            <div class="va-card__image-overlay"></div>
         }
     </div>
     }
@@ -50,10 +51,10 @@
     [Parameter(CaptureUnmatchedValues = true)] public IDictionary<string, object> AdditionalAttributes { get; set; } = null!;
     [CascadingParameter] public ThemeDictionary ContextTheme { get; set; } = null!;
     [Parameter] public string? Class { get; set; }
-    [Parameter] public string Stripe { get; set; } = string.Empty;
     [Parameter] public string? Title { get; set; }
     [Parameter] public string? Image { get; set; }
     [Parameter] public string? ImageAlt { get; set; }
+    [Parameter] public string Stripe { get; set; } = string.Empty;
     [Parameter] public string Color { get; set; } = string.Empty;
     [Parameter] public bool IsPaddingV { get; set; } = true;
     [Parameter] public bool IsPaddingH { get; set; } = true;
@@ -99,23 +100,11 @@
             .Build();
 
     private string ComputedCardStyle =>
-        StyleBuilder.Default("box-shadow", BoxShadow())
+        StyleBuilder.Empty()
+            .AddStyle("box-shadow", "0 1px 1px 0 rgba(190, 190, 190, 0.25)", ContextTheme.ShadowSize == SizeType.Small)
+            .AddStyle("box-shadow", "0 2px 3px 0 rgba(52, 56, 85, 0.25)", ContextTheme.ShadowSize == SizeType.Large)
             .AddStyle("color", "#fff", !string.IsNullOrWhiteSpace(Color))
             .AddStyle("background", ComputedColor.GetGradientBackground(), !string.IsNullOrWhiteSpace(Color) && ContextTheme.IsGradient)
             .AddStyle("background", ComputedColor, !string.IsNullOrWhiteSpace(Color) && ContextTheme.IsGradient)
             .Build();
-
-    private string BoxShadow()
-    {
-        string shadow = string.Empty;
-        if (ContextTheme.ShadowSize == SizeType.Small)
-        {
-            shadow = "0 1px 1px 0 rgba(190, 190, 190, 0.25)";
-        }
-        if (ContextTheme.ShadowSize == SizeType.Large)
-        {
-            shadow = "0 2px 3px 0 rgba(52, 56, 85, 0.25)";
-        }
-        return shadow;
-    }
 }

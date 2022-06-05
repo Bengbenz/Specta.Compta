@@ -23,25 +23,38 @@ public class GenericRepository : IRepository
         return DbContext.Set<T>().SingleOrDefaultAsync(e => e.Id == id);
     }
 
-    public async Task<IReadOnlyCollection<T>> ListAsync<T>() where T : class
+    public async Task<IReadOnlyCollection<T>> ListAsync<T>() where T : BaseEntity
     {
         return await DbContext.Set<T>().ToListAsync();
     }
-
+    
+    public async Task<int> CountAsync<T>() where T : BaseEntity
+    {
+        return await DbContext.Set<T>().CountAsync();
+    }
+    
+    public async Task<bool> AnyAsync<T>() where T : BaseEntity
+    {
+        return await DbContext.Set<T>().AnyAsync();
+    }
+    
     public async Task AddAsync<T>(params T[] entities) where T : class
     {
+        ArgumentNullException.ThrowIfNull(entities);
         await DbContext.Set<T>().AddRangeAsync(entities);
         await DbContext.SaveChangesAsync();
     }
 
-    public async Task UpdateAsync<T>(T entity) where T : class
+    public async Task UpdateAsync<T>(T entity) where T : BaseEntity
     {
+        ArgumentNullException.ThrowIfNull(entity);
         DbContext.Entry(entity).State = EntityState.Modified;
         await DbContext.SaveChangesAsync();
     }
-
+    
     public async Task DeleteAsync<T>(params T[] entities) where T : class
     {
+        ArgumentNullException.ThrowIfNull(entities);
         DbContext.Set<T>().RemoveRange(entities);
         await DbContext.SaveChangesAsync();
     }
