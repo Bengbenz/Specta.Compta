@@ -10,7 +10,7 @@
     <PackageReference Update="Microsoft.AspNetCore.Components.Web" Version="6.0.4" /> <!-- Support for rendering ASP.NET Core components for browsers. Includes Microsoft.AspNetCore.Components -->
     <PackageReference Update="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.5" /> <!-- Support building SPAs with Blazor running under WebAssembly -->
     <PackageReference Update="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.4" />
-    <PackageReference Update="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.5" /> <!-- ASP.NET Core middleware for Entity Framework Core error pages -->
+    <PackageReference Update="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.6" /> <!-- ASP.NET Core middleware for Entity Framework Core error pages -->
     <PackageReference Update="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.5" />
     <PackageReference Update="Microsoft.AspNetCore.Identity.UI" Version="6.0.4" />
     <PackageReference Update="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.5" />
@@ -42,7 +42,7 @@
   </ItemGroup>
   
   <ItemGroup Condition="'$(TestProjectMode)' == 'true'">
-    <PackageReference Include="ReportGenerator" Version="5.1.6" />
+    <PackageReference Include="ReportGenerator" Version="5.1.9" />
     <PackageReference Include="Moq" Version="4.18.1" />
     <PackageReference Include="coverlet.msbuild" Version="3.1.2">
       <PrivateAssets>all</PrivateAssets>
