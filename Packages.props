@@ -25,7 +25,7 @@
     <PackageReference Update="log4net" Version="2.0.14" />
     <PackageReference Update="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.4" />
     <PackageReference Update="NodaMoney" Version="1.0.5" />
-    <PackageReference Update="Syncfusion.Blazor" Version="20.1.0.57" />
+    <PackageReference Update="Syncfusion.Blazor" Version="20.2.0.38" />
     <PackageReference Update="Syncfusion.Blazor.WordProcessor" Version="20.1.0.57" />
     <PackageReference Update="Syncfusion.Licensing" Version="20.1.0.57" />
     <PackageReference Update="System.ComponentModel.Annotations" Version="5.0.0"/>
@@ -54,6 +54,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.4" />
     <PackageReference Include="Microsoft.Playwright" Version="1.22.0" />
     <PackageReference Include="System.Net.Http.Json" Version="6.0.0" />
+    <PackageReference Include="SpecFlow.Plus.LivingDocPlugin" Version="3.9.57" />
+    <PackageReference Include="SpecFlow.xUnit" Version="3.9.74" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.console" Version="2.4.1" PrivateAssets="all" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" PrivateAssets="all" />
