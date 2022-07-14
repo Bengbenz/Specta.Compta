@@ -19,7 +19,7 @@ namespace Beng.Specta.Compta.IntegrationTests.Features
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.9.0.0")]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public partial class ProjectListFeature : object, Xunit.IClassFixture<ProjectListFeature.FixtureData>, System.IDisposable
+    public partial class ProjectWebApiFeature : object, Xunit.IClassFixture<ProjectWebApiFeature.FixtureData>, System.IDisposable
     {
         
         private static TechTalk.SpecFlow.ITestRunner testRunner;
@@ -31,7 +31,7 @@ namespace Beng.Specta.Compta.IntegrationTests.Features
 #line 1 "ProjectController.feature"
 #line hidden
         
-        public ProjectListFeature(ProjectListFeature.FixtureData fixtureData, Beng_Specta_Compta_IntegrationTests_XUnitAssemblyFixture assemblyFixture, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
+        public ProjectWebApiFeature(ProjectWebApiFeature.FixtureData fixtureData, Beng_Specta_Compta_IntegrationTests_XUnitAssemblyFixture assemblyFixture, Xunit.Abstractions.ITestOutputHelper testOutputHelper)
         {
             this._testOutputHelper = testOutputHelper;
             this.TestInitialize();
@@ -40,8 +40,8 @@ namespace Beng.Specta.Compta.IntegrationTests.Features
         public static void FeatureSetup()
         {
             testRunner = TechTalk.SpecFlow.TestRunnerManager.GetTestRunner();
-            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "Project List", "\tGets Project list from ProjectController api\n\tLink to a feature: [ProjectControl" +
-                    "ler](Beng.Specta.Compta/Controllers/ProjectController.List)", ProgrammingLanguage.CSharp, featureTags);
+            TechTalk.SpecFlow.FeatureInfo featureInfo = new TechTalk.SpecFlow.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "Project Web Api", "\tHandle Project Operations (CRUD) from ProjectController api\n\tLink to a feature: " +
+                    "[ProjectController](Beng.Specta.Compta/Controllers/ProjectController)", ProgrammingLanguage.CSharp, featureTags);
             testRunner.OnFeatureStart(featureInfo);
         }
         
@@ -82,7 +82,7 @@ namespace Beng.Specta.Compta.IntegrationTests.Features
         }
         
         [Xunit.SkippableFactAttribute(DisplayName="Gets empty list of projects")]
-        [Xunit.TraitAttribute("FeatureTitle", "Project List")]
+        [Xunit.TraitAttribute("FeatureTitle", "Project Web Api")]
         [Xunit.TraitAttribute("Description", "Gets empty list of projects")]
         [Xunit.TraitAttribute("Category", "list")]
         public void GetsEmptyListOfProjects()
@@ -115,7 +115,7 @@ this.ScenarioInitialize(scenarioInfo);
         }
         
         [Xunit.SkippableFactAttribute(DisplayName="Gets not-empty list of projects")]
-        [Xunit.TraitAttribute("FeatureTitle", "Project List")]
+        [Xunit.TraitAttribute("FeatureTitle", "Project Web Api")]
         [Xunit.TraitAttribute("Description", "Gets not-empty list of projects")]
         public void GetsNot_EmptyListOfProjects()
         {
@@ -154,6 +154,39 @@ this.ScenarioInitialize(scenarioInfo);
             this.ScenarioCleanup();
         }
         
+        [Xunit.SkippableFactAttribute(DisplayName="Save a new project")]
+        [Xunit.TraitAttribute("FeatureTitle", "Project Web Api")]
+        [Xunit.TraitAttribute("Description", "Save a new project")]
+        [Xunit.TraitAttribute("Category", "post")]
+        public void SaveANewProject()
+        {
+            string[] tagsOfScenario = new string[] {
+                    "post"};
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("Save a new project", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 20
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 21
+ testRunner.Given("I give a minimum information about a project.", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 22
+ testRunner.When("I save this project by web api.", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 23
+ testRunner.Then("The project is saved in DB and returned.", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
         [System.CodeDom.Compiler.GeneratedCodeAttribute("TechTalk.SpecFlow", "3.9.0.0")]
         [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
         public class FixtureData : System.IDisposable
@@ -161,12 +194,12 @@ this.ScenarioInitialize(scenarioInfo);
             
             public FixtureData()
             {
-                ProjectListFeature.FeatureSetup();
+                ProjectWebApiFeature.FeatureSetup();
             }
             
             void System.IDisposable.Dispose()
             {
-                ProjectListFeature.FeatureTearDown();
+                ProjectWebApiFeature.FeatureTearDown();
             }
         }
     }

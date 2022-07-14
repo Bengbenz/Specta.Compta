@@ -31,8 +31,7 @@ public class AppAuthenticationStateProvider : AuthenticationStateProvider
                 new Claim(ClaimTypes.Name, !string.IsNullOrWhiteSpace(account.UserName) ? account.UserName : account.Email),
                 new Claim(ClaimTypes.Email, account.Email),
                 new Claim(ClaimTypes.AuthenticationMethod, account.HasPassword ? "internal" : "external"),
-                new Claim(PermissionConstants.Title, account.Title),
-                new Claim(PermissionConstants.PackedPermissionClaimType, account.PackedPermissions),
+                new Claim(PermissionConstants.Title, account.Title)
             }, "serverauth")
             : new ClaimsIdentity();
             

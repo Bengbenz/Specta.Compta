@@ -1,0 +1,70 @@
+@inject HttpWebApiClient WebApiClient
+@inject IJSRuntime JsRuntime 
+@inject ILogger<ProjectForm> Logger
+
+<VaCard class="@ComputedClass"
+        Title="@Title"
+        IsOverlay="true">
+    <Header>
+        <VaIcon Name="@Icon" Color="@ThemeDictionary.InfoKey" />
+        <h5 class="ml-2 mt-0 mb-0" style="color:@(ContextTheme[ThemeDictionary.InfoKey])">@Title</h5>
+    </Header>
+    <BodyContent>
+        <EditForm EditContext="@_editContext" OnValidSubmit="AddProject">
+            <DataAnnotationsValidator/>
+            <ServerSideValidator @ref="ServerSideValidator"/>
+            <VaInput @bind-Value="Project.Code" Label="Code"/>
+            <VaInput @bind-Value="Project.Name" Label="Nom"/>
+            <VaInput Type="VaInputType.TextArea" @bind-Value="Project.Description" Label="Description"/>
+            <!--<SfDateTimePicker ID="date-time" @bind-value="Project.StartDate" Label="Date de debut" />
+            <VaInput @bind-Value="Project.Duration" Label="Durée" /> -->
+
+            <div class="d-flex justify--center mt-3">
+                <VaButton Type="@ButtonType.Button" Color="gray" IsFlat="true" @onclick="@CancelAction">Annuler</VaButton>
+                <VaButton Type="@ButtonType.Submit" class="my-0">Valider</VaButton>
+            </div>
+        </EditForm>
+    </BodyContent>
+</VaCard>
+
+@code {
+    
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; } = null!;
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? Icon { get; set; }
+    [Parameter] public string? Class { get; set; }    
+    [Parameter] public string? NewText { get; set; }
+    [Parameter] public EventCallback CancelAction { get; set; }
+    [Parameter] public EventCallback SubmitAction { get; set; }
+
+    private ProjectDto Project { get; set; } = new();
+    private ServerSideValidator ServerSideValidator { get; set; } = null!;
+    private EditContext _editContext = null!;
+    
+    private string ComputedClass =>
+        CssBuilder.Empty()
+            .AddClass(Class, !string.IsNullOrWhiteSpace(Class))
+            .Build();
+
+    private async Task AddProject()
+    {
+        await WebApiClient.CreateRequest("api/project/post")
+            .OnBadRequest<Dictionary<string, List<string>>>(errors =>
+            {
+                Logger.LogDebug($"{GetType().Name}: Project saved is failed.");
+                ServerSideValidator.DisplayErrors(errors, true);
+            })
+            .OnOK(() =>
+            {
+                JsRuntime.LaunchToast("success", $"{Project.Name} added.");
+                Project = new ProjectDto();
+                CancelAction.InvokeAsync();
+            })
+            .PostAsync(Project);
+    }
+    
+    protected override void OnInitialized()
+    {
+        _editContext = new EditContext(Project);
+    }
+}

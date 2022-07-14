@@ -22,7 +22,6 @@ public static class DtosExtension
             //Title = user.Title
             IsAuthenticated = principalClaims.Identity!.IsAuthenticated,
             // RoleNames = 
-            PackedPermissions = principalClaims.PermissionAsString()
             // IsAdmin = user.Roles.Contains(ApplicationUser.AdminRole),
         };
     }
