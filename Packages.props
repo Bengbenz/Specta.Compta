@@ -10,7 +10,7 @@
     <PackageReference Update="Microsoft.AspNetCore.Components.Web" Version="6.0.4" /> <!-- Support for rendering ASP.NET Core components for browsers. Includes Microsoft.AspNetCore.Components -->
     <PackageReference Update="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.5" /> <!-- Support building SPAs with Blazor running under WebAssembly -->
     <PackageReference Update="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.4" />
-    <PackageReference Update="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.5" /> <!-- ASP.NET Core middleware for Entity Framework Core error pages -->
+    <PackageReference Update="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.7" /> <!-- ASP.NET Core middleware for Entity Framework Core error pages -->
     <PackageReference Update="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.5" />
     <PackageReference Update="Microsoft.AspNetCore.Identity.UI" Version="6.0.4" />
     <PackageReference Update="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.5" />
@@ -54,6 +54,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.4" />
     <PackageReference Include="Microsoft.Playwright" Version="1.22.0" />
     <PackageReference Include="System.Net.Http.Json" Version="6.0.0" />
+    <PackageReference Include="SpecFlow.Plus.LivingDocPlugin" Version="3.9.57" />
+    <PackageReference Include="SpecFlow.xUnit" Version="3.9.74" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.console" Version="2.4.1" PrivateAssets="all" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" PrivateAssets="all" />
