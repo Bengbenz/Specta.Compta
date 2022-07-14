@@ -21,33 +21,34 @@ public class ProjectController : BaseApiController
     }
 
     // GET: api/Project
-    [HttpGet]
+    [HttpGet, AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IReadOnlyCollection<ProjectDto>> List()
+    public async Task<IActionResult> List()
     {
-        return (await _repository.ListAsync<Project>()).Select(x => x.ToDto()).ToList();
+        var projectDtos = (await _repository.ListAsync<Project>()).Select(x => x.ToDto()).ToList();
+        return Ok(projectDtos);
     }
 
     // GET: api/Project
     [HttpGet("{id:long}")]
     public async Task<IActionResult> GetById(long id)
     {
-        var item = (await _repository.GetByIdAsync<Project>(id))?.ToDto();
-        return Ok(item);
+        var projectDto = (await _repository.GetByIdAsync<Project>(id))?.ToDto();
+        return Ok(projectDto);
     }
 
-    // POST: api/Projects
+    // POST: api/Project
     [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Post([FromBody] ProjectDto item)
+    //[ValidateAntiForgeryToken]
+    public async Task<IActionResult> Post([FromBody] ProjectDto projectDto)
     {
-        ArgumentNullException.ThrowIfNull(item);
+        ArgumentNullException.ThrowIfNull(projectDto);
 
-        var projectItem = new Project(item.Code, item.Name)
+        var projectItem = new Project(projectDto.Code, projectDto.Name)
         {
-            Description = item.Description,
-            StartDate = item.StartDate,
-            Duration = item.Duration
+            Description = projectDto.Description,
+            StartDate = projectDto.StartDate,
+            Duration = projectDto.Duration
         };
 
         await _repository.AddAsync(projectItem);

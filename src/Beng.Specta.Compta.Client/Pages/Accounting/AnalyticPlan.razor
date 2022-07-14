@@ -3,16 +3,16 @@
 @inject HttpClient HttpClient
 
 <GenericPage Title="Plan analytique"
-    Loader="@LoadItems"
-    Icon="vuestic-iconset vuestic-iconset-files"
-    NewText="Ajouter une entrée">
+             Loader="@LoadItems"
+             Icon="vuestic-iconset vuestic-iconset-files"
+             NewText="Ajouter une entrée">
     <Loading>
         <h1>Loading...</h1>
     </Loading>
     <Empty>
         Vous n'avez aucune entrée dans votre plan analytique.
     </Empty>
-    <Item Context="item">
+    <ItemTemplate Context="item">
         <div class="col">
             <h5>@item.Name</h5>
             Code:
@@ -23,12 +23,12 @@
         <div class="col">
             Durée: <strong>@item.Duration</strong>
         </div>
-    </Item>
+    </ItemTemplate>
 </GenericPage>
 
 @code{
     
-    protected async Task<IList<ProjectDto>> LoadItems()
+    protected async Task<IEnumerable<ProjectDto>> LoadItems()
     {
         //await Task.Delay(3000);
         

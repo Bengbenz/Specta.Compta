@@ -29,7 +29,8 @@ pool:
 variables:
   buildConfiguration: 'Release'
   #reportCodeCoverageToolVersion: '5.1.6'
-  codeCoverageParams: '/p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
+  # N.B. With /p:MergeWith, you need to specify json format plus another format(the final one), because Coverlet can only merge proprietary format /p:CoverletOutputFormat=\"cobertura,json\"
+  codeCoverageParams: /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura #/p:SkipAutoProps=true /p:SourceLink=true /p:DeterministicReport=true
   netVersion: 'net6.0'
   disable.coverage.autogenerate: 'true'
   codecoverage.inputs.directory: '$(Build.SourcesDirectory)/tests/**/coverage.cobertura.xml'
@@ -59,19 +60,6 @@ steps:
     projects: '**/*.csproj'
     arguments: '--configuration $(BuildConfiguration) --no-restore' 
     
-# Install required browsers
-- task: PowerShell@2
-  displayName: 'Install playwright'
-  inputs:
-    targetType: 'filePath'
-    filePath: 'tests/Beng.Specta.Compta.IntegrationTests/bin/$(BuildConfiguration)/$(netVersion)/playwright.ps1'
-    arguments: 'install'
-  
-# Start x-server daemon for E2E tests on linux
-- script: 'sudo /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16'
-  displayName: 'Start Xvfb'
-  continueOnError: true
-  
 - task: DotNetCoreCLI@2
   displayName: 'Run Unit tests'
   inputs:
@@ -89,7 +77,20 @@ steps:
     arguments: '--configuration $(BuildConfiguration) $(CodeCoverageParams)'
     projects: tests/Beng.Specta.Compta.IntegrationTests/*.csproj
     nobuild: true
-    
+  
+# Install required browsers
+- task: PowerShell@2
+  displayName: 'Install playwright'
+  inputs:
+    targetType: 'filePath'
+    filePath: 'tests/Beng.Specta.Compta.IntegrationTests/bin/$(BuildConfiguration)/$(netVersion)/playwright.ps1'
+    arguments: 'install'
+  
+# Start x-server daemon for E2E tests on linux
+- script: 'sudo /sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16'
+  displayName: 'Start Xvfb'
+  continueOnError: true
+  
 # Run functional tests
 - task: DotNetCoreCLI@2
   displayName: 'Run Functionnal tests'

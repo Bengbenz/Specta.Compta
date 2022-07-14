@@ -1,84 +1,77 @@
 @page "/projects"
 @inject ILogger<ProjectList> Logger
-@inject HttpClient HttpClient
+@inject HttpWebApiClient WebApiClient
 
-<div class="@MainClass">
-    <VaCard IsVisible="@(Projects.Any())" class="flex xs12 md6 xl3">
-        <BodyContent>
-            <SfListBox DataSource="@Projects" TValue="string[]" TItem="ProjectDto">
-                <ListBoxFieldSettings Text="Name" Value="Id" />
-                <ListBoxSelectionSettings ShowCheckbox="true" />
-            </SfListBox>
-        </BodyContent>
-    </VaCard>
-    <GenericPage Title="Projects"
-                    Loader="@LoadItems"
-                    Icon="vuestic-iconset vuestic-iconset-statistics"
-                    NewText="Initier un projet"
-                    class="@DetailsClass">
-        <Loading>
-            <h1>Loading...</h1>
-        </Loading>
-        <Empty>
-            Vous n'avez pas encore de projets en cours.
-        </Empty>
-        <Item Context="item">
-            <div class="col">
-                <h5>@item.Name</h5>
-                Code:
-                <strong>@item.Code</strong>;
-                Date de début:
-                <strong>£@item.StartDate</strong>
-            </div>
-            <div class="col">
-                Durée: <strong>@item.Duration</strong>
-            </div>
-        </Item>
-    </GenericPage>
+<div class="row">
+    @if (CanShowProjectForm)
+    {
+    <div class="flex xs12 md4">
+        <ProjectForm Title="Nouveau projet"
+                     Icon="vuestic-iconset vuestic-iconset-statistics"
+                     CancelAction="@HideProjectForm"/>
+    </div>
+    }
+    
+    <div class="@ComputedListClass">
+        <GenericPage Title="Projects"
+                     Loader="@LoadProjects"
+                     Icon="vuestic-iconset vuestic-iconset-statistics"
+                     NewText="Initier un projet"
+                     ViewType="ViewType.AsCard"
+                     ShowAddFormAction="@ShowProjectForm">
+            <Loading>
+                <h1>Loading...</h1>
+            </Loading>
+            <Empty>
+                Vous n'avez pas encore de projets en cours.
+            </Empty>
+            <ItemTemplate Context="item">
+                <div class="flex xs12 sm6 lg4 xl3" key>
+                    <VaCard Stripe="@ThemeDictionary.PrimaryKey" Title="@item.Name">
+                        <BodyContent>
+                            <div class="col">
+                                Code: <strong>@item.Code</strong>
+                            </div>
+                            <div class="col">
+                                Nom: <strong>@item.Name</strong>
+                            </div>
+                            <div class="col">
+                                Date de début: @item.StartDate
+                            </div>
+                            <div class="col">
+                                Durée: @item.Duration
+                            </div>
+                            <VaSeparator/>
+                            <p>@item.Description</p>
+                        </BodyContent>
+                    </VaCard>
+                </div>
+            </ItemTemplate>
+        </GenericPage>
+    </div>
 </div>
 
 @code{
 
-    private string[] _selectedValue = new string[] { "Hennessey Venom" };
+    private bool CanShowProjectForm { get; set; }
+    
+    private string ComputedListClass =>
+        CssBuilder.Default("flex xs12")
+            .AddClass("md12", !CanShowProjectForm)
+            .AddClass("md8", CanShowProjectForm)
+            .Build();
 
-    protected async Task<IList<ProjectDto>> LoadItems()
+    private async Task<IEnumerable<ProjectDto>> LoadProjects()
     {
-        //await Task.Delay(3000);
-        
-        return await Task.Run(() => new List<ProjectDto>());//GetProjects();
+        var result = new List<ProjectDto>();
+        await WebApiClient.CreateRequest("api/project/list")
+            .OnOK<IReadOnlyCollection<ProjectDto>>(r => result = r!.ToList())
+            .GetAsync();
+
+        return result;
     }
 
-    private IList<ProjectDto> Projects
-    {
-        get
-        {
-            var groups = new string[]
-            {
-            "ZZ",
-            "TT",
-            "Tchoupi",
-            "Kouroukour",
-            "Birao",
-            "Bangassou",
-            "Bambari"
-            };
-
-            long id = 0;
-            var projectDtos = Enumerable.Range(1, 5).Select(x => new ProjectDto
-            {
-                Id = ++id,
-                Code = groups[new Random().Next(groups.Length)].Substring(0, 2).Trim() + $"_{id}",
-                Name = groups[new Random().Next(groups.Length)],
-                StartDate = DateTime.Now.AddDays(id),
-                Duration = (int)id
-            }).ToList();
-
-            return projectDtos;
-        }
-    }
-
-    private string MainClass => Projects.Any() ? "row row-equal" : string.Empty;
-
-    private string DetailsClass => Projects.Any() ? "flex xs12 md6 xl9" : string.Empty;
-
+    private void ShowProjectForm() => CanShowProjectForm = true;
+    
+    private void HideProjectForm() => CanShowProjectForm = false;
 }

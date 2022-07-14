@@ -12,23 +12,22 @@
     <Empty>
         Vous n'avez encore jamais effectué une intégration comptable dans le projet en cours.
     </Empty>
-    <Item Context="item">
+    <ItemTemplate Context="item">
         <div class="col">
             <h5>@item.Name</h5>
             Code:
             <strong>@item.Code</strong>;
-            Date de début:
-            <strong>£@item.StartDate</strong>
+            Date de début: <strong>@item.StartDate</strong>
         </div>
         <div class="col">
             Durée: <strong>@item.Duration</strong>
         </div>
-    </Item>
+    </ItemTemplate>
 </GenericPage>
 
 @code{
     
-    protected async Task<IList<ProjectDto>> LoadItems()
+    protected async Task<IEnumerable<ProjectDto>> LoadItems()
     {
         //await Task.Delay(3000);
         

@@ -5,12 +5,12 @@
 <VaCard class="@ComputedClass"
         Title="@Title"
         Image="@ImageForEmpty"
-        IsOverlay="true"
-        IsTitleOnImage="@(!string.IsNullOrWhiteSpace(ImageForEmpty))">
+        IsTitleOnImage="@(!string.IsNullOrWhiteSpace(ImageForEmpty))"
+        ShowBody="@(Items is null || !Items.Any() || ViewType == ViewType.AsList)">
     <Header>
-        @if (Items?.Count == 0)
+        @if (Items is not null && !Items.Any())
         {
-            <VaButton Icon="ion ion-ios-add-circle-outline" @onclick="@AddAction" IsLarge="true">
+            <VaButton Icon="ion ion-ios-add-circle-outline" @onclick="@ShowAddFormAction" IsLarge="true">
                 @NewText
             </VaButton>
         }
@@ -21,34 +21,44 @@
         }
     </Header>
     <Actions>
-        <VaButton IsVisible="@(Items?.Count > 0)" Icon="fa fa-refresh" @onclick="@Loader" />
+        <VaButton IsVisible="@(Items is not null && Items.Any())" Icon="ion ion-ios-add-circle-outline" @onclick="@ShowAddFormAction" />
     </Actions>
     <BodyContent>
         <VaNotification BadgeText="Error"
-            Color="@ThemeDictionary.DangerKey"
-            IsVisible="@(string.IsNullOrEmpty(ErrorDetails))"
-            class="mb-4">
+                        Color="@ThemeDictionary.DangerKey"
+                        IsVisible="@(!string.IsNullOrWhiteSpace(ErrorDetails))"
+                        class="mb-4">
             @ErrorDetails
         </VaNotification>
-    @if (Items is null)
-    {
-        @Loading
-    }
-    else if (Items.Count > 0)
-    {
-        foreach(var item in Items)
+        @if (Items is null)
         {
-            @Item(item)
+            @Loading
         }
-    }
-    else
-    {
-        <div class="flex-center py-2">
-            @Empty
-        </div>
-    }
-   </BodyContent>
+        else if (!Items.Any())
+        {
+            <div class="flex-center py-2">
+                @Empty
+            </div>
+        }
+        else // As List
+        {
+            foreach(var item in Items)
+            {
+                @ItemTemplate(item)
+            }
+        }
+    </BodyContent>
 </VaCard>
+    
+@if (ViewType == ViewType.AsCard && Items is not null && Items.Any())
+{
+    <div class="cards-container row d-flex wrap align--start">
+        @foreach (var item in Items)
+        {
+            @ItemTemplate(item)
+        }
+    </div>
+}
 
 @code {
 
@@ -57,16 +67,16 @@
     [Parameter] public string? Icon { get; set; }
     [Parameter] public string? Class { get; set; }    
     [Parameter] public string? NewText { get; set; }
-    [Parameter] public string ErrorDetails  { get; set; } = string.Empty;
+    [Parameter] public string? ErrorDetails  { get; set; }
+    [Parameter] public ViewType ViewType  { get; set; } = ViewType.AsList;
     [Parameter] public RenderFragment? Loading { get; set; }
     [Parameter] public RenderFragment? Empty { get; set; }
-    [Parameter] public RenderFragment<TItem> Item { get; set; } = null!;
-    [Parameter] public Func<Task<IList<TItem>>> Loader { get; set; } = null!;
-    [Parameter] public EventCallback AddAction { get; set; }
+    [Parameter] public RenderFragment<TItem> ItemTemplate { get; set; } = null!;
+    [Parameter] public Func<Task<IEnumerable<TItem>>> Loader { get; set; } = null!;
+    [Parameter] public IEnumerable<TItem>? Items { get; set; }
+    [Parameter] public EventCallback ShowAddFormAction { get; set; }
 
-    private IList<TItem>? Items { get; set; }
-
-    private string ImageForEmpty => Items?.Count == 0 ? ThemeState.GetRandomBackgroundImage() : string.Empty;
+    private string ImageForEmpty => Items is not null && !Items.Any() ? ThemeState.GetRandomBackgroundImage() : string.Empty;
 
     private string ComputedClass =>
         CssBuilder.Empty()

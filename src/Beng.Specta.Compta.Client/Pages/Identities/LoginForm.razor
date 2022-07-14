@@ -9,12 +9,12 @@
     <DataAnnotationsValidator />
     <ServerSideValidator @ref="ServerSideValidator" />
     <VaInput @bind-Value="UserInfo.Email"
-      Type="@VaInputType.Email"
-      Label="Email" />
+             Type="@VaInputType.Email"
+             Label="Email" />
 
     <VaInput @bind-Value="UserInfo.Password"
-      Type="@VaInputType.Password"
-      Label="Mot de passe" />
+             Type="@VaInputType.Password"
+             Label="Mot de passe" />
 
     <div class="auth-layout__options d-flex align--center justify--space-between">
         <VaCheckBox @bind-Value="UserInfo.RememberMe" class="mb-0" Label="Se souvenir de moi ?"/>
@@ -28,7 +28,7 @@
 
 @code
 {
-    [CascadingParameter] public ThemeDictionary? ContextTheme { get; set; }
+    [CascadingParameter] public ThemeDictionary ContextTheme { get; set; } = null!;
 
     private SignInUserInfoDto UserInfo { get; set; } = new();
     private ServerSideValidator ServerSideValidator { get; set; } = null!;
@@ -36,7 +36,7 @@
 
     private string LinkStyle =>
         StyleBuilder.Empty()
-            .AddStyle("color", ContextTheme![ThemeDictionary.PrimaryKey], ContextTheme.IsInverted)
+            .AddStyle("color", ContextTheme[ThemeDictionary.PrimaryKey], ContextTheme.IsInverted)
             .Build();
 
     private async Task LoginUser()

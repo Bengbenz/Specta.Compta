@@ -13,6 +13,6 @@ namespace Beng.Specta.Compta.SharedKernel.Interfaces
         /// <summary>
         /// This contains the return result, or if there are errors it will return default(T)
         /// </summary>
-        T? Result { get; }
+        T Result { get; }
     }
 }

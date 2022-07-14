@@ -44,7 +44,7 @@ public class AccountController : BaseApiController
             Logger.LogInformation($"Can't get a logged user.");
             return Ok(LoggoutUser);
         }
-            
+        
         var userInfo = identity.ToDto(User);
         Logger.LogInformation($"Get a logged user : {userInfo}");
         return Ok(userInfo);
