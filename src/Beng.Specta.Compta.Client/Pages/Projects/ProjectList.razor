@@ -2,58 +2,76 @@
 @inject ILogger<ProjectList> Logger
 @inject HttpWebApiClient WebApiClient
 
-<GenericPage Title="Projects"
-             Loader="@LoadProjects"
-             Items="@Projects"
-             Icon="vuestic-iconset vuestic-iconset-statistics"
-             NewText="Initier un projet"
-             ViewType="ViewType.AsCard"
-             AddAction="@ShowProjectForm">
-    <Loading>
-        <h1>Loading...</h1>
-    </Loading>
-    <Empty>
-        Vous n'avez pas encore de projets en cours.
-    </Empty>
-    <ItemTemplate Context="item">
-        <div class="flex xs12 sm6 lg4 xl3">
-            <VaCard stripe="danger" title="@item.Name">
-                <BodyContent>
-                    <div class="col">
-                        Date de début: <strong>@item.StartDate</strong>
-                    </div>
-                    <div class="col">
-                        Durée: <strong>@item.Duration</strong>
-                    </div>
-                    <VaSeparator />
-                    @item.Description
-                </BodyContent>
-            </VaCard>
-        </div>
-    </ItemTemplate>
-</GenericPage>
+<div class="row">
+    @if (CanShowProjectForm)
+    {
+    <div class="flex xs12 md4">
+        <ProjectForm Title="Nouveau projet"
+                     Icon="vuestic-iconset vuestic-iconset-statistics"
+                     CancelAction="@HideProjectForm"/>
+    </div>
+    }
+    
+    <div class="@ComputedListClass">
+        <GenericPage Title="Projects"
+                     Loader="@LoadProjects"
+                     Icon="vuestic-iconset vuestic-iconset-statistics"
+                     NewText="Initier un projet"
+                     ViewType="ViewType.AsCard"
+                     ShowAddFormAction="@ShowProjectForm">
+            <Loading>
+                <h1>Loading...</h1>
+            </Loading>
+            <Empty>
+                Vous n'avez pas encore de projets en cours.
+            </Empty>
+            <ItemTemplate Context="item">
+                <div class="flex xs12 sm6 lg4 xl3" key>
+                    <VaCard Stripe="@ThemeDictionary.PrimaryKey" Title="@item.Name">
+                        <BodyContent>
+                            <div class="col">
+                                Code: <strong>@item.Code</strong>
+                            </div>
+                            <div class="col">
+                                Nom: <strong>@item.Name</strong>
+                            </div>
+                            <div class="col">
+                                Date de début: @item.StartDate
+                            </div>
+                            <div class="col">
+                                Durée: @item.Duration
+                            </div>
+                            <VaSeparator/>
+                            <p>@item.Description</p>
+                        </BodyContent>
+                    </VaCard>
+                </div>
+            </ItemTemplate>
+        </GenericPage>
+    </div>
+</div>
 
 @code{
 
-    private IEnumerable<ProjectDto> Projects { get; set; } = null!;
+    private bool CanShowProjectForm { get; set; }
+    
+    private string ComputedListClass =>
+        CssBuilder.Default("flex xs12")
+            .AddClass("md12", !CanShowProjectForm)
+            .AddClass("md8", CanShowProjectForm)
+            .Build();
 
     private async Task<IEnumerable<ProjectDto>> LoadProjects()
     {
         var result = new List<ProjectDto>();
         await WebApiClient.CreateRequest("api/project/list")
-            .OnOK<ICollection<ProjectDto>>(r => result = r!.ToList())
+            .OnOK<IReadOnlyCollection<ProjectDto>>(r => result = r!.ToList())
             .GetAsync();
 
         return result;
     }
 
-    private void ShowProjectForm()
-    {
-        
-    }
+    private void ShowProjectForm() => CanShowProjectForm = true;
     
-    protected override async Task OnInitializedAsync()
-    {
-        Projects = await LoadProjects();
-    }
+    private void HideProjectForm() => CanShowProjectForm = false;
 }

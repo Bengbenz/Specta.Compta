@@ -27,5 +27,16 @@ namespace Beng.Specta.Compta.IntegrationTests
                 Description = "Make sure all the tests run and review what they are doing."
             });
         }
+        
+        public static async Task CleanProjects(this IServiceProvider serviceProvider)
+        {
+            var scopeServiceProvider = serviceProvider.CreateScope().ServiceProvider;
+            var repository = scopeServiceProvider.GetRequiredService<IRepository>();
+            var projects = await repository.ListAsync<Project>();
+            if (projects.Any())
+            {
+                await repository.DeleteAsync(projects.ToArray());
+            }
+        }
     }
 }

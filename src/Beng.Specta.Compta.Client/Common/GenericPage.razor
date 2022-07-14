@@ -5,12 +5,12 @@
 <VaCard class="@ComputedClass"
         Title="@Title"
         Image="@ImageForEmpty"
-        IsOverlay="true"
-        IsTitleOnImage="@(!string.IsNullOrWhiteSpace(ImageForEmpty))">
+        IsTitleOnImage="@(!string.IsNullOrWhiteSpace(ImageForEmpty))"
+        ShowBody="@(Items is null || !Items.Any() || ViewType == ViewType.AsList)">
     <Header>
         @if (Items is not null && !Items.Any())
         {
-            <VaButton Icon="ion ion-ios-add-circle-outline" @onclick="@AddAction" IsLarge="true">
+            <VaButton Icon="ion ion-ios-add-circle-outline" @onclick="@ShowAddFormAction" IsLarge="true">
                 @NewText
             </VaButton>
         }
@@ -21,13 +21,13 @@
         }
     </Header>
     <Actions>
-        <VaButton IsVisible="@(Items is not null && Items.Any())" Icon="fa fa-refresh" @onclick="@Loader" />
+        <VaButton IsVisible="@(Items is not null && Items.Any())" Icon="ion ion-ios-add-circle-outline" @onclick="@ShowAddFormAction" />
     </Actions>
     <BodyContent>
         <VaNotification BadgeText="Error"
-            Color="@ThemeDictionary.DangerKey"
-            IsVisible="@(!string.IsNullOrWhiteSpace(ErrorDetails))"
-            class="mb-4">
+                        Color="@ThemeDictionary.DangerKey"
+                        IsVisible="@(!string.IsNullOrWhiteSpace(ErrorDetails))"
+                        class="mb-4">
             @ErrorDetails
         </VaNotification>
         @if (Items is null)
@@ -40,7 +40,7 @@
                 @Empty
             </div>
         }
-        else if (ViewType == ViewType.AsList)
+        else // As List
         {
             foreach(var item in Items)
             {
@@ -74,7 +74,7 @@
     [Parameter] public RenderFragment<TItem> ItemTemplate { get; set; } = null!;
     [Parameter] public Func<Task<IEnumerable<TItem>>> Loader { get; set; } = null!;
     [Parameter] public IEnumerable<TItem>? Items { get; set; }
-    [Parameter] public EventCallback AddAction { get; set; }
+    [Parameter] public EventCallback ShowAddFormAction { get; set; }
 
     private string ImageForEmpty => Items is not null && !Items.Any() ? ThemeState.GetRandomBackgroundImage() : string.Empty;
 
