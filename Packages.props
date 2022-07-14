@@ -12,7 +12,7 @@
     <PackageReference Update="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.4" />
     <PackageReference Update="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.5" /> <!-- ASP.NET Core middleware for Entity Framework Core error pages -->
     <PackageReference Update="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.5" />
-    <PackageReference Update="Microsoft.AspNetCore.Identity.UI" Version="6.0.4" />
+    <PackageReference Update="Microsoft.AspNetCore.Identity.UI" Version="6.0.7" />
     <PackageReference Update="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.5" />
     <PackageReference Update="Microsoft.EntityFrameworkCore.Tools" Version="6.0.5" PrivateAssets="all" /> <!-- Tools for Dotnet ef cli (dotnet ef migrations for example); Includes Microsoft.EntityFrameworkCore.Design -->
     <PackageReference Update="Microsoft.Extensions.Configuration.Json" Version="6.0.0" /> <!-- JSON configuration provider implementation for Microsoft.Extensions.Configuration  -->
@@ -54,6 +54,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.4" />
     <PackageReference Include="Microsoft.Playwright" Version="1.22.0" />
     <PackageReference Include="System.Net.Http.Json" Version="6.0.0" />
+    <PackageReference Include="SpecFlow.Plus.LivingDocPlugin" Version="3.9.57" />
+    <PackageReference Include="SpecFlow.xUnit" Version="3.9.74" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.console" Version="2.4.1" PrivateAssets="all" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" PrivateAssets="all" />
