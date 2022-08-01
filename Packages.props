@@ -25,7 +25,7 @@
     <PackageReference Update="log4net" Version="2.0.14" />
     <PackageReference Update="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.4" />
     <PackageReference Update="NodaMoney" Version="1.0.5" />
-    <PackageReference Update="Syncfusion.Blazor" Version="20.1.0.57" />
+    <PackageReference Update="Syncfusion.Blazor" Version="20.2.0.40" />
     <PackageReference Update="Syncfusion.Blazor.WordProcessor" Version="20.1.0.57" />
     <PackageReference Update="Syncfusion.Licensing" Version="20.1.0.57" />
     <PackageReference Update="System.ComponentModel.Annotations" Version="5.0.0"/>
