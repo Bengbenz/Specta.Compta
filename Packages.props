@@ -12,7 +12,7 @@
     <PackageReference Update="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.4" />
     <PackageReference Update="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.5" /> <!-- ASP.NET Core middleware for Entity Framework Core error pages -->
     <PackageReference Update="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.5" />
-    <PackageReference Update="Microsoft.AspNetCore.Identity.UI" Version="6.0.4" />
+    <PackageReference Update="Microsoft.AspNetCore.Identity.UI" Version="6.0.8" />
     <PackageReference Update="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.5" />
     <PackageReference Update="Microsoft.EntityFrameworkCore.Tools" Version="6.0.5" PrivateAssets="all" /> <!-- Tools for Dotnet ef cli (dotnet ef migrations for example); Includes Microsoft.EntityFrameworkCore.Design -->
     <PackageReference Update="Microsoft.Extensions.Configuration.Json" Version="6.0.0" /> <!-- JSON configuration provider implementation for Microsoft.Extensions.Configuration  -->
