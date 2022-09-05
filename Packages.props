@@ -27,7 +27,7 @@
     <PackageReference Update="NodaMoney" Version="1.0.5" />
     <PackageReference Update="Syncfusion.Blazor" Version="20.1.0.57" />
     <PackageReference Update="Syncfusion.Blazor.WordProcessor" Version="20.1.0.57" />
-    <PackageReference Update="Syncfusion.Licensing" Version="20.1.0.57" />
+    <PackageReference Update="Syncfusion.Licensing" Version="20.2.0.46" />
     <PackageReference Update="System.ComponentModel.Annotations" Version="5.0.0"/>
     <PackageReference Update="System.Collections.Immutable" Version="6.0.0" />
     <PackageReference Update="System.Net.Http.Json" Version="6.0.0" /> <!--Provides extension methods for System.Net.Http.HttpClient -->
